@@ -1,36 +1,124 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Shadcn Theme Generator
 
-## Getting Started
+A powerful and flexible theme generator for [shadcn/ui](https://ui.shadcn.com/) components, leveraging modern color science with OKLCH color space to create beautiful, accessible, and harmonious themes.
 
-First, run the development server:
+## Features
+
+- **Advanced Color Harmonies**: Generate themes using various color harmony models:
+
+  - Analogous
+  - Complementary
+  - Triadic
+  - Tetradic
+  - Monochromatic
+  - Split-complementary
+
+- **OKLCH Color Space**: Uses perceptually uniform OKLCH color space for better color representation and accessibility
+
+- **Dark/Light Mode Support**: Automatically generates appropriate colors for both dark and light modes
+
+- **Flexible Output Formats**: Export your theme as CSS variables or JSON
+
+- **Chart Colors**: Includes a set of chart colors that work well with your theme
+
+## Installation
 
 ```bash
+# Clone the repository
+git clone https://github.com/raihan-bin-islam/ShadeCraft.git
+cd ShadeCraft
+
+# Install dependencies
+npm install
+# or
+yarn
+# or
+pnpm install
+```
+
+## Development
+
+```bash
+# Start the development server with Turbopack
 npm run dev
 # or
 yarn dev
 # or
 pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Usage
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Basic Usage
 
-## Learn More
+```typescript
+import { generateTheme } from "./utils/theme-generator";
 
-To learn more about Next.js, take a look at the following resources:
+// Generate a theme with default settings (analogous harmony, CSS output)
+const theme = generateTheme("#3b82f6"); // Use any hex color as your primary color
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+// Apply the theme to your application
+console.log(theme); // CSS string with all theme variables
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Advanced Usage
 
-## Deploy on Vercel
+```typescript
+import { generateTheme } from "./utils/theme-generator";
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+// Generate a theme with custom settings
+const theme = generateTheme(
+  "#3b82f6", // Primary color (hex)
+  "complementary", // Color harmony
+  "both", // Output format: "css", "json", or "both"
+  true // Include hex values in CSS comments (for debugging)
+);
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+// If output format is "both", you get an object with CSS and palette properties
+const { css, palette } = theme;
+
+// Apply the CSS to your application
+document.documentElement.style.cssText = css;
+
+// Or use the palette object for custom processing
+console.log(palette);
+```
+
+### Available Color Harmonies
+
+- `"analogous"` - Colors that are adjacent to each other on the color wheel
+- `"complementary"` - Colors that are opposite each other on the color wheel
+- `"triadic"` - Three colors equally spaced around the color wheel
+- `"tetradic"` - Four colors arranged into two complementary pairs
+- `"monochromatic"` - Different shades and tints of a single color
+- `"split-complementary"` - A color and two colors adjacent to its complement
+
+## Theme Structure
+
+The generated theme includes variables for:
+
+- Primary, secondary, and accent colors
+- Background and foreground colors
+- Card, popover, and sidebar components
+- Muted and destructive states
+- Input and border styles
+- Chart colors for data visualization
+
+## Upcoming Features
+
+- **Custom Color Palette Editor**: Visual interface for creating and editing custom color palettes
+- **Theme Export Options**: Additional export formats including Tailwind config
+- **Accessibility Checker**: Built-in tools to verify WCAG compliance for generated themes
+- **Theme Sharing**: Ability to share themes via URL or community gallery
+- **Component Preview**: Live preview of all shadcn/ui components with your theme applied
+- **Theme Version Control**: Save and track changes to your themes
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+[MIT](LICENSE)
