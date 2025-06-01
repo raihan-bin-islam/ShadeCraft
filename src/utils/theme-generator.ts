@@ -1,10 +1,4 @@
-export type ColorHarmony =
-  | "analogous"
-  | "complementary"
-  | "triadic"
-  | "tetradic"
-  | "monochromatic"
-  | "split-complementary";
+export type ColorHarmony = "analogous" | "complementary" | "triadic" | "tetradic" | "monochromatic" | "split-complementary";
 
 interface HSL {
   h: number;
@@ -273,79 +267,215 @@ export function ensureContrast(foreground: string, background: string, minContra
   return newForeground;
 }
 
-// Generate chart colors with good visual distinction
+// Generate chart colors with good visual distinction based on color theory
 function generateChartColors(baseHsl: HSL, count: number = 5): HSL[] {
   const colors: HSL[] = [];
 
-  // Start with primary
+  // Start with the primary color
   colors.push({ ...baseHsl });
 
-  // Add colors at golden angle intervals for maximum distinction
-  const goldenAngle = 137.5; // Golden angle in degrees
+  // Determine the color scheme based on the number of colors needed
+  if (count <= 3) {
+    // For 2-3 colors, use a triadic scheme for clear distinction
+    const angle = 360 / count;
+    for (let i = 1; i < count; i++) {
+      const h = (baseHsl.h + angle * i) % 360;
+      // Maintain similar saturation but vary lightness for better distinction
+      const s = Math.min(90, Math.max(50, baseHsl.s));
+      const l = Math.max(40, Math.min(70, baseHsl.l + (i % 2 === 0 ? 10 : -10)));
+      colors.push({ h, s, l });
+    }
+  } else {
+    // For 4+ colors, use golden angle for maximum distinction
+    // The golden angle (137.5°) provides optimal spacing around the color wheel
+    const goldenAngle = 137.5;
 
-  for (let i = 1; i < count; i++) {
-    const h = (baseHsl.h + goldenAngle * i) % 360;
-    // Vary saturation and lightness for better distinction
-    const s = Math.min(100, baseHsl.s + (i % 3) * 10 - 10);
-    const l = Math.max(40, Math.min(75, baseHsl.l + (i % 2) * 15 - 7));
+    for (let i = 1; i < count; i++) {
+      const h = (baseHsl.h + goldenAngle * i) % 360;
 
-    colors.push({ h, s, l });
+      // Apply the 60-30-10 rule to chart colors:
+      // - First few colors: more saturated (primary emphasis)
+      // - Middle colors: medium saturation (secondary emphasis)
+      // - Last colors: lower saturation but distinct (accent emphasis)
+
+      let s, l;
+
+      if (i < count / 3) {
+        // Primary emphasis colors (more saturated)
+        s = Math.min(95, baseHsl.s + 15);
+        l = Math.max(45, Math.min(65, baseHsl.l - 5));
+      } else if (i < (2 * count) / 3) {
+        // Secondary emphasis colors (medium saturation)
+        s = Math.min(85, baseHsl.s);
+        l = Math.max(50, Math.min(70, baseHsl.l));
+      } else {
+        // Accent emphasis colors (lower saturation but distinct)
+        s = Math.max(60, baseHsl.s - 10);
+        l = Math.max(55, Math.min(75, baseHsl.l + 10));
+      }
+
+      colors.push({ h, s, l });
+    }
+  }
+
+  // Ensure all colors have sufficient contrast with each other
+  // by slightly adjusting lightness if colors are too similar
+  for (let i = 1; i < colors.length; i++) {
+    for (let j = 0; j < i; j++) {
+      // If hues are too close, adjust lightness more dramatically
+      const hueDiff = Math.abs(colors[i].h - colors[j].h);
+      if (hueDiff < 30 || hueDiff > 330) {
+        colors[i].l = Math.max(30, Math.min(85, colors[i].l + (i % 2 === 0 ? 15 : -15)));
+      }
+    }
   }
 
   return colors;
 }
 
 // Generate harmony colors based on color theory principles
-function generateHarmonyColors(baseHsl: HSL, harmony: ColorHarmony): HSL[] {
+function generateHarmonyColors(baseHsl: HSL, harmony: ColorHarmony, apply6030Rule: boolean = true): HSL[] {
+  // Conditionally apply the 60-30-10 rule by adjusting saturation and lightness
+  // Primary color (60%) - baseHsl is already defined and will be used as is
+  // Secondary color (30%) - First harmony color with slightly reduced saturation
+  // Accent color (10%) - Second harmony color with more vibrant properties
+
   switch (harmony) {
     case "analogous":
-      return [
-        { ...baseHsl, h: (baseHsl.h + 30) % 360 },
-        { ...baseHsl, h: (baseHsl.h - 30 + 360) % 360 },
-      ];
+      // Colors adjacent to each other on the color wheel (30° apart)
+      // Creates a harmonious and smooth feel
+      if (apply6030Rule) {
+        return [
+          // Secondary - slightly less saturated (30%)
+          { h: (baseHsl.h + 30) % 360, s: Math.max(30, baseHsl.s - 10), l: Math.min(65, baseHsl.l + 5) },
+          // Accent - more vibrant (10%)
+          { h: (baseHsl.h - 30 + 360) % 360, s: Math.min(90, baseHsl.s + 15), l: Math.max(45, baseHsl.l - 5) },
+        ];
+      } else {
+        // Simple analogous colors without 60-30-10 rule adjustments
+        return [
+          { h: (baseHsl.h + 30) % 360, s: baseHsl.s, l: baseHsl.l },
+          { h: (baseHsl.h - 30 + 360) % 360, s: baseHsl.s, l: baseHsl.l },
+        ];
+      }
     case "complementary":
-      return [{ ...baseHsl, h: (baseHsl.h + 180) % 360 }];
+      // Colors opposite each other on the color wheel (180° apart)
+      // Creates high contrast and vibrant look
+      if (apply6030Rule) {
+        return [
+          // For complementary, we use a more vibrant opposite color (30%)
+          // and add a third color that's a muted version of the primary (10%)
+          { h: (baseHsl.h + 180) % 360, s: Math.min(85, baseHsl.s + 10), l: Math.min(60, Math.max(40, baseHsl.l)) },
+          // Additional muted variant of primary for better balance
+          { ...baseHsl, s: Math.max(30, baseHsl.s - 30), l: Math.min(80, baseHsl.l + 15) },
+        ];
+      } else {
+        // Simple complementary color without 60-30-10 rule adjustments
+        return [{ h: (baseHsl.h + 180) % 360, s: baseHsl.s, l: baseHsl.l }];
+      }
     case "triadic":
-      return [
-        { ...baseHsl, h: (baseHsl.h + 120) % 360 },
-        { ...baseHsl, h: (baseHsl.h + 240) % 360 },
-      ];
+      // Three colors equally spaced (120° apart) around the color wheel
+      // Creates a dynamic and balanced combination
+      if (apply6030Rule) {
+        return [
+          // Secondary - slightly muted (30%)
+          { h: (baseHsl.h + 120) % 360, s: Math.max(40, baseHsl.s - 5), l: Math.min(65, baseHsl.l + 5) },
+          // Accent - more vibrant (10%)
+          { h: (baseHsl.h + 240) % 360, s: Math.min(85, baseHsl.s + 10), l: Math.max(45, baseHsl.l - 5) },
+        ];
+      } else {
+        // Simple triadic colors without 60-30-10 rule adjustments
+        return [
+          { h: (baseHsl.h + 120) % 360, s: baseHsl.s, l: baseHsl.l },
+          { h: (baseHsl.h + 240) % 360, s: baseHsl.s, l: baseHsl.l },
+        ];
+      }
     case "tetradic":
-      return [
-        { ...baseHsl, h: (baseHsl.h + 90) % 360 },
-        { ...baseHsl, h: (baseHsl.h + 180) % 360 },
-        { ...baseHsl, h: (baseHsl.h + 270) % 360 },
-      ];
+      // Four colors forming a rectangle on the color wheel
+      // Offers a balanced and vibrant palette with two complementary pairs
+      if (apply6030Rule) {
+        return [
+          // Secondary - first complementary pair (20%)
+          { h: (baseHsl.h + 90) % 360, s: Math.max(40, baseHsl.s - 5), l: Math.min(65, baseHsl.l + 5) },
+          // Tertiary - complementary to primary (10%)
+          { h: (baseHsl.h + 180) % 360, s: Math.min(80, baseHsl.s), l: Math.max(45, baseHsl.l - 5) },
+          // Accent - complementary to secondary (10%)
+          { h: (baseHsl.h + 270) % 360, s: Math.min(85, baseHsl.s + 10), l: Math.max(40, baseHsl.l - 10) },
+        ];
+      } else {
+        // Simple tetradic colors without 60-30-10 rule adjustments
+        return [
+          { h: (baseHsl.h + 90) % 360, s: baseHsl.s, l: baseHsl.l },
+          { h: (baseHsl.h + 180) % 360, s: baseHsl.s, l: baseHsl.l },
+          { h: (baseHsl.h + 270) % 360, s: baseHsl.s, l: baseHsl.l },
+        ];
+      }
     case "split-complementary":
-      return [
-        { ...baseHsl, h: (baseHsl.h + 150) % 360 },
-        { ...baseHsl, h: (baseHsl.h + 210) % 360 },
-      ];
+      // A color and two colors adjacent to its complement
+      // Offers high contrast with more variety than complementary
+      if (apply6030Rule) {
+        return [
+          // Secondary - first split complement (30%)
+          { h: (baseHsl.h + 150) % 360, s: Math.min(80, baseHsl.s + 5), l: Math.min(60, Math.max(40, baseHsl.l)) },
+          // Accent - second split complement (10%)
+          { h: (baseHsl.h + 210) % 360, s: Math.min(85, baseHsl.s + 10), l: Math.max(45, baseHsl.l - 5) },
+        ];
+      } else {
+        // Simple split-complementary colors without 60-30-10 rule adjustments
+        return [
+          { h: (baseHsl.h + 150) % 360, s: baseHsl.s, l: baseHsl.l },
+          { h: (baseHsl.h + 210) % 360, s: baseHsl.s, l: baseHsl.l },
+        ];
+      }
     case "monochromatic":
-      return [adjustHSL(baseHsl, { s: 10, l: -15 }), adjustHSL(baseHsl, { s: -10, l: 15 })];
+      // Different shades and tints of a single color
+      // Creates a cohesive and subtle look
+      if (apply6030Rule) {
+        return [
+          // Secondary - lighter shade (30%)
+          { ...baseHsl, s: Math.max(30, baseHsl.s - 20), l: Math.min(75, baseHsl.l + 15) },
+          // Accent - darker shade (10%)
+          { ...baseHsl, s: Math.min(90, baseHsl.s + 10), l: Math.max(30, baseHsl.l - 15) },
+        ];
+      } else {
+        // Simple monochromatic colors without 60-30-10 rule adjustments
+        return [
+          { ...baseHsl, s: baseHsl.s, l: Math.min(80, baseHsl.l + 20) },
+          { ...baseHsl, s: baseHsl.s, l: Math.max(20, baseHsl.l - 20) },
+        ];
+      }
     default:
       return [];
   }
 }
 
 // Generate a complete color palette including OKLCH values
-export function generateColorPalette(baseColor: string, harmony: ColorHarmony = "analogous") {
+export function generateColorPalette(baseColor: string, harmony: ColorHarmony = "analogous", apply6030Rule: boolean = true) {
   const baseHsl = hexToHsl(baseColor);
 
-  // Generate harmony colors
-  const harmonyColors = generateHarmonyColors(baseHsl, harmony);
+  // Generate harmony colors based on color theory principles
+  const harmonyColors = generateHarmonyColors(baseHsl, harmony, apply6030Rule);
 
-  // Generate chart colors
+  // Generate chart colors for data visualization
   const chartColors = generateChartColors(baseHsl);
 
-  // Create base palette
+  // Apply the 60-30-10 rule:
+  // - Primary color (60%): Main brand color (baseHsl)
+  // - Secondary color (30%): First harmony color
+  // - Accent color (10%): Second harmony color or a vibrant variant
+
+  // Create base palette with perceptually appropriate backgrounds
+  // Light mode: very light background with subtle hue
   const lightBackground = hslToHex({ h: baseHsl.h, s: 5, l: 98 });
+  // Dark mode: very dark background with subtle hue
   const darkBackground = hslToHex({ h: baseHsl.h, s: 15, l: 8 });
 
+  // Text colors with good contrast
   const lightForeground = hslToHex({ h: baseHsl.h, s: 10, l: 10 });
   const darkForeground = hslToHex({ h: baseHsl.h, s: 5, l: 98 });
 
-  // Ensure contrast for primary colors
+  // Primary color (60% of the design)
+  // Ensure contrast for primary colors against backgrounds
   const lightPrimary = ensureContrast(baseColor, lightBackground, 4.5);
   const darkPrimary = ensureContrast(
     hslToHex(adjustHSL(baseHsl, { s: Math.min(15, baseHsl.s), l: Math.max(55, baseHsl.l) })),
@@ -353,15 +483,16 @@ export function generateColorPalette(baseColor: string, harmony: ColorHarmony = 
     4.5
   );
 
-  // Ensure contrast for secondary colors
+  // Secondary color (30% of the design)
+  // Use the first harmony color or fallback to a 30° shift if no harmony colors
   const secondaryHsl = harmonyColors[0] || adjustHSL(baseHsl, { h: 30 });
   const lightSecondary = ensureContrast(
-    hslToHex(adjustHSL(secondaryHsl, { s: Math.min(70, secondaryHsl.s), l: 50 })),
+    hslToHex(secondaryHsl), // Use the harmony-generated secondary directly
     lightBackground,
     4.5
   );
   const darkSecondary = ensureContrast(
-    hslToHex(adjustHSL(secondaryHsl, { s: Math.min(80, secondaryHsl.s), l: 60 })),
+    hslToHex(adjustHSL(secondaryHsl, { l: Math.max(60, secondaryHsl.l) })), // Ensure visibility in dark mode
     darkBackground,
     4.5
   );
@@ -414,12 +545,38 @@ export function generateColorPalette(baseColor: string, harmony: ColorHarmony = 
         dark: ensureContrast("#ffffff", darkSecondary, 4.5),
       },
       accent: {
-        light: ensureContrast(hslToHex(adjustHSL(baseHsl, { s: -50, l: 90 })), lightBackground, 3),
-        dark: ensureContrast(hslToHex(adjustHSL(baseHsl, { s: -30, l: 25 })), darkBackground, 3),
+        // Accent color (10% of the design)
+        // Use the second harmony color or create a vibrant variant of the primary
+        light: ensureContrast(
+          harmonyColors[1]
+            ? hslToHex(harmonyColors[1])
+            : hslToHex(adjustHSL(baseHsl, { s: Math.min(90, baseHsl.s + 10), l: Math.min(90, Math.max(65, baseHsl.l + 10)) })),
+          lightBackground,
+          3
+        ),
+        dark: ensureContrast(
+          harmonyColors[1]
+            ? hslToHex(adjustHSL(harmonyColors[1], { l: Math.max(40, harmonyColors[1].l) }))
+            : hslToHex(adjustHSL(baseHsl, { s: Math.min(90, baseHsl.s + 15), l: Math.max(40, baseHsl.l - 5) })),
+          darkBackground,
+          3
+        ),
       },
       "accent-foreground": {
-        light: ensureContrast(lightForeground, hslToHex(adjustHSL(baseHsl, { s: -50, l: 90 })), 4.5),
-        dark: ensureContrast(darkForeground, hslToHex(adjustHSL(baseHsl, { s: -30, l: 25 })), 4.5),
+        light: ensureContrast(
+          lightForeground,
+          harmonyColors[1]
+            ? hslToHex(harmonyColors[1])
+            : hslToHex(adjustHSL(baseHsl, { s: Math.min(90, baseHsl.s + 10), l: Math.min(90, Math.max(65, baseHsl.l + 10)) })),
+          4.5
+        ),
+        dark: ensureContrast(
+          darkForeground,
+          harmonyColors[1]
+            ? hslToHex(adjustHSL(harmonyColors[1], { l: Math.max(40, harmonyColors[1].l) }))
+            : hslToHex(adjustHSL(baseHsl, { s: Math.min(90, baseHsl.s + 15), l: Math.max(40, baseHsl.l - 5) })),
+          4.5
+        ),
       },
       muted: {
         light: hslToHex(adjustHSL(baseHsl, { s: -80, l: 95 })),
@@ -525,6 +682,37 @@ export function generateThemeCSS(palette: any, includeHex = false): string {
   let rootCSS = `:root {\n  --radius: 0.625rem;\n`;
   let darkCSS = `.dark {\n`;
 
+  // Map of our keys to shadcn UI expected CSS variable names
+  const cssVarMap: Record<string, string> = {
+    background: "background",
+    foreground: "foreground",
+    card: "card",
+    "card-foreground": "card-foreground",
+    popover: "popover",
+    "popover-foreground": "popover-foreground",
+    primary: "primary",
+    "primary-foreground": "primary-foreground",
+    secondary: "secondary",
+    "secondary-foreground": "secondary-foreground",
+    muted: "muted",
+    "muted-foreground": "muted-foreground",
+    accent: "accent",
+    "accent-foreground": "accent-foreground",
+    destructive: "destructive",
+    "destructive-foreground": "destructive-foreground",
+    border: "border",
+    input: "input",
+    ring: "ring",
+    sidebar: "sidebar",
+    "sidebar-foreground": "sidebar-foreground",
+    "sidebar-primary": "sidebar-primary",
+    "sidebar-primary-foreground": "sidebar-primary-foreground",
+    "sidebar-accent": "sidebar-accent",
+    "sidebar-accent-foreground": "sidebar-accent-foreground",
+    "sidebar-border": "sidebar-border",
+    "sidebar-ring": "sidebar-ring",
+  };
+
   // Process all keys except chart colors
   for (const key of Object.keys(palette.oklch)) {
     if (key === "chart") continue;
@@ -532,8 +720,11 @@ export function generateThemeCSS(palette: any, includeHex = false): string {
     const lightValue = palette.oklch[key].light;
     const darkValue = palette.oklch[key].dark;
 
-    rootCSS += `  --${key}: ${lightValue};\n`;
-    darkCSS += `  --${key}: ${darkValue};\n`;
+    // Use the mapped variable name or the original key if not in the map
+    const varName = cssVarMap[key] || key;
+
+    rootCSS += `  --${varName}: ${lightValue};\n`;
+    darkCSS += `  --${varName}: ${darkValue};\n`;
   }
 
   // Add chart colors
@@ -550,12 +741,12 @@ export function generateThemeCSS(palette: any, includeHex = false): string {
     rootCSS += `\n/* Hex values for reference */\n:root {\n`;
     for (const key of Object.keys(palette.hex)) {
       if (key === "chart") continue;
-      rootCSS += `  /* --${key}: ${palette.hex[key].light}; */\n`;
+      rootCSS += `  /* --${cssVarMap[key] || key}: ${palette.hex[key].light}; */\n`;
     }
     rootCSS += `}\n\n.dark {\n`;
     for (const key of Object.keys(palette.hex)) {
       if (key === "chart") continue;
-      rootCSS += `  /* --${key}: ${palette.hex[key].dark}; */\n`;
+      rootCSS += `  /* --${cssVarMap[key] || key}: ${palette.hex[key].dark}; */\n`;
     }
     rootCSS += `}\n`;
   }
@@ -563,15 +754,40 @@ export function generateThemeCSS(palette: any, includeHex = false): string {
   return rootCSS + darkCSS;
 }
 
-// Generate a theme with just one primary color input
+/**
+ * Generate a theme with just one primary color input
+ *
+ * This function creates a complete theme based on color theory principles:
+ *
+ * 1. Color Harmonies:
+ *    - Analogous: Colors adjacent on the color wheel, creating a harmonious feel
+ *    - Complementary: Colors opposite on the color wheel, creating high contrast
+ *    - Triadic: Three colors equally spaced around the color wheel, creating balance
+ *    - Tetradic: Four colors forming a rectangle on the color wheel, offering variety
+ *    - Monochromatic: Different shades of a single color, creating cohesion
+ *    - Split-complementary: A color and two colors adjacent to its complement
+ *
+ * 2. 60-30-10 Rule:
+ *    - Primary color (60%): Main brand color used for primary elements
+ *    - Secondary color (30%): Complementary or harmony-based color for secondary elements
+ *    - Accent color (10%): Vibrant color for highlights and calls to action
+ *
+ * 3. Perceptual Uniformity:
+ *    - Uses OKLCH color space for better perceptual representation
+ *    - Ensures proper contrast ratios for accessibility
+ *    - Maintains color harmony across light and dark modes
+ */
 export function generateTheme(
   primaryColor: string,
   harmony: ColorHarmony = "analogous",
   outputFormat: "css" | "json" | "both" = "css",
-  includeHex = false
+  includeHex = false,
+  apply6030Rule = true // Whether to apply the 60-30-10 rule in the theme
 ) {
-  const palette = generateColorPalette(primaryColor, harmony);
+  // Generate the color palette based on color theory principles
+  const palette = generateColorPalette(primaryColor, harmony, apply6030Rule);
 
+  // Return the palette in the requested format
   if (outputFormat === "json") {
     return palette;
   } else if (outputFormat === "css") {
