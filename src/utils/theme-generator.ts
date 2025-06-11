@@ -162,32 +162,42 @@ function adjustHSL(hsl: HSL, adjustments: Partial<HSL>): HSL {
   };
 }
 
-// Convert RGB to OKLCH approximation
+// Convert RGB to OKLCH using a more accurate algorithm
 function rgbToOklch(rgb: RGB): OKLCH {
-  // Convert RGB to linear RGB
+  // Convert sRGB to linear RGB
   const r = srgbToLinear(rgb.r / 255);
   const g = srgbToLinear(rgb.g / 255);
   const b = srgbToLinear(rgb.b / 255);
 
-  // Convert to XYZ
-  const x = 0.4124 * r + 0.3576 * g + 0.1805 * b;
-  const y = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-  const z = 0.0193 * r + 0.1192 * g + 0.9505 * b;
+  // Convert linear RGB to Oklab
+  // First, convert to XYZ using the standard RGB to XYZ matrix
+  const x = 0.4124564 * r + 0.3575761 * g + 0.1804375 * b;
+  const y = 0.2126729 * r + 0.7151522 * g + 0.072175 * b;
+  const z = 0.0193339 * r + 0.119192 * g + 0.9503041 * b;
 
-  // Convert XYZ to LAB (approximation)
-  const l = 0.3 * Math.cbrt(y);
-  const a = 0.5 * (Math.cbrt(x) - Math.cbrt(y));
-  const b2 = 0.2 * (Math.cbrt(y) - Math.cbrt(z));
+  // Then, transform XYZ to Oklab
+  const l = 0.8189330101 * x + 0.3618667424 * y - 0.1288597137 * z;
+  const m = 0.0329845436 * x + 0.9293118715 * y + 0.0361456387 * z;
+  const s = 0.0482003018 * x + 0.2643662691 * y + 0.633851707 * z;
 
-  // Convert LAB to LCH
-  const c = Math.sqrt(a * a + b2 * b2);
-  let h = Math.atan2(b2, a) * (180 / Math.PI);
+  // Apply non-linearity
+  const l_ = Math.cbrt(l);
+  const m_ = Math.cbrt(m);
+  const s_ = Math.cbrt(s);
+
+  // Convert to Oklab
+  const L = 0.2104542553 * l_ + 0.793617785 * m_ - 0.0040720468 * s_;
+  const a = 1.9779984951 * l_ - 2.428592205 * m_ + 0.4505937099 * s_;
+  const b_lab = 0.0259040371 * l_ + 0.7827717662 * m_ - 0.808675766 * s_;
+
+  // Convert Oklab to OKLCH
+  const C = Math.sqrt(a * a + b_lab * b_lab);
+  let h = Math.atan2(b_lab, a) * (180 / Math.PI);
   if (h < 0) h += 360;
 
-  // Map to OKLCH range (approximation)
   return {
-    l: Math.min(1, Math.max(0, l)),
-    c: Math.min(0.4, Math.max(0, c * 0.3)), // Limit chroma to reasonable values
+    l: Math.min(1, Math.max(0, L)),
+    c: Math.min(0.4, Math.max(0, C)), // Limit chroma to reasonable values
     h,
   };
 }
@@ -199,7 +209,10 @@ function srgbToLinear(value: number): number {
 
 // Format OKLCH for CSS output
 function oklchToString(oklch: OKLCH): string {
-  return `oklch(${oklch.l.toFixed(3)} ${oklch.c.toFixed(3)} ${Math.round(oklch.h)})`;
+  // Format OKLCH values according to CSS Color Module Level 4 specification
+  // Format: oklch(L C H) where L is 0-1, C is 0-0.4 (typically), and H is 0-360 degrees
+  // We need to ensure proper formatting with appropriate precision
+  return `oklch(${oklch.l.toFixed(3)} ${oklch.c.toFixed(3)} ${Math.round(oklch.h)}deg)`;
 }
 
 // Convert hex to OKLCH string
