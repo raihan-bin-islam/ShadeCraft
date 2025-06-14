@@ -128,7 +128,7 @@ ${darkVars}
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Shuffle className="h-5 w-5" />
-            AI Theme Generator (Tailwind v4)
+            Theme Generator (Tailwind v4)
           </CardTitle>
           <CardDescription>
             Generate beautiful themes optimized for Tailwind CSS v4 with OKLCH color space for better perceptual uniformity and

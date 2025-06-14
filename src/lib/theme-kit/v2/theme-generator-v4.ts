@@ -225,7 +225,7 @@ export function generateTailwindV4Theme(): TailwindV4Theme {
     secondary: oklchToCss(secondaryPair.background),
     "secondary-foreground": oklchToCss(secondaryPair.foreground),
     muted: oklchToCss(lightBgs.muted),
-    "muted-foreground": oklchToCss(generateOklchForeground(lightBgs.muted)),
+    "muted-foreground": oklchToCss({ ...lightBgs.muted, l: 0.6 }),
     accent: oklchToCss(accentPair.background),
     "accent-foreground": oklchToCss(accentPair.foreground),
     destructive: oklchToCss(destructive),
@@ -249,7 +249,7 @@ export function generateTailwindV4Theme(): TailwindV4Theme {
       ensureOklchContrast(secondaryPair.foreground, createOklchTint(secondaryPair.background, 15))
     ),
     "dark-muted": oklchToCss(darkBgs.muted),
-    "dark-muted-foreground": oklchToCss(generateOklchForeground(darkBgs.muted)),
+    "dark-muted-foreground": oklchToCss({ ...lightBgs.muted, l: 0.5 }),
     "dark-accent": oklchToCss(createOklchTint(accentPair.background, 15)),
     "dark-accent-foreground": oklchToCss(ensureOklchContrast(accentPair.foreground, createOklchTint(accentPair.background, 15))),
     "dark-destructive": oklchToCss(destructiveDark),
@@ -259,9 +259,19 @@ export function generateTailwindV4Theme(): TailwindV4Theme {
     "dark-ring": oklchToCss(createOklchTint(primary, 10)),
   };
 
+  // Add chart colors (light mode)
   const chartColors = generateOklchChartColors(primary);
   Object.assign(cssVars, chartColors);
 
+  // Add dark mode chart colors
+  const darkChartColors = generateOklchChartColors(createOklchTint(primary, 10));
+  const darkChartVars: Record<string, string> = {};
+  Object.entries(darkChartColors).forEach(([key, value]) => {
+    darkChartVars[`dark-${key}`] = value;
+  });
+  Object.assign(cssVars, darkChartVars);
+
+  // Add sidebar colors (light mode)
   const sidebarColors = generateOklchSidebarColors(
     lightBgs.background,
     generateOklchForeground(lightBgs.background),
@@ -270,6 +280,20 @@ export function generateTailwindV4Theme(): TailwindV4Theme {
     lightBgs.border
   );
   Object.assign(cssVars, sidebarColors);
+
+  // Add dark mode sidebar colors
+  const darkSidebarColors = generateOklchSidebarColors(
+    darkBgs.background,
+    generateOklchForeground(darkBgs.background),
+    createOklchTint(primary, 10),
+    createOklchTint(accent, 15),
+    darkBgs.border
+  );
+  const darkSidebarVars: Record<string, string> = {};
+  Object.entries(darkSidebarColors).forEach(([key, value]) => {
+    darkSidebarVars[`dark-${key}`] = value;
+  });
+  Object.assign(cssVars, darkSidebarVars);
 
   const hslVars: Record<string, string> = {};
   Object.entries(cssVars).forEach(([key, value]) => {

@@ -8,15 +8,14 @@ import { Badge } from "@/components/ui/badge";
 import { BrandColorInput } from "@/components/theme/brand-color-input";
 import { ThemeEditor } from "@/components/theme/theme-editor";
 import { ThemePreview } from "@/components/theme/theme-preview";
-// import { ThemeGenerator } from "@/components/theme/theme-generator";
 import { ThemeSwitcher } from "@/components/theme/theme-switcher";
 import { ThemeAnalyzer } from "@/components/theme/theme-analyzer";
 import { ThemeComparison } from "@/components/theme/theme-comparison";
 import { Palette, Wand2, Edit3, Eye, Search, GitCompare } from "lucide-react";
-// import type { GeneratedTheme } from "@/lib/theme-kit/v2/theme-generator";
 import { ThemeGeneratorV4 } from "@/components/theme/theme-generator-v4";
 import { TailwindV4Theme } from "@/lib/theme-kit/v2/theme-generator-v4";
 import { ThemeName, themes } from "@/lib/themes";
+import { ThemeShowcase } from "@/components/theme/theme-showcase";
 
 export default function Home() {
   const [currentTheme, setCurrentTheme] = useState<any>(null);
@@ -61,8 +60,12 @@ export default function Home() {
           </div>
         </div>
 
-        <Tabs defaultValue="themes" className="space-y-6">
+        <Tabs defaultValue="generator" className="space-y-6">
           <TabsList className="grid w-full grid-cols-6">
+            <TabsTrigger value="generator" className="flex items-center gap-2">
+              <Wand2 className="h-4 w-4" />
+              Generator
+            </TabsTrigger>
             <TabsTrigger value="themes" className="flex items-center gap-2">
               <Eye className="h-4 w-4" />
               Themes
@@ -70,10 +73,6 @@ export default function Home() {
             <TabsTrigger value="brand-input" className="flex items-center gap-2">
               <Palette className="h-4 w-4" />
               Brand Colors
-            </TabsTrigger>
-            <TabsTrigger value="generator" className="flex items-center gap-2">
-              <Wand2 className="h-4 w-4" />
-              AI Generator
             </TabsTrigger>
             <TabsTrigger value="editor" className="flex items-center gap-2" disabled={!currentTheme}>
               <Edit3 className="h-4 w-4" />
@@ -88,43 +87,6 @@ export default function Home() {
               HSL vs OKLCH
             </TabsTrigger>
           </TabsList>
-
-          <TabsContent value="themes" className="space-y-6">
-            <ThemeSwitcher currentTheme={selectedBuiltInTheme} setCurrentTheme={setSelectedBuiltInTheme} />
-            {selectedBuiltInTheme && (
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold">Live Preview</h3>
-                  <Tabs value={previewMode} onValueChange={(value) => setPreviewMode(value as "light" | "dark")}>
-                    <TabsList>
-                      <TabsTrigger value="light">Light</TabsTrigger>
-                      <TabsTrigger value="dark">Dark</TabsTrigger>
-                    </TabsList>
-                  </Tabs>
-                </div>
-                <ThemePreview theme={themes[selectedBuiltInTheme].cssVars} themeName={currentThemeName} mode={previewMode} />
-              </div>
-            )}
-          </TabsContent>
-
-          <TabsContent value="brand-input" className="space-y-6">
-            <BrandColorInput onThemeGenerated={handleThemeGenerated} />
-
-            {currentTheme && (
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold">Live Preview</h3>
-                  <Tabs value={previewMode} onValueChange={(value) => setPreviewMode(value as "light" | "dark")}>
-                    <TabsList>
-                      <TabsTrigger value="light">Light</TabsTrigger>
-                      <TabsTrigger value="dark">Dark</TabsTrigger>
-                    </TabsList>
-                  </Tabs>
-                </div>
-                <ThemePreview theme={currentTheme} themeName={currentThemeName} mode={previewMode} />
-              </div>
-            )}
-          </TabsContent>
 
           <TabsContent value="generator" className="space-y-6">
             <ThemeGeneratorV4
@@ -148,6 +110,30 @@ export default function Home() {
                   : undefined
               }
             />
+
+            {currentTheme && <ThemeShowcase theme={currentTheme} themeName={currentThemeName} />}
+          </TabsContent>
+
+          <TabsContent value="themes" className="space-y-6">
+            <ThemeSwitcher currentTheme={selectedBuiltInTheme} setCurrentTheme={setSelectedBuiltInTheme} />
+            {selectedBuiltInTheme && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold">Live Preview</h3>
+                  <Tabs value={previewMode} onValueChange={(value) => setPreviewMode(value as "light" | "dark")}>
+                    <TabsList>
+                      <TabsTrigger value="light">Light</TabsTrigger>
+                      <TabsTrigger value="dark">Dark</TabsTrigger>
+                    </TabsList>
+                  </Tabs>
+                </div>
+                <ThemePreview theme={themes[selectedBuiltInTheme].cssVars} themeName={currentThemeName} mode={previewMode} />
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="brand-input" className="space-y-6">
+            <BrandColorInput onThemeGenerated={handleThemeGenerated} />
 
             {currentTheme && (
               <div className="space-y-4">
