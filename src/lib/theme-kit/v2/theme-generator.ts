@@ -1,215 +1,188 @@
+import { THEME_FEELS_V4 } from "@/config/theme-feels";
 import {
-  type HSL,
-  hslToCss,
-  getComplementary,
-  getTriadic,
-  getAnalogous,
-  getSplitComplementary,
-  getTetradic,
-  createTint,
-  createShade,
-  adjustSaturation,
-  hslToRgb,
-} from "./color-theory"
-import {
-  hslToOklch,
-  convertThemeToOklch,
+  type OKLCH,
+  oklchToCss,
+  createOklchTint,
+  createOklchShade,
+  adjustOklchChroma,
+  getOklchComplementary,
+  getOklchTriadic,
+  getOklchAnalogous,
+  getOklchSplitComplementary,
+  getOklchTetradic,
+  generateOklchForeground,
+  ensureOklchContrast,
+  generateOklchContrastPair,
   generateOklchChartColors,
   generateOklchSidebarColors,
-} from "./oklch-converter"
-import { generateForegroundColor, ensureContrast, generateContrastPair } from "./contrast-utils"
+  oklchToHsl,
+} from "./oklch-converter";
 
-export interface GeneratedTheme {
-  name: string
-  description: string
-  feel: string
-  cssVars: {
-    light: Record<string, string>
-    dark: Record<string, string>
-  }
-  oklchVars: {
-    light: Record<string, string>
-    dark: Record<string, string>
-  }
+export interface TailwindV4Theme {
+  name: string;
+  description: string;
+  feel: string;
+  cssVars: { light: Record<string, string>; dark: Record<string, string> };
+  hslVars?: Record<string, string>;
   previewColors: {
-    primary: string
-    secondary: string
-    accent: string
-    lightBg: string
-    darkBg: string
-  }
+    primary: string;
+    secondary: string;
+    accent: string;
+    lightBg: string;
+    darkBg: string;
+  };
 }
 
-// Color harmony types
-type ColorHarmony = "complementary" | "triadic" | "analogous" | "splitComplementary" | "tetradic" | "monochromatic"
+type ColorHarmony = "complementary" | "triadic" | "analogous" | "splitComplementary" | "tetradic" | "monochromatic";
 
-// Theme feels and their characteristics
-const THEME_FEELS = [
-  {
-    name: "Ethereal",
-    description: "Mystical and dreamy with soft, otherworldly colors",
-    saturationRange: [40, 70],
-    lightnessRange: [45, 75],
-    preferredHues: [240, 280, 320, 200], // Blues, purples, magentas, cyans
-  },
-  {
-    name: "Vibrant",
-    description: "Bold and energetic with high-contrast colors",
-    saturationRange: [70, 90],
-    lightnessRange: [40, 65],
-    preferredHues: [0, 30, 120, 240], // Reds, oranges, greens, blues
-  },
-  {
-    name: "Serene",
-    description: "Calm and peaceful with muted, sophisticated tones",
-    saturationRange: [20, 50],
-    lightnessRange: [35, 70],
-    preferredHues: [200, 220, 180, 160], // Blues, blue-grays, teals
-  },
-  {
-    name: "Warm",
-    description: "Cozy and inviting with earth-toned colors",
-    saturationRange: [50, 80],
-    lightnessRange: [40, 70],
-    preferredHues: [20, 40, 60, 300], // Oranges, yellows, browns, magentas
-  },
-  {
-    name: "Cool",
-    description: "Fresh and modern with cool-toned colors",
-    saturationRange: [40, 75],
-    lightnessRange: [45, 75],
-    preferredHues: [180, 200, 240, 280], // Cyans, blues, purples
-  },
-  {
-    name: "Elegant",
-    description: "Sophisticated and refined with rich, deep colors",
-    saturationRange: [30, 60],
-    lightnessRange: [25, 55],
-    preferredHues: [260, 280, 20, 340], // Purples, browns, deep reds
-  },
-  {
-    name: "Playful",
-    description: "Fun and cheerful with bright, happy colors",
-    saturationRange: [60, 85],
-    lightnessRange: [50, 80],
-    preferredHues: [300, 60, 120, 200], // Pinks, yellows, greens, blues
-  },
-  {
-    name: "Minimalist",
-    description: "Clean and simple with subtle, understated colors",
-    saturationRange: [10, 40],
-    lightnessRange: [40, 80],
-    preferredHues: [0, 220, 180, 60], // Grays, blues, teals, yellows
-  },
-]
-
-// Generate a random number within a range
 function randomInRange(min: number, max: number): number {
-  return Math.floor(Math.random() * (max - min + 1)) + min
+  return Math.random() * (max - min) + min;
 }
 
-// Pick a random element from an array
 function randomChoice<T>(array: T[]): T {
-  return array[Math.floor(Math.random() * array.length)]
+  return array[Math.floor(Math.random() * array.length)];
 }
 
-// Generate a base color based on theme feel
-function generateBaseColor(feel: (typeof THEME_FEELS)[0]): HSL {
-  const hue = randomChoice(feel.preferredHues) + randomInRange(-20, 20) // Add some variation
-  const saturation = randomInRange(feel.saturationRange[0], feel.saturationRange[1])
-  const lightness = randomInRange(feel.lightnessRange[0], feel.lightnessRange[1])
+function generateBaseOklchColor(feel: (typeof THEME_FEELS_V4)[0]): OKLCH {
+  const hue = randomChoice(feel.preferredHues) + randomInRange(-20, 20); // Add some variation
+  const lightness = randomInRange(feel.lightnessRange[0], feel.lightnessRange[1]);
+  const chroma = randomInRange(feel.chromaRange[0], feel.chromaRange[1]);
 
   return {
     h: (hue + 360) % 360, // Ensure positive
-    s: Math.max(0, Math.min(100, saturation)),
-    l: Math.max(0, Math.min(100, lightness)),
-  }
+    l: Math.max(0, Math.min(1, lightness)),
+    c: Math.max(0, Math.min(0.4, chroma)),
+  };
 }
 
-// Generate color palette based on harmony type
-function generateColorPalette(baseColor: HSL, harmony: ColorHarmony): HSL[] {
+function generateOklchColorPalette(baseColor: OKLCH, harmony: ColorHarmony): OKLCH[] {
   switch (harmony) {
     case "complementary":
-      return [baseColor, getComplementary(baseColor)]
+      return [baseColor, getOklchComplementary(baseColor)];
 
     case "triadic":
-      return [baseColor, ...getTriadic(baseColor)]
+      return [baseColor, ...getOklchTriadic(baseColor)];
 
     case "analogous":
-      return [baseColor, ...getAnalogous(baseColor)]
+      return [baseColor, ...getOklchAnalogous(baseColor)];
 
     case "splitComplementary":
-      return [baseColor, ...getSplitComplementary(baseColor)]
+      return [baseColor, ...getOklchSplitComplementary(baseColor)];
 
     case "tetradic":
-      return [baseColor, ...getTetradic(baseColor)]
+      return [baseColor, ...getOklchTetradic(baseColor)];
 
     case "monochromatic":
       return [
         baseColor,
-        adjustSaturation(createShade(baseColor, 15), -10),
-        adjustSaturation(createTint(baseColor, 20), 15),
-      ]
+        adjustOklchChroma(createOklchShade(baseColor, 15), -5),
+        adjustOklchChroma(createOklchTint(baseColor, 20), 5),
+      ];
 
     default:
-      return [baseColor, getComplementary(baseColor)]
+      return [baseColor, getOklchComplementary(baseColor)];
   }
 }
 
-// Generate background colors based on primary color
-function generateBackgrounds(
-  primaryColor: HSL,
-  isLight: boolean,
-): {
-  background: string
-  card: string
-  muted: string
-  border: string
-  input: string
+function generateOklchBackgrounds(primaryColor: OKLCH): {
+  background: OKLCH;
+  card: OKLCH;
+  muted: OKLCH;
+  border: OKLCH;
+  input: OKLCH;
 } {
-  if (isLight) {
-    // Light mode backgrounds
-    const bgTint = createTint(adjustSaturation(primaryColor, -40), 45) // Very light, desaturated
-    const cardTint = createTint(adjustSaturation(primaryColor, -45), 50) // Even lighter
-    const mutedTint = createTint(adjustSaturation(primaryColor, -35), 35) // Slightly more saturated
-    const borderTint = createTint(adjustSaturation(primaryColor, -30), 25)
-    const inputTint = createTint(adjustSaturation(primaryColor, -35), 30)
+  // Create very light, desaturated backgrounds
+  const background = {
+    h: primaryColor.h,
+    l: +(Math.random() * 0.02 + 0.98).toFixed(2),
+    c: Math.min(0.005, primaryColor.c * 0.1),
+  };
 
-    return {
-      background: hslToCss({ ...bgTint, l: Math.max(95, bgTint.l) }),
-      card: hslToCss({ ...cardTint, l: Math.max(97, cardTint.l) }),
-      muted: hslToCss({ ...mutedTint, l: Math.max(90, mutedTint.l) }),
-      border: hslToCss({ ...borderTint, l: Math.max(85, borderTint.l) }),
-      input: hslToCss({ ...inputTint, l: Math.max(88, inputTint.l) }),
-    }
-  } else {
-    // Dark mode backgrounds
-    const bgShade = createShade(adjustSaturation(primaryColor, -20), 40) // Dark, less saturated
-    const cardShade = createShade(adjustSaturation(primaryColor, -25), 35) // Slightly lighter
-    const mutedShade = createShade(adjustSaturation(primaryColor, -15), 45) // Darker
-    const borderShade = createShade(adjustSaturation(primaryColor, -10), 35)
-    const inputShade = createShade(adjustSaturation(primaryColor, -15), 35)
+  const card = {
+    h: primaryColor.h,
+    l: 0.99,
+    c: Math.min(0.003, primaryColor.c * 0.08),
+  };
 
-    return {
-      background: hslToCss({ ...bgShade, l: Math.min(12, bgShade.l) }),
-      card: hslToCss({ ...cardShade, l: Math.min(16, cardShade.l) }),
-      muted: hslToCss({ ...mutedShade, l: Math.min(18, mutedShade.l) }),
-      border: hslToCss({ ...borderShade, l: Math.min(20, borderShade.l) }),
-      input: hslToCss({ ...inputShade, l: Math.min(20, inputShade.l) }),
+  const muted = {
+    h: primaryColor.h,
+    l: 0.95,
+    c: Math.min(0.01, primaryColor.c * 0.15),
+  };
+
+  const border = {
+    h: primaryColor.h,
+    l: 0.9,
+    c: Math.min(0.015, primaryColor.c * 0.2),
+  };
+
+  const input = {
+    h: primaryColor.h,
+    l: 0.92,
+    c: Math.min(0.012, primaryColor.c * 0.18),
+  };
+
+  return { background, card, muted, border, input };
+}
+
+function generateOklchDarkBackgrounds(primaryColor: OKLCH): {
+  background: OKLCH;
+  card: OKLCH;
+  muted: OKLCH;
+  border: OKLCH;
+  input: OKLCH;
+} {
+  // Create very dark, slightly saturated backgrounds
+  const background = {
+    h: primaryColor.h,
+    l: 0.1,
+    c: Math.min(0.02, primaryColor.c * 0.3),
+  };
+
+  const card = {
+    h: primaryColor.h,
+    l: 0.2,
+    c: Math.min(0.025, primaryColor.c * 0.35),
+  };
+
+  const muted = {
+    h: primaryColor.h,
+    l: 0.15,
+    c: Math.min(0.03, primaryColor.c * 0.4),
+  };
+
+  const border = {
+    h: primaryColor.h,
+    l: 0.25,
+    c: Math.min(0.035, primaryColor.c * 0.45),
+  };
+
+  const input = {
+    h: primaryColor.h,
+    l: 0.1,
+    c: Math.min(0.032, primaryColor.c * 0.42),
+  };
+
+  return { background, card, muted, border, input };
+}
+
+const groupThemeTokens = (theme: Record<string, string>) => {
+  const light: Record<string, string> = {};
+  const dark: Record<string, string> = {};
+
+  for (const [key, value] of Object.entries(theme)) {
+    if (key.startsWith("dark-")) {
+      dark[key.replace(/^dark-/, "")] = value;
+    } else {
+      light[key] = value;
     }
   }
-}
 
-// Ensure color has good contrast for text
-function ensureTextContrast(color: HSL, isDark: boolean): HSL {
-  const targetLightness = isDark ? 85 : 15 // Light text on dark bg, dark text on light bg
-  return { ...color, l: targetLightness }
-}
+  return { light, dark };
+};
 
-// Generate a complete theme
-export function generateRandomTheme(): GeneratedTheme {
-  // Pick random theme feel and harmony
-  const feel = randomChoice(THEME_FEELS)
+export function generateTailwindV4Theme(): TailwindV4Theme {
+  const feel = randomChoice(THEME_FEELS_V4);
   const harmony = randomChoice<ColorHarmony>([
     "complementary",
     "triadic",
@@ -217,158 +190,185 @@ export function generateRandomTheme(): GeneratedTheme {
     "splitComplementary",
     "tetradic",
     "monochromatic",
-  ])
+  ]);
 
-  // Generate base color and palette
-  const baseColor = generateBaseColor(feel)
-  const palette = generateColorPalette(baseColor, harmony)
+  const baseColor = generateBaseOklchColor(feel);
+  const palette = generateOklchColorPalette(baseColor, harmony);
 
-  // Assign colors to roles
-  const primary = palette[0]
-  const secondary = palette[1] || adjustSaturation(createTint(primary, 20), -15)
-  const accent = palette[2] || adjustSaturation(createShade(primary, 10), 10)
+  const primary = palette[0];
+  const secondary = palette[1] || adjustOklchChroma(createOklchTint(primary, 20), -0.03);
+  const accent = palette[2] || adjustOklchChroma(createOklchShade(primary, 10), 0.02);
 
-  // Generate theme name
-  const colorNames = ["Crimson", "Azure", "Emerald", "Amber", "Violet", "Coral", "Teal", "Rose", "Sage", "Indigo"]
-  const suffixes = ["Dream", "Mist", "Glow", "Bloom", "Zen", "Vibe", "Flow", "Spark", "Aura", "Wave"]
-  const themeName = `${randomChoice(colorNames)} ${randomChoice(suffixes)}`
+  const colorNames = ["Crimson", "Azure", "Emerald", "Amber", "Violet", "Coral", "Teal", "Rose", "Sage", "Indigo"];
+  const suffixes = ["Dream", "Mist", "Glow", "Bloom", "Zen", "Vibe", "Flow", "Spark", "Aura", "Wave"];
+  const themeName = `${randomChoice(colorNames)} ${randomChoice(suffixes)}`;
 
-  // Generate backgrounds
-  const lightBgs = generateBackgrounds(primary, true)
-  const darkBgs = generateBackgrounds(primary, false)
+  const lightBgs = generateOklchBackgrounds(primary);
+  const darkBgs = generateOklchDarkBackgrounds(primary);
 
-  // Generate proper foreground colors with contrast checking
-  const lightForeground = generateForegroundColor({ h: primary.h, s: 10, l: 97 }) // Light background
-  const darkForeground = generateForegroundColor({ h: primary.h, s: 20, l: 8 }) // Dark background
+  const primaryPair = generateOklchContrastPair(primary);
+  const secondaryPair = generateOklchContrastPair(secondary);
+  const accentPair = generateOklchContrastPair(accent);
 
-  // Generate contrast-aware color pairs
-  const primaryPair = generateContrastPair(primary)
-  const secondaryPair = generateContrastPair(secondary)
-  const accentPair = generateContrastPair(accent)
+  const destructive: OKLCH = { h: 0, l: 0.55, c: 0.22 }; // Red in OKLCH
+  const destructiveDark: OKLCH = { h: 0, l: 0.6, c: 0.25 };
 
-  // Parse background HSL values for foreground calculation
-  const parseHslString = (hslStr: string): HSL => {
-    const parts = hslStr.split(/\s+/)
-    return {
-      h: Number.parseFloat(parts[0]),
-      s: Number.parseFloat(parts[1].replace("%", "")),
-      l: Number.parseFloat(parts[2].replace("%", "")),
-    }
-  }
+  const cssVars = {
+    background: oklchToCss(lightBgs.background),
+    foreground: oklchToCss(generateOklchForeground(lightBgs.background)),
+    card: oklchToCss(lightBgs.card),
+    "card-foreground": oklchToCss(generateOklchForeground(lightBgs.card)),
+    popover: oklchToCss(lightBgs.card),
+    "popover-foreground": oklchToCss(generateOklchForeground(lightBgs.card)),
+    primary: oklchToCss(primaryPair.background),
+    "primary-foreground": oklchToCss(primaryPair.foreground),
+    secondary: oklchToCss(secondaryPair.background),
+    "secondary-foreground": oklchToCss(secondaryPair.foreground),
+    muted: oklchToCss(lightBgs.muted),
+    "muted-foreground": oklchToCss({ ...lightBgs.muted, l: 0.6 }),
+    accent: oklchToCss(accentPair.background),
+    "accent-foreground": oklchToCss(accentPair.foreground),
+    destructive: oklchToCss(destructive),
+    "destructive-foreground": oklchToCss(generateOklchForeground(destructive)),
+    border: oklchToCss(lightBgs.border),
+    input: oklchToCss(lightBgs.input),
+    ring: oklchToCss(primary),
 
-  const lightBgHsl = parseHslString(lightBgs.background)
-  const lightCardHsl = parseHslString(lightBgs.card)
-  const lightMutedHsl = parseHslString(lightBgs.muted)
-
-  const darkBgHsl = parseHslString(darkBgs.background)
-  const darkCardHsl = parseHslString(darkBgs.card)
-  const darkMutedHsl = parseHslString(darkBgs.muted)
-
-  // Create CSS variables (HSL format) with proper contrast
-  const lightVars = {
-    background: lightBgs.background,
-    foreground: hslToCss(generateForegroundColor(lightBgHsl)),
-    card: lightBgs.card,
-    "card-foreground": hslToCss(generateForegroundColor(lightCardHsl)),
-    popover: lightBgs.card,
-    "popover-foreground": hslToCss(generateForegroundColor(lightCardHsl)),
-    primary: hslToCss(primaryPair.background),
-    "primary-foreground": hslToCss(primaryPair.foreground),
-    secondary: hslToCss(secondaryPair.background),
-    "secondary-foreground": hslToCss(secondaryPair.foreground),
-    muted: lightBgs.muted,
-    "muted-foreground": hslToCss(generateForegroundColor(lightMutedHsl)),
-    accent: hslToCss(accentPair.background),
-    "accent-foreground": hslToCss(accentPair.foreground),
-    destructive: "0 84% 60%",
-    "destructive-foreground": hslToCss(generateForegroundColor({ h: 0, s: 84, l: 60 })),
-    border: lightBgs.border,
-    input: lightBgs.input,
-    ring: hslToCss(primary),
-  }
-
-  const darkVars = {
-    background: darkBgs.background,
-    foreground: hslToCss(generateForegroundColor(darkBgHsl)),
-    card: darkBgs.card,
-    "card-foreground": hslToCss(generateForegroundColor(darkCardHsl)),
-    popover: darkBgs.card,
-    "popover-foreground": hslToCss(generateForegroundColor(darkCardHsl)),
-    primary: hslToCss(createTint(primaryPair.background, 10)),
-    "primary-foreground": hslToCss(ensureContrast(primaryPair.foreground, createTint(primaryPair.background, 10))),
-    secondary: hslToCss(createTint(secondaryPair.background, 15)),
-    "secondary-foreground": hslToCss(
-      ensureContrast(secondaryPair.foreground, createTint(secondaryPair.background, 15)),
+    "dark-background": oklchToCss(darkBgs.background),
+    "dark-foreground": oklchToCss(generateOklchForeground(darkBgs.background)),
+    "dark-card": oklchToCss(darkBgs.card),
+    "dark-card-foreground": oklchToCss(generateOklchForeground(darkBgs.card)),
+    "dark-popover": oklchToCss(darkBgs.card),
+    "dark-popover-foreground": oklchToCss(generateOklchForeground(darkBgs.card)),
+    "dark-primary": oklchToCss(createOklchTint(primaryPair.background, 10)),
+    "dark-primary-foreground": oklchToCss(
+      ensureOklchContrast(primaryPair.foreground, createOklchTint(primaryPair.background, 10))
     ),
-    muted: darkBgs.muted,
-    "muted-foreground": hslToCss(generateForegroundColor(darkMutedHsl)),
-    accent: hslToCss(createTint(accentPair.background, 15)),
-    "accent-foreground": hslToCss(ensureContrast(accentPair.foreground, createTint(accentPair.background, 15))),
-    destructive: "0 84% 65%",
-    "destructive-foreground": hslToCss(generateForegroundColor({ h: 0, s: 84, l: 65 })),
-    border: darkBgs.border,
-    input: darkBgs.input,
-    ring: hslToCss(createTint(primary, 10)),
-  }
+    "dark-secondary": oklchToCss(createOklchTint(secondaryPair.background, 15)),
+    "dark-secondary-foreground": oklchToCss(
+      ensureOklchContrast(secondaryPair.foreground, createOklchTint(secondaryPair.background, 15))
+    ),
+    "dark-muted": oklchToCss(darkBgs.muted),
+    "dark-muted-foreground": oklchToCss({ ...lightBgs.muted, l: 0.5 }),
+    "dark-accent": oklchToCss(createOklchTint(accentPair.background, 15)),
+    "dark-accent-foreground": oklchToCss(ensureOklchContrast(accentPair.foreground, createOklchTint(accentPair.background, 15))),
+    "dark-destructive": oklchToCss(destructiveDark),
+    "dark-destructive-foreground": oklchToCss(generateOklchForeground(destructiveDark)),
+    "dark-border": oklchToCss(darkBgs.border),
+    "dark-input": oklchToCss(darkBgs.input),
+    "dark-ring": oklchToCss(createOklchTint(primary, 10)),
+  };
 
-  // Convert to OKLCH format
-  const oklchLightVars = convertThemeToOklch(lightVars)
-  const oklchDarkVars = convertThemeToOklch(darkVars)
+  // Add chart colors (light mode)
+  const chartColors = generateOklchChartColors(primary);
+  Object.assign(cssVars, chartColors);
 
-  // Add chart colors in OKLCH
-  const primaryOklch = hslToOklch(primary)
-  const chartColors = generateOklchChartColors(primaryOklch)
-  Object.assign(oklchLightVars, chartColors)
-  Object.assign(oklchDarkVars, chartColors)
+  // Add dark mode chart colors
+  const darkChartColors = generateOklchChartColors(createOklchTint(primary, 10));
+  const darkChartVars: Record<string, string> = {};
+  Object.entries(darkChartColors).forEach(([key, value]) => {
+    darkChartVars[`dark-${key}`] = value;
+  });
+  Object.assign(cssVars, darkChartVars);
 
-  // Add sidebar colors in OKLCH
-  const backgroundOklch = hslToOklch(lightBgHsl)
-  const foregroundOklch = hslToOklch(generateForegroundColor(lightBgHsl))
-  const accentOklch = hslToOklch(accent)
-  const borderOklch = hslToOklch(parseHslString(lightBgs.border))
-
+  // Add sidebar colors (light mode)
   const sidebarColors = generateOklchSidebarColors(
-    backgroundOklch,
-    foregroundOklch,
-    primaryOklch,
-    accentOklch,
-    borderOklch,
-  )
-  Object.assign(oklchLightVars, sidebarColors)
+    lightBgs.background,
+    generateOklchForeground(lightBgs.background),
+    primary,
+    accent,
+    lightBgs.border
+  );
+  Object.assign(cssVars, sidebarColors);
 
-  // Dark mode sidebar colors
-  const darkBackgroundOklch = hslToOklch(darkBgHsl)
-  const darkForegroundOklch = hslToOklch(generateForegroundColor(darkBgHsl))
-  const darkBorderOklch = hslToOklch(parseHslString(darkBgs.border))
-
+  // Add dark mode sidebar colors
   const darkSidebarColors = generateOklchSidebarColors(
-    darkBackgroundOklch,
-    darkForegroundOklch,
-    primaryOklch,
-    accentOklch,
-    darkBorderOklch,
-  )
-  Object.assign(oklchDarkVars, darkSidebarColors)
+    darkBgs.background,
+    generateOklchForeground(darkBgs.background),
+    createOklchTint(primary, 10),
+    createOklchTint(accent, 15),
+    darkBgs.border
+  );
+  const darkSidebarVars: Record<string, string> = {};
+  Object.entries(darkSidebarColors).forEach(([key, value]) => {
+    darkSidebarVars[`dark-${key}`] = value;
+  });
+  Object.assign(cssVars, darkSidebarVars);
 
-  // Generate preview colors for the theme switcher
-  const primaryRgb = hslToRgb(primary)
-  const secondaryRgb = hslToRgb(secondary)
-  const accentRgb = hslToRgb(accent)
-  const lightBgRgb = hslToRgb(lightBgHsl)
-  const darkBgRgb = hslToRgb(darkBgHsl)
+  const hslVars: Record<string, string> = {};
+  Object.entries(cssVars).forEach(([key, value]) => {
+    // This is a simplified conversion - in production you'd want more accurate conversion
+    if (value.includes("oklch")) {
+      try {
+        // Parse OKLCH and convert to HSL approximation
+        const match = value.match(/oklch$$([^)]+)$$/);
+        if (match) {
+          const parts = match[1].split(/\s+/);
+          if (parts.length >= 3) {
+            const oklch: OKLCH = {
+              l: Number.parseFloat(parts[0]),
+              c: Number.parseFloat(parts[1]),
+              h: Number.parseFloat(parts[2]),
+            };
+            const hsl = oklchToHsl(oklch);
+            hslVars[key] = `${hsl.h.toFixed(1)} ${hsl.s.toFixed(1)}% ${hsl.l.toFixed(1)}%`;
+          }
+        }
+      } catch {
+        hslVars[key] = value; // Fallback to original
+      }
+    } else {
+      hslVars[key] = value;
+    }
+  });
+
+  const primaryHsl = oklchToHsl(primary);
+  const secondaryHsl = oklchToHsl(secondary);
+  const accentHsl = oklchToHsl(accent);
+  const lightBgHsl = oklchToHsl(lightBgs.background);
+  const darkBgHsl = oklchToHsl(darkBgs.background);
+
+  const hslToRgb = (hsl: { h: number; s: number; l: number }) => {
+    const h = hsl.h / 360;
+    const s = hsl.s / 100;
+    const l = hsl.l / 100;
+
+    const hue2rgb = (p: number, q: number, t: number) => {
+      if (t < 0) t += 1;
+      if (t > 1) t -= 1;
+      if (t < 1 / 6) return p + (q - p) * 6 * t;
+      if (t < 1 / 2) return q;
+      if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+      return p;
+    };
+
+    if (s === 0) {
+      const gray = Math.round(l * 255);
+      return { r: gray, g: gray, b: gray };
+    }
+
+    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    const p = 2 * l - q;
+
+    return {
+      r: Math.round(hue2rgb(p, q, h + 1 / 3) * 255),
+      g: Math.round(hue2rgb(p, q, h) * 255),
+      b: Math.round(hue2rgb(p, q, h - 1 / 3) * 255),
+    };
+  };
+
+  const primaryRgb = hslToRgb(primaryHsl);
+  const secondaryRgb = hslToRgb(secondaryHsl);
+  const accentRgb = hslToRgb(accentHsl);
+  const lightBgRgb = hslToRgb(lightBgHsl);
+  const darkBgRgb = hslToRgb(darkBgHsl);
 
   return {
     name: themeName,
     description: feel.description,
     feel: feel.name,
-    cssVars: {
-      light: lightVars,
-      dark: darkVars,
-    },
-    oklchVars: {
-      light: oklchLightVars,
-      dark: oklchDarkVars,
-    },
+    cssVars: groupThemeTokens(cssVars),
+    hslVars,
     previewColors: {
       primary: `rgb(${primaryRgb.r}, ${primaryRgb.g}, ${primaryRgb.b})`,
       secondary: `rgb(${secondaryRgb.r}, ${secondaryRgb.g}, ${secondaryRgb.b})`,
@@ -376,27 +376,26 @@ export function generateRandomTheme(): GeneratedTheme {
       lightBg: `rgb(${lightBgRgb.r}, ${lightBgRgb.g}, ${lightBgRgb.b})`,
       darkBg: `rgb(${darkBgRgb.r}, ${darkBgRgb.g}, ${darkBgRgb.b})`,
     },
-  }
+  };
 }
 
-// Generate multiple themes at once
-export function generateThemeCollection(count = 5): GeneratedTheme[] {
-  const themes: GeneratedTheme[] = []
-  const usedFeels = new Set<string>()
+export function generateTailwindV4ThemeCollection(count = 5): TailwindV4Theme[] {
+  const themes: TailwindV4Theme[] = [];
+  const usedFeels = new Set<string>();
 
   for (let i = 0; i < count; i++) {
-    let theme = generateRandomTheme()
+    let theme = generateTailwindV4Theme();
 
     // Try to avoid duplicate feels in the same collection
-    let attempts = 0
+    let attempts = 0;
     while (usedFeels.has(theme.feel) && attempts < 10) {
-      theme = generateRandomTheme()
-      attempts++
+      theme = generateTailwindV4Theme();
+      attempts++;
     }
 
-    usedFeels.add(theme.feel)
-    themes.push(theme)
+    usedFeels.add(theme.feel);
+    themes.push(theme);
   }
 
-  return themes
+  return themes;
 }

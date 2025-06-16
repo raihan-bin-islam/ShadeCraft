@@ -1,97 +1,48 @@
 "use client";
 
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Shuffle, Download, Copy, Check } from "lucide-react";
-import { generateRandomTheme, generateThemeCollection, type GeneratedTheme } from "@/lib/theme-kit/v2/theme-generator";
 import { cn } from "@/lib/utils";
+import type { TailwindV4Theme } from "@/lib/theme-kit/v2/theme-generator";
+import { useThemeGeneratorCompositeModule } from "@/hooks/theme-module";
 
-interface ThemeGeneratorProps {
-  onThemeSelect: (theme: GeneratedTheme) => void;
-  currentTheme?: GeneratedTheme;
+interface ThemeGeneratorV4Props {
+  onThemeSelect?: (theme: TailwindV4Theme) => void;
+  currentTheme?: TailwindV4Theme;
 }
 
-export function ThemeGenerator({ onThemeSelect, currentTheme }: ThemeGeneratorProps) {
-  const [generatedThemes, setGeneratedThemes] = useState<GeneratedTheme[]>([]);
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [copiedTheme, setCopiedTheme] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState("hsl");
+export function ThemeGeneratorV4({ onThemeSelect, currentTheme: externalCurrentTheme }: ThemeGeneratorV4Props) {
+  const {
+    // Theme generation
+    generatedThemes,
+    currentTheme: internalCurrentTheme,
+    isGenerating,
+    generateSingle,
+    generateMultiple,
+    selectTheme,
+    hasThemes,
 
-  const generateSingleTheme = async () => {
-    setIsGenerating(true);
-    // Add a small delay for better UX
-    await new Promise((resolve) => setTimeout(resolve, 300));
-    const theme = generateRandomTheme();
-    setGeneratedThemes((prev) => [theme, ...prev.slice(0, 9)]); // Keep last 10 themes
-    onThemeSelect(theme);
-    setIsGenerating(false);
-  };
+    // Theme export
+    copyThemeCSS,
+    downloadThemeJSON,
+    isCopied,
 
-  const generateMultipleThemes = async () => {
-    setIsGenerating(true);
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    const themes = generateThemeCollection(5);
-    setGeneratedThemes(themes);
-    setIsGenerating(false);
-  };
+    // Format management
+    activeFormat,
+    setActiveFormat,
+  } = useThemeGeneratorCompositeModule({
+    onThemeSelected: onThemeSelect,
+  });
 
-  const copyThemeCSS = async (theme: GeneratedTheme, format: "hsl" | "oklch" = "hsl") => {
-    const css = generateThemeCSS(theme, format);
-    await navigator.clipboard.writeText(css);
-    setCopiedTheme(`${theme.name}-${format}`);
-    setTimeout(() => setCopiedTheme(null), 2000);
-  };
+  // Use external current theme if provided, otherwise use internal
+  const currentTheme = externalCurrentTheme || internalCurrentTheme;
 
-  const downloadThemeJSON = (theme: GeneratedTheme) => {
-    const json = JSON.stringify(theme, null, 2);
-    const blob = new Blob([json], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${theme.name.toLowerCase().replace(/\s+/g, "-")}-theme.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  };
-
-  const generateThemeCSS = (theme: GeneratedTheme, format: "hsl" | "oklch" = "hsl"): string => {
-    const vars = format === "oklch" ? theme.oklchVars : theme.cssVars;
-    const themeId = theme.name.toLowerCase().replace(/\s+/g, "-");
-
-    const lightVars = Object.entries(vars.light)
-      .map(([key, value]) => `  --${key}: ${value};`)
-      .join("\n");
-
-    const darkVars = Object.entries(vars.dark)
-      .map(([key, value]) => `  --${key}: ${value};`)
-      .join("\n");
-
-    if (format === "oklch") {
-      return `/* ${theme.name} Theme - ${theme.description} */
-/* Tailwind v4 OKLCH Format */
-:root {
-  --radius: 0.65rem;
-${lightVars}
-}
-
-.dark {
-${darkVars}
-}`;
-    } else {
-      return `/* ${theme.name} Theme - ${theme.description} */
-/* Tailwind v3 HSL Format */
-[data-theme="${themeId}"] {
-${lightVars}
-}
-
-[data-theme="${themeId}"].dark {
-${darkVars}
-}`;
-    }
+  const handleThemeSelect = (theme: TailwindV4Theme) => {
+    selectTheme(theme);
+    onThemeSelect?.(theme);
   };
 
   return (
@@ -100,20 +51,20 @@ ${darkVars}
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Shuffle className="h-5 w-5" />
-            AI Theme Generator
+            Theme Generator (Tailwind v4)
           </CardTitle>
           <CardDescription>
-            Generate beautiful, harmonious themes based on color theory. Each theme is unique and follows professional design
-            principles.
+            Generate beautiful themes optimized for Tailwind CSS v4 with OKLCH color space for better perceptual uniformity and
+            wider color gamut support.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex gap-2">
-            <Button onClick={generateSingleTheme} disabled={isGenerating} className="flex items-center gap-2">
+            <Button onClick={() => generateSingle()} disabled={isGenerating} className="flex items-center gap-2">
               <Shuffle className="h-4 w-4" />
               {isGenerating ? "Generating..." : "Generate Random Theme"}
             </Button>
-            <Button variant="outline" onClick={generateMultipleThemes} disabled={isGenerating}>
+            <Button variant="outline" onClick={() => generateMultiple(5)} disabled={isGenerating}>
               Generate Collection (5)
             </Button>
           </div>
@@ -128,22 +79,22 @@ ${darkVars}
                 <Badge variant="secondary">{currentTheme.feel}</Badge>
               </div>
 
-              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <Tabs value={activeFormat} onValueChange={setActiveFormat} className="w-full">
                 <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="hsl">HSL (Tailwind v3)</TabsTrigger>
                   <TabsTrigger value="oklch">OKLCH (Tailwind v4)</TabsTrigger>
+                  <TabsTrigger value="hsl">HSL (Legacy)</TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="hsl" className="space-y-2">
+                <TabsContent value="oklch" className="space-y-2">
                   <div className="flex gap-2">
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => copyThemeCSS(currentTheme, "hsl")}
+                      onClick={() => copyThemeCSS(currentTheme, "oklch")}
                       className="flex items-center gap-1"
                     >
-                      {copiedTheme === `${currentTheme.name}-hsl` ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
-                      {copiedTheme === `${currentTheme.name}-hsl` ? "Copied!" : "Copy HSL CSS"}
+                      {isCopied(currentTheme, "oklch") ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+                      {isCopied(currentTheme, "oklch") ? "Copied!" : "Copy OKLCH CSS"}
                     </Button>
                     <Button
                       size="sm"
@@ -155,23 +106,24 @@ ${darkVars}
                       Download JSON
                     </Button>
                   </div>
-                  <div className="text-xs text-muted-foreground">Compatible with Tailwind CSS v3 and current shadcn/ui setup</div>
+                  <div className="text-xs text-muted-foreground space-y-1">
+                    <p>✅ Optimized for Tailwind CSS v4</p>
+                    <p>✅ OKLCH color space for better perceptual uniformity</p>
+                    <p>✅ Wider color gamut support (P3, Rec2020)</p>
+                    <p>✅ Better color interpolation and gradients</p>
+                  </div>
                 </TabsContent>
 
-                <TabsContent value="oklch" className="space-y-2">
+                <TabsContent value="hsl" className="space-y-2">
                   <div className="flex gap-2">
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => copyThemeCSS(currentTheme, "oklch")}
+                      onClick={() => copyThemeCSS(currentTheme, "hsl")}
                       className="flex items-center gap-1"
                     >
-                      {copiedTheme === `${currentTheme.name}-oklch` ? (
-                        <Check className="h-3 w-3" />
-                      ) : (
-                        <Copy className="h-3 w-3" />
-                      )}
-                      {copiedTheme === `${currentTheme.name}-oklch` ? "Copied!" : "Copy OKLCH CSS"}
+                      {isCopied(currentTheme, "hsl") ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+                      {isCopied(currentTheme, "hsl") ? "Copied!" : "Copy HSL CSS"}
                     </Button>
                     <Button
                       size="sm"
@@ -184,7 +136,8 @@ ${darkVars}
                     </Button>
                   </div>
                   <div className="text-xs text-muted-foreground">
-                    Compatible with Tailwind CSS v4 with OKLCH color space support
+                    <p>⚠️ Legacy format for backward compatibility with Tailwind v3</p>
+                    <p>Limited color gamut compared to OKLCH</p>
                   </div>
                 </TabsContent>
               </Tabs>
@@ -193,11 +146,11 @@ ${darkVars}
         </CardContent>
       </Card>
 
-      {generatedThemes.length > 0 && (
+      {hasThemes && (
         <Card>
           <CardHeader>
-            <CardTitle>Generated Themes</CardTitle>
-            <CardDescription>Click on any theme to apply it</CardDescription>
+            <CardTitle>Generated Themes (Tailwind v4)</CardTitle>
+            <CardDescription>Click on any theme to apply it. All themes use OKLCH color space.</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -208,7 +161,7 @@ ${darkVars}
                     "cursor-pointer transition-all hover:scale-105",
                     currentTheme?.name === theme.name && "ring-2 ring-primary"
                   )}
-                  onClick={() => onThemeSelect(theme)}
+                  onClick={() => handleThemeSelect(theme)}
                 >
                   <CardContent className="p-4 space-y-3">
                     {/* Background preview */}
@@ -240,15 +193,11 @@ ${darkVars}
                         variant="ghost"
                         onClick={(e) => {
                           e.stopPropagation();
-                          copyThemeCSS(theme, activeTab as "hsl" | "oklch");
+                          copyThemeCSS(theme, activeFormat);
                         }}
                         className="h-6 px-2 text-xs"
                       >
-                        {copiedTheme === `${theme.name}-${activeTab}` ? (
-                          <Check className="h-3 w-3" />
-                        ) : (
-                          <Copy className="h-3 w-3" />
-                        )}
+                        {isCopied(theme, activeFormat) ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
                       </Button>
                       <Button
                         size="sm"

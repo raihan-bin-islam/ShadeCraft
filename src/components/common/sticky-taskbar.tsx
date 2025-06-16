@@ -50,7 +50,7 @@ export function StickyTaskbar({
         y: Math.sin(angle),
       };
     });
-  }, [options.length]);
+  }, [options]);
 
   const startIdleTimer = useCallback(() => {
     // Clear existing timer
@@ -70,7 +70,7 @@ export function StickyTaskbar({
       // Only update position when taskbar is NOT expanded
       if (!isExpanded) {
         setMousePosition({ x: e.clientX, y: e.clientY });
-        setIsVisible(true);
+        // setIsVisible(true);
         // Restart the idle timer since mouse moved
         startIdleTimer();
       } else {
@@ -112,11 +112,18 @@ export function StickyTaskbar({
     [isExpanded, mousePosition.x, mousePosition.y, startIdleTimer]
   );
 
+  const handleKeyPress = useCallback((e: KeyboardEvent) => {
+    if (e.key.toLowerCase() === "t") {
+      setIsVisible((prev) => !prev);
+    }
+  }, []);
+
   useEffect(() => {
     // Add event listeners
     document.addEventListener("mousemove", handleMouseMove, { passive: true });
     document.addEventListener("mouseleave", handleMouseLeave);
     document.addEventListener("click", handleClickOutside);
+    document.addEventListener("keypress", handleKeyPress);
 
     // Start initial idle timer
     startIdleTimer();
@@ -125,11 +132,12 @@ export function StickyTaskbar({
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseleave", handleMouseLeave);
       document.removeEventListener("click", handleClickOutside);
+      document.removeEventListener("keypress", handleKeyPress);
       if (idleTimeoutRef.current) {
         clearTimeout(idleTimeoutRef.current);
       }
     };
-  }, [handleMouseMove, handleMouseLeave, handleClickOutside, startIdleTimer]);
+  }, [handleMouseMove, handleMouseLeave, handleClickOutside, handleKeyPress, startIdleTimer]);
 
   const handleOptionClick = useCallback((option: TaskbarOption) => {
     if (option.onClick) {
@@ -233,7 +241,7 @@ export function StickyTaskbar({
                     y2={centerY + position.y * radius}
                     stroke="currentColor"
                     strokeWidth="1"
-                    className="text-gray-400 pointer-events-none"
+                    className="text-foreground pointer-events-none"
                     style={{
                       transition: `all ${animationDuration} cubic-bezier(0.4, 0, 0.2, 1)`,
                       opacity: 0.2,
