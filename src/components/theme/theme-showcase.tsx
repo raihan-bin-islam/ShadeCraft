@@ -1,10 +1,7 @@
 "use client";
+import { SidebarPreview } from "@/components/blocks/sidebar-16/preview/dashboard/page";
 import { ThemePreviewer } from "@/components/theme/theme-previewer";
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Moon, Sun } from "lucide-react";
 import { useState } from "react";
 
@@ -14,7 +11,6 @@ type ThemeShowcaseProps = {
 };
 
 export const ThemeShowcase = ({ theme, themeName }: ThemeShowcaseProps) => {
-  const [date, setDate] = useState<Date | undefined>(new Date());
   const [isDark, setIsDark] = useState(false);
 
   return (
@@ -26,23 +22,8 @@ export const ThemeShowcase = ({ theme, themeName }: ThemeShowcaseProps) => {
         </Button>
       </div>
       <ThemePreviewer theme={theme} isDark={isDark}>
-        <div className="bg-background border p-5">
-          <div className="grid grid-cols-5 gap-4">
-            <Card className="h-fit">
-              <CardContent className="space-y-4">
-                <Label htmlFor="email">Email</Label>
-                <Input id="email" placeholder="you@example.com" className="bg-background" />
-                <Button>Submit</Button>
-              </CardContent>
-            </Card>
-            <Calendar
-              mode="single"
-              selected={date}
-              onSelect={setDate}
-              className="rounded-md border shadow-sm text-foreground min-h-86"
-              captionLayout="dropdown"
-            />
-          </div>
+        <div className="relative overflow-hidden rounded-xl border">
+          <SidebarPreview />
         </div>
       </ThemePreviewer>
     </main>
