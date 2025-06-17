@@ -16,6 +16,7 @@ import {
   generateOklchChartColors,
   generateOklchSidebarColors,
   oklchToHsl,
+  adjustOklch,
 } from "./oklch-converter";
 
 export interface TailwindV4Theme {
@@ -135,31 +136,31 @@ function generateOklchDarkBackgrounds(primaryColor: OKLCH): {
   // Create very dark, slightly saturated backgrounds
   const background = {
     h: primaryColor.h,
-    l: 0.1,
+    l: 0.15,
     c: Math.min(0.02, primaryColor.c * 0.3),
   };
 
   const card = {
     h: primaryColor.h,
-    l: 0.2,
+    l: 0.3,
     c: Math.min(0.025, primaryColor.c * 0.35),
   };
 
   const muted = {
     h: primaryColor.h,
-    l: 0.15,
+    l: 0.25,
     c: Math.min(0.03, primaryColor.c * 0.4),
   };
 
   const border = {
     h: primaryColor.h,
-    l: 0.25,
+    l: 0.28,
     c: Math.min(0.035, primaryColor.c * 0.45),
   };
 
   const input = {
     h: primaryColor.h,
-    l: 0.1,
+    l: 0.33,
     c: Math.min(0.032, primaryColor.c * 0.42),
   };
 
@@ -271,23 +272,25 @@ export function generateTailwindV4Theme(): TailwindV4Theme {
   });
   Object.assign(cssVars, darkChartVars);
 
-  // Add sidebar colors (light mode)
+  // Add sidebar colors (light mode) - create subtle lightness difference for better contrast
+  const lightSidebarBg = adjustOklch(lightBgs.background, { lightness: -0.02 }); // Slightly darker than main background
   const sidebarColors = generateOklchSidebarColors(
-    lightBgs.background,
-    generateOklchForeground(lightBgs.background),
+    lightSidebarBg,
+    generateOklchForeground(lightSidebarBg),
     primary,
     accent,
-    lightBgs.border
+    adjustOklch(lightBgs.border, { lightness: -0.01 }) // Slightly darker border
   );
   Object.assign(cssVars, sidebarColors);
 
-  // Add dark mode sidebar colors
+  // Add dark mode sidebar colors - create subtle lightness difference for better contrast
+  const darkSidebarBg = adjustOklch(darkBgs.background, { lightness: 0.1 }); // Slightly lighter than main background
   const darkSidebarColors = generateOklchSidebarColors(
-    darkBgs.background,
-    generateOklchForeground(darkBgs.background),
+    darkSidebarBg,
+    generateOklchForeground(darkSidebarBg),
     createOklchTint(primary, 10),
     createOklchTint(accent, 15),
-    darkBgs.border
+    adjustOklch(darkBgs.border, { lightness: 0.02 }) // Slightly lighter border
   );
   const darkSidebarVars: Record<string, string> = {};
   Object.entries(darkSidebarColors).forEach(([key, value]) => {
