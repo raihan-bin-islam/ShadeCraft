@@ -1,5 +1,5 @@
 import type { ThemeConfig } from "@/types/theme";
-import { convertThemeToOklch as convertVarsToOklch } from "./oklch-converter";
+import { convertThemeToOklch as convertVarsToOklch } from "./converters/oklch-converter";
 
 // Convert HSL theme to OKLCH theme
 export function convertThemeToOklch(theme: ThemeConfig): ThemeConfig {

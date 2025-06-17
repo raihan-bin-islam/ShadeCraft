@@ -26,7 +26,9 @@ export const SidebarPreview = () => {
                   <Badge variant="destructive">Destructive</Badge>
                   <Badge variant="outline">Outline</Badge>
                 </div>
-                <ChartDemo />
+                <div className="max-w-lg">
+                  <ChartDemo />
+                </div>
               </div>
             </SidebarInset>
           </div>

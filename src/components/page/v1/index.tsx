@@ -9,7 +9,7 @@ import { BrandColorInput } from "@/components/theme/brand-color-input";
 import { ThemeEditor } from "@/components/theme/theme-editor";
 import { ThemePreview } from "@/components/theme/theme-preview";
 import { ThemeSwitcher } from "@/components/theme/theme-switcher";
-import { ThemeAnalyzer } from "@/components/theme/theme-analyzer";
+import { ThemeAnalyzer } from "@/components/theme/analyzer/theme-analyzer";
 import { ThemeComparison } from "@/components/theme/theme-comparison";
 import {
   Palette,

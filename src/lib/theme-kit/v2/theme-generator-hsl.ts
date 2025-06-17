@@ -11,7 +11,12 @@ import {
   adjustSaturation,
   hslToRgb,
 } from "./color-theory";
-import { hslToOklch, convertThemeToOklch, generateOklchChartColors, generateOklchSidebarColors } from "./oklch-converter";
+import {
+  hslToOklch,
+  convertThemeToOklch,
+  generateOklchChartColors,
+  generateOklchSidebarColors,
+} from "./converters/oklch-converter";
 import { generateForegroundColor, ensureContrast, generateContrastPair } from "./contrast-utils";
 
 export interface GeneratedTheme {

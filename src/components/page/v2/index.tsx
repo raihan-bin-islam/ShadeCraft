@@ -3,7 +3,7 @@
 
 import { StickyTaskbar } from "@/components/circular-taskbar";
 import { BrandColorInput } from "@/components/theme/brand-color-input";
-import { ThemeAnalyzer } from "@/components/theme/theme-analyzer";
+import { ThemeAnalyzer } from "@/components/theme/analyzer/theme-analyzer";
 import { ThemeComparison } from "@/components/theme/theme-comparison";
 import { ThemeEditor } from "@/components/theme/theme-editor";
 import { ThemePreview } from "@/components/theme/theme-preview";
@@ -18,8 +18,6 @@ import { ThemeName, themes } from "@/lib/themes";
 import { useState } from "react";
 
 export const LandingPage = () => {
-  // const [currentTheme, setCurrentTheme] = useState<any>(null);
-  // const [currentThemeName, setCurrentThemeName] = useState<string>("");
   const [previewMode, setPreviewMode] = useState<"light" | "dark">("light");
   const [selectedBuiltInTheme, setSelectedBuiltInTheme] = useState<ThemeName>("aurora");
   const [selectedTab, setSelectedTab] = useState<TaskbarItemId>("generator");
@@ -46,28 +44,6 @@ export const LandingPage = () => {
 
           <Tabs value={selectedTab} defaultValue="generator" className="space-y-6">
             <TabsContent value="generator" className="space-y-6">
-              {/* <ThemeGeneratorV4
-                onThemeSelect={handleGeneratedThemeSelect}
-                currentTheme={
-                  currentTheme
-                    ? {
-                        name: currentThemeName,
-                        description: "Custom generated theme",
-                        feel: "Custom",
-                        cssVars: currentTheme,
-                        // oklchVars: currentTheme,
-                        previewColors: {
-                          primary: "#000",
-                          secondary: "#000",
-                          accent: "#000",
-                          lightBg: "#fff",
-                          darkBg: "#000",
-                        },
-                      }
-                    : undefined
-                }
-              /> */}
-
               {currentTheme && (
                 <ThemeShowcase
                   theme={{ light: currentTheme.cssVars.light, dark: currentTheme.cssVars.dark }}

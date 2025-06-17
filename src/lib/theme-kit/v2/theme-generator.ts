@@ -17,7 +17,7 @@ import {
   generateOklchSidebarColors,
   oklchToHsl,
   adjustOklch,
-} from "./oklch-converter";
+} from "./converters/oklch-converter";
 
 export interface TailwindV4Theme {
   name: string;

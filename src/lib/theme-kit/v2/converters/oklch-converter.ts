@@ -6,11 +6,11 @@ export interface OKLCH {
 }
 
 export interface HSL {
-  h: number; // Hue (0-360)
-  s: number; // Saturation (0-100)
-  l: number; // Lightness (0-100)
+  h: number; // Hue angle [0..360)
+  s: number; // Saturation [0..1]
+  l: number; // Lightness [0..1]
+  a?: number; // Optional alpha [0..1]
 }
-
 // More accurate HSL to OKLCH conversion using proper color space math
 export function hslToOklch(hsl: HSL): OKLCH {
   // First convert HSL to RGB
@@ -77,22 +77,92 @@ export function hslToOklch(hsl: HSL): OKLCH {
   };
 }
 
-// Convert OKLCH back to HSL for compatibility
+/*
+ * Convert OKLCH color to HSL, following the provided interface.
+ */
+
+// Clamp helper
+function clamp(value: number, min = 0, max = 1): number {
+  return Math.min(Math.max(value, min), max);
+}
+
+// 1. OKLCH -> OKLab
+function oklchToOkLab({ l, c, h }: OKLCH) {
+  const hRad = (h * Math.PI) / 180;
+  const a = c * Math.cos(hRad);
+  const b = c * Math.sin(hRad);
+  return { L: l, a, b };
+}
+
+// 2. OKLab -> linear sRGB
+function okLabToLinearSrgb({ L, a, b }: { L: number; a: number; b: number }) {
+  const l_ = L + 0.3963377774 * a + 0.2158037573 * b;
+  const m_ = L - 0.1055613458 * a - 0.0638541728 * b;
+  const s_ = L - 0.0894841775 * a - 1.291485548 * b;
+
+  const l = l_ ** 3;
+  const m = m_ ** 3;
+  const s = s_ ** 3;
+
+  const rLin = +4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s;
+  const gLin = -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s;
+  const bLin = -0.0041960863 * l - 0.7034186147 * m + 1.707614701 * s;
+
+  return { rLin, gLin, bLin };
+}
+
+// sRGB companding
+function linearToSrgb(channel: number): number {
+  if (channel <= 0.0031308) {
+    return 12.92 * channel;
+  }
+  return 1.055 * channel ** (1 / 2.4) - 0.055;
+}
+
+// 3. linear sRGB -> HSL
+function srgbToHsl(rLin: number, gLin: number, bLin: number): HSL {
+  const r = clamp(linearToSrgb(rLin));
+  const g = clamp(linearToSrgb(gLin));
+  const b = clamp(linearToSrgb(bLin));
+
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  const delta = max - min;
+
+  const l = (max + min) / 2;
+
+  let s = 0;
+  if (delta !== 0) {
+    s = delta / (1 - Math.abs(2 * l - 1));
+  }
+
+  let h = 0;
+  if (delta !== 0) {
+    if (max === r) {
+      h = ((g - b) / delta) % 6;
+    } else if (max === g) {
+      h = (b - r) / delta + 2;
+    } else {
+      h = (r - g) / delta + 4;
+    }
+    h = 60 * h;
+    if (h < 0) h += 360;
+  }
+
+  return { h, s, l };
+}
+
+/**
+ * Main function: Convert OKLCH to HSL.
+ * Preserves optional alpha channel if provided.
+ */
 export function oklchToHsl(oklch: OKLCH): HSL {
-  // This is a simplified approximation for reverse conversion
-  // For production, you'd want a more accurate conversion
-  const { l, c, h } = oklch;
+  const { l, c, h, a } = oklch;
+  const okLab = oklchToOkLab({ l, c, h });
+  const { rLin, gLin, bLin } = okLabToLinearSrgb(okLab);
+  const { h: H, s, l: L } = srgbToHsl(rLin, gLin, bLin);
 
-  // Approximate conversion
-  const lightness = l * 100;
-  const saturation = Math.min(100, c * 250); // Rough approximation
-  const hue = h;
-
-  return {
-    h: hue,
-    s: saturation,
-    l: lightness,
-  };
+  return a !== undefined ? { h: H, s, l: L, a } : { h: H, s, l: L };
 }
 
 // Convert OKLCH to CSS string for Tailwind v4
@@ -283,31 +353,6 @@ export function generateOklchSidebarColors(
   };
 }
 
-// Parse OKLCH string to OKLCH object
-export function parseOklchString(oklchString: string): OKLCH | null {
-  try {
-    const match = oklchString.match(/oklch$$([^)]+)$$/);
-    if (!match) return null;
-
-    const values = match[1].split(/[\s,]+/).filter(Boolean);
-    if (values.length < 3) return null;
-
-    const l = Number.parseFloat(values[0]);
-    const c = Number.parseFloat(values[1]);
-    const h = Number.parseFloat(values[2]);
-
-    let a: number | undefined;
-    if (values.length > 3 && values[3].includes("/")) {
-      const alphaPart = values[3].split("/")[1];
-      a = Number.parseFloat(alphaPart.replace("%", "")) / 100;
-    }
-
-    return { l, c, h, a };
-  } catch {
-    return null;
-  }
-}
-
 // Convert HSL theme to OKLCH format
 export function convertThemeToOklch(theme: Record<string, string>): Record<string, string> {
   const oklchVars: Record<string, string> = {};
@@ -341,6 +386,30 @@ export function convertThemeToOklch(theme: Record<string, string>): Record<strin
   return oklchVars;
 }
 
+// Parse OKLCH string to OKLCH object
+export function parseOklchString(oklchString: string): OKLCH | null {
+  try {
+    const match = oklchString.match(/oklch$$([^)]+)$$/);
+    if (!match) return null;
+
+    const values = match[1].split(/[\s,]+/).filter(Boolean);
+    if (values.length < 3) return null;
+
+    const l = Number.parseFloat(values[0]);
+    const c = Number.parseFloat(values[1]);
+    const h = Number.parseFloat(values[2]);
+
+    let a: number | undefined;
+    if (values.length > 3 && values[3].includes("/")) {
+      const alphaPart = values[3].split("/")[1];
+      a = Number.parseFloat(alphaPart.replace("%", "")) / 100;
+    }
+
+    return { l, c, h, a };
+  } catch {
+    return null;
+  }
+}
 // Helper function to parse HSL string
 function parseHslString(hslString: string): HSL | null {
   try {

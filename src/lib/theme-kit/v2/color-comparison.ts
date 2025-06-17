@@ -1,155 +1,152 @@
-import { type HSL, type OKLCH, oklchToHsl } from "./oklch-converter"
-import { hslToRgb } from "./color-theory"
+import { type HSL, type OKLCH, oklchToHsl } from "./converters/oklch-converter";
+import { hslToRgb } from "./color-theory";
 
 export interface ColorComparison {
-  name: string
+  name: string;
   hsl: {
-    value: HSL
-    css: string
-    rgb: { r: number; g: number; b: number }
-  }
+    value: HSL;
+    css: string;
+    rgb: { r: number; g: number; b: number };
+  };
   oklch: {
-    value: OKLCH
-    css: string
-    rgb: { r: number; g: number; b: number }
-  }
+    value: OKLCH;
+    css: string;
+    rgb: { r: number; g: number; b: number };
+  };
   difference: {
-    deltaE: number
-    perceptualDifference: "identical" | "minimal" | "noticeable" | "significant"
-    gamutExpansion: boolean
-  }
+    deltaE: number;
+    perceptualDifference: "identical" | "minimal" | "noticeable" | "significant";
+    gamutExpansion: boolean;
+  };
 }
 
 // Convert HSL string to HSL object
 export function parseHslString(hslString: string): HSL | null {
   try {
-    const parts = hslString.trim().split(/\s+/)
+    const parts = hslString.trim().split(/\s+/);
     if (parts.length >= 3) {
       return {
         h: Number.parseFloat(parts[0]),
         s: Number.parseFloat(parts[1].replace("%", "")),
         l: Number.parseFloat(parts[2].replace("%", "")),
-      }
+      };
     }
-    return null
+    return null;
   } catch {
-    return null
+    return null;
   }
 }
 
 // Convert OKLCH string to OKLCH object
 export function parseOklchString(oklchString: string): OKLCH | null {
   try {
-    const match = oklchString.match(/oklch$$([^)]+)$$/)
-    if (!match) return null
+    const match = oklchString.match(/oklch$$([^)]+)$$/);
+    if (!match) return null;
 
-    const values = match[1].split(/[\s,]+/).filter(Boolean)
-    if (values.length < 3) return null
+    const values = match[1].split(/[\s,]+/).filter(Boolean);
+    if (values.length < 3) return null;
 
-    const l = Number.parseFloat(values[0])
-    const c = Number.parseFloat(values[1])
-    const h = Number.parseFloat(values[2])
+    const l = Number.parseFloat(values[0]);
+    const c = Number.parseFloat(values[1]);
+    const h = Number.parseFloat(values[2]);
 
-    let a: number | undefined
+    let a: number | undefined;
     if (values.length > 3 && values[3].includes("/")) {
-      const alphaPart = values[3].split("/")[1]
-      a = Number.parseFloat(alphaPart.replace("%", "")) / 100
+      const alphaPart = values[3].split("/")[1];
+      a = Number.parseFloat(alphaPart.replace("%", "")) / 100;
     }
 
-    return { l, c, h, a }
+    return { l, c, h, a };
   } catch {
-    return null
+    return null;
   }
 }
 
 // Calculate Delta E (perceptual color difference)
-export function calculateDeltaE(
-  rgb1: { r: number; g: number; b: number },
-  rgb2: { r: number; g: number; b: number },
-): number {
+export function calculateDeltaE(rgb1: { r: number; g: number; b: number }, rgb2: { r: number; g: number; b: number }): number {
   // Simplified Delta E calculation (CIE76)
   // For production, you'd want to use more accurate Delta E 2000
 
   // Convert RGB to LAB (simplified)
   const rgbToLab = (rgb: { r: number; g: number; b: number }) => {
     // Normalize RGB
-    let r = rgb.r / 255
-    let g = rgb.g / 255
-    let b = rgb.b / 255
+    let r = rgb.r / 255;
+    let g = rgb.g / 255;
+    let b = rgb.b / 255;
 
     // Apply gamma correction
-    r = r > 0.04045 ? Math.pow((r + 0.055) / 1.055, 2.4) : r / 12.92
-    g = g > 0.04045 ? Math.pow((g + 0.055) / 1.055, 2.4) : g / 12.92
-    b = b > 0.04045 ? Math.pow((b + 0.055) / 1.055, 2.4) : b / 12.92
+    r = r > 0.04045 ? Math.pow((r + 0.055) / 1.055, 2.4) : r / 12.92;
+    g = g > 0.04045 ? Math.pow((g + 0.055) / 1.055, 2.4) : g / 12.92;
+    b = b > 0.04045 ? Math.pow((b + 0.055) / 1.055, 2.4) : b / 12.92;
 
     // Convert to XYZ
-    let x = r * 0.4124564 + g * 0.3575761 + b * 0.1804375
-    let y = r * 0.2126729 + g * 0.7151522 + b * 0.072175
-    let z = r * 0.0193339 + g * 0.119192 + b * 0.9503041
+    let x = r * 0.4124564 + g * 0.3575761 + b * 0.1804375;
+    let y = r * 0.2126729 + g * 0.7151522 + b * 0.072175;
+    let z = r * 0.0193339 + g * 0.119192 + b * 0.9503041;
 
     // Normalize for D65 illuminant
-    x = x / 0.95047
-    y = y / 1.0
-    z = z / 1.08883
+    x = x / 0.95047;
+    y = y / 1.0;
+    z = z / 1.08883;
 
     // Convert to LAB
-    x = x > 0.008856 ? Math.pow(x, 1 / 3) : 7.787 * x + 16 / 116
-    y = y > 0.008856 ? Math.pow(y, 1 / 3) : 7.787 * y + 16 / 116
-    z = z > 0.008856 ? Math.pow(z, 1 / 3) : 7.787 * z + 16 / 116
+    x = x > 0.008856 ? Math.pow(x, 1 / 3) : 7.787 * x + 16 / 116;
+    y = y > 0.008856 ? Math.pow(y, 1 / 3) : 7.787 * y + 16 / 116;
+    z = z > 0.008856 ? Math.pow(z, 1 / 3) : 7.787 * z + 16 / 116;
 
-    const L = 116 * y - 16
-    const a = 500 * (x - y)
-    const b_lab = 200 * (y - z)
+    const L = 116 * y - 16;
+    const a = 500 * (x - y);
+    const b_lab = 200 * (y - z);
 
-    return { L, a, b: b_lab }
-  }
+    return { L, a, b: b_lab };
+  };
 
-  const lab1 = rgbToLab(rgb1)
-  const lab2 = rgbToLab(rgb2)
+  const lab1 = rgbToLab(rgb1);
+  const lab2 = rgbToLab(rgb2);
 
-  const deltaL = lab1.L - lab2.L
-  const deltaA = lab1.a - lab2.a
-  const deltaB = lab1.b - lab2.b
+  const deltaL = lab1.L - lab2.L;
+  const deltaA = lab1.a - lab2.a;
+  const deltaB = lab1.b - lab2.b;
 
-  return Math.sqrt(deltaL * deltaL + deltaA * deltaA + deltaB * deltaB)
+  return Math.sqrt(deltaL * deltaL + deltaA * deltaA + deltaB * deltaB);
 }
 
 // Check if OKLCH color is outside sRGB gamut
 export function isOutsideSrgbGamut(oklch: OKLCH): boolean {
   // Convert OKLCH to RGB and check if values are outside 0-255 range
   try {
-    const hsl = oklchToHsl(oklch)
-    const rgb = hslToRgb(hsl)
+    const hsl = oklchToHsl(oklch);
+    const rgb = hslToRgb(hsl);
 
     // Check if any RGB value is outside valid range or if conversion resulted in clamping
-    return rgb.r < 0 || rgb.r > 255 || rgb.g < 0 || rgb.g > 255 || rgb.b < 0 || rgb.b > 255
+    return rgb.r < 0 || rgb.r > 255 || rgb.g < 0 || rgb.g > 255 || rgb.b < 0 || rgb.b > 255;
   } catch {
-    return true // If conversion fails, assume it's outside gamut
+    return true; // If conversion fails, assume it's outside gamut
   }
 }
 
 // Compare HSL and OKLCH colors
 export function compareColors(name: string, hslValue: string, oklchValue: string): ColorComparison {
-  const hsl = parseHslString(hslValue)
-  const oklch = parseOklchString(oklchValue)
+  const hsl = parseHslString(hslValue);
+  const oklch = parseOklchString(oklchValue);
 
   if (!hsl || !oklch) {
-    throw new Error(`Failed to parse colors for ${name}`)
+    throw new Error(`Failed to parse colors for ${name}`);
   }
 
-  const hslRgb = hslToRgb(hsl)
-  const oklchHsl = oklchToHsl(oklch)
-  const oklchRgb = hslToRgb(oklchHsl)
+  const hslRgb = hslToRgb(hsl);
+  const oklchHsl = oklchToHsl(oklch);
+  const oklchRgb = hslToRgb(oklchHsl);
 
-  const deltaE = calculateDeltaE(hslRgb, oklchRgb)
+  const deltaE = calculateDeltaE(hslRgb, oklchRgb);
 
-  let perceptualDifference: ColorComparison["difference"]["perceptualDifference"]
-  if (deltaE < 1) perceptualDifference = "identical"
-  else if (deltaE < 2.3) perceptualDifference = "minimal"
-  else if (deltaE < 5) perceptualDifference = "noticeable"
-  else perceptualDifference = "significant"
+  let perceptualDifference: ColorComparison["difference"]["perceptualDifference"];
+  if (deltaE < 1) perceptualDifference = "identical";
+  else if (deltaE < 2.3) perceptualDifference = "minimal";
+  else if (deltaE < 5) perceptualDifference = "noticeable";
+  else perceptualDifference = "significant";
 
-  const gamutExpansion = isOutsideSrgbGamut(oklch)
+  const gamutExpansion = isOutsideSrgbGamut(oklch);
 
   return {
     name,
@@ -168,7 +165,7 @@ export function compareColors(name: string, hslValue: string, oklchValue: string
       perceptualDifference,
       gamutExpansion,
     },
-  }
+  };
 }
 
 // Get legacy HSL values for themes (converted from original HSL themes)
@@ -373,4 +370,4 @@ export const legacyHslThemes = {
       ring: "330 81% 65%",
     },
   },
-}
+};
