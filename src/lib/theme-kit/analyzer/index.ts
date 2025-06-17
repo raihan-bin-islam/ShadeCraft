@@ -1,132 +1,16 @@
-import { hslToRgb, rgbToHsl, getContrastRatio, type HSL } from "./color-theory";
-
-export interface ThemeAnalysis {
-  score: number; // Overall score 0-100
-  accessibility: AccessibilityAnalysis;
-  harmony: HarmonyAnalysis;
-  hierarchy: HierarchyAnalysis;
-  consistency: ConsistencyAnalysis;
-  suggestions: Suggestion[];
-  improvements: ThemeImprovements;
-}
-
-export interface AccessibilityAnalysis {
-  score: number;
-  issues: AccessibilityIssue[];
-  wcagLevel: "AA" | "AAA" | "FAIL";
-}
-
-export interface AccessibilityIssue {
-  type: "contrast" | "color-blindness" | "focus";
-  severity: "critical" | "warning" | "info";
-  description: string;
-  elements: string[];
-  contrastRatio?: number;
-  minimumRequired?: number;
-}
-
-export interface HarmonyAnalysis {
-  score: number;
-  colorRelationship: "complementary" | "triadic" | "analogous" | "monochromatic" | "custom" | "poor";
-  saturationBalance: number; // 0-100
-  lightnessBalance: number; // 0-100
-  issues: string[];
-}
-
-export interface HierarchyAnalysis {
-  score: number;
-  backgroundLevels: number;
-  depthClarity: number; // 0-100
-  surfaceContrast: number; // 0-100
-  issues: string[];
-}
-
-export interface ConsistencyAnalysis {
-  score: number;
-  colorVariations: number;
-  semanticConsistency: number; // 0-100
-  issues: string[];
-}
-
-export interface Suggestion {
-  type: "accessibility" | "harmony" | "hierarchy" | "consistency" | "branding";
-  priority: "high" | "medium" | "low";
-  title: string;
-  description: string;
-  action: string;
-  before?: string;
-  after?: string;
-}
-
-export interface ThemeImprovements {
-  improvedColors: Record<string, string>;
-  reasoning: string[];
-}
-
-// Parse CSS theme variables
-export function parseThemeCSS(css: string): Record<string, string> {
-  const variables: Record<string, string> = {};
-
-  // Match CSS custom properties
-  const variableRegex = /--([^:]+):\s*([^;]+);/g;
-  let match;
-
-  while ((match = variableRegex.exec(css)) !== null) {
-    const [, name, value] = match;
-    variables[name.trim()] = value.trim();
-  }
-
-  return variables;
-}
-
-// Convert various color formats to HSL
-function parseColorToHsl(colorValue: string): HSL | null {
-  try {
-    // Handle HSL format: "217.2 32.6% 17.5%"
-    if (colorValue.includes("%")) {
-      const parts = colorValue.split(/\s+/);
-      if (parts.length >= 3) {
-        return {
-          h: Number.parseFloat(parts[0]),
-          s: Number.parseFloat(parts[1].replace("%", "")),
-          l: Number.parseFloat(parts[2].replace("%", "")),
-        };
-      }
-    }
-
-    // Handle OKLCH format: "oklch(0.627 0.265 303.9)"
-    if (colorValue.includes("oklch")) {
-      const match = colorValue.match(/oklch$$([^)]+)$$/);
-      if (match) {
-        const parts = match[1].split(/\s+/);
-        if (parts.length >= 3) {
-          // Approximate conversion from OKLCH to HSL
-          const l = Number.parseFloat(parts[0]) * 100;
-          const c = Number.parseFloat(parts[1]);
-          const h = Number.parseFloat(parts[2]);
-          const s = Math.min(100, c * 200); // Rough approximation
-
-          return { h, s, l };
-        }
-      }
-    }
-
-    // Handle RGB format
-    if (colorValue.includes("rgb")) {
-      const match = colorValue.match(/rgb$$([^)]+)$$/);
-      if (match) {
-        const parts = match[1].split(",").map((p) => Number.parseFloat(p.trim()));
-        if (parts.length >= 3) {
-          return rgbToHsl({ r: parts[0], g: parts[1], b: parts[2] });
-        }
-      }
-    }
-
-    return null;
-  } catch {
-    return null;
-  }
-}
+import { HSL } from "@/types/theme-kit/color-space";
+import {
+  AccessibilityAnalysis,
+  AccessibilityIssue,
+  ConsistencyAnalysis,
+  HarmonyAnalysis,
+  HierarchyAnalysis,
+  Suggestion,
+  ThemeAnalysis,
+  ThemeImprovements,
+} from "@/types/theme-kit/analyzer";
+import { parseColorToHsl, parseOklchString, parseThemeCSS } from "@/lib/theme-kit/core/parser";
+import { getContrastRatio } from "@/lib/theme-kit/core";
 
 // Analyze accessibility
 function analyzeAccessibility(theme: Record<string, string>): AccessibilityAnalysis {
@@ -145,13 +29,11 @@ function analyzeAccessibility(theme: Record<string, string>): AccessibilityAnaly
   ];
 
   for (const pair of contrastPairs) {
-    const fgColor = parseColorToHsl(theme[pair.fg] || "");
-    const bgColor = parseColorToHsl(theme[pair.bg] || "");
+    const fgColor = parseOklchString(theme[pair.fg] || "");
+    const bgColor = parseOklchString(theme[pair.bg] || "");
 
     if (fgColor && bgColor) {
-      const fgRgb = hslToRgb(fgColor);
-      const bgRgb = hslToRgb(bgColor);
-      const contrast = getContrastRatio(fgRgb, bgRgb);
+      const contrast = getContrastRatio(fgColor, bgColor);
 
       totalContrast += contrast;
       contrastChecks++;

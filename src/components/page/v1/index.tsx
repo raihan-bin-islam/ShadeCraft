@@ -27,7 +27,7 @@ import {
   Settings,
 } from "lucide-react";
 import { ThemeGeneratorV4 } from "@/components/theme/theme-generator";
-import { TailwindV4Theme } from "@/lib/theme-kit/v2/theme-generator";
+import { TailwindV4Theme } from "@/lib/theme-kit/generators/theme";
 import { ThemeName, themes } from "@/lib/themes";
 import { ThemeShowcase } from "@/components/theme/theme-showcase";
 import { StickyTaskbar } from "@/components/common/sticky-taskbar";

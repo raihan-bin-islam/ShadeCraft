@@ -1,9 +1,6 @@
 import { useState, useCallback } from "react";
-import {
-  generateTailwindV4Theme,
-  generateTailwindV4ThemeCollection,
-  type TailwindV4Theme,
-} from "@/lib/theme-kit/v2/theme-generator";
+import { generateTailwindV4Theme, generateTailwindV4ThemeCollection } from "@/lib/theme-kit/generators/theme";
+import { TailwindV4Theme } from "@/types/theme-kit/theme";
 
 export interface UseThemeGeneratorOptions {
   maxStoredThemes?: number;

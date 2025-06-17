@@ -1,66 +1,8 @@
-import { type HSL, type OKLCH, oklchToHsl } from "./converters/oklch-converter";
-import { hslToRgb } from "./color-theory";
-
-export interface ColorComparison {
-  name: string;
-  hsl: {
-    value: HSL;
-    css: string;
-    rgb: { r: number; g: number; b: number };
-  };
-  oklch: {
-    value: OKLCH;
-    css: string;
-    rgb: { r: number; g: number; b: number };
-  };
-  difference: {
-    deltaE: number;
-    perceptualDifference: "identical" | "minimal" | "noticeable" | "significant";
-    gamutExpansion: boolean;
-  };
-}
-
-// Convert HSL string to HSL object
-export function parseHslString(hslString: string): HSL | null {
-  try {
-    const parts = hslString.trim().split(/\s+/);
-    if (parts.length >= 3) {
-      return {
-        h: Number.parseFloat(parts[0]),
-        s: Number.parseFloat(parts[1].replace("%", "")),
-        l: Number.parseFloat(parts[2].replace("%", "")),
-      };
-    }
-    return null;
-  } catch {
-    return null;
-  }
-}
-
-// Convert OKLCH string to OKLCH object
-export function parseOklchString(oklchString: string): OKLCH | null {
-  try {
-    const match = oklchString.match(/oklch$$([^)]+)$$/);
-    if (!match) return null;
-
-    const values = match[1].split(/[\s,]+/).filter(Boolean);
-    if (values.length < 3) return null;
-
-    const l = Number.parseFloat(values[0]);
-    const c = Number.parseFloat(values[1]);
-    const h = Number.parseFloat(values[2]);
-
-    let a: number | undefined;
-    if (values.length > 3 && values[3].includes("/")) {
-      const alphaPart = values[3].split("/")[1];
-      a = Number.parseFloat(alphaPart.replace("%", "")) / 100;
-    }
-
-    return { l, c, h, a };
-  } catch {
-    return null;
-  }
-}
+import { OKLCH } from "@/types/theme-kit/color-space";
+import { parseHslString, parseOklchString } from "@/lib/theme-kit/core/parser";
+import { hslToRgb } from "@/lib/theme-kit/converters/to-rgb";
+import { oklchToHsl } from "@/lib/theme-kit/converters/to-hsl";
+import { ColorComparison } from "@/types/theme-kit";
 
 // Calculate Delta E (perceptual color difference)
 export function calculateDeltaE(rgb1: { r: number; g: number; b: number }, rgb2: { r: number; g: number; b: number }): number {

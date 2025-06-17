@@ -1,5 +1,5 @@
+import { TailwindV4Theme } from "@/types/theme-kit/theme";
 import { useState, useCallback } from "react";
-import type { TailwindV4Theme } from "@/lib/theme-kit/v2/theme-generator";
 
 export type ThemeFormat = "oklch" | "hsl" extends string ? string : never;
 

@@ -6,8 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Shuffle, Download, Copy, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { TailwindV4Theme } from "@/lib/theme-kit/v2/theme-generator";
 import { useThemeGeneratorCompositeModule } from "@/hooks/theme-module";
+import { TailwindV4Theme } from "@/types/theme-kit/theme";
 
 interface ThemeGeneratorV4Props {
   onThemeSelect?: (theme: TailwindV4Theme) => void;

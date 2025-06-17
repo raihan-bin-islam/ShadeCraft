@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { StickyTaskbar } from "@/components/circular-taskbar";
@@ -6,7 +5,6 @@ import { BrandColorInput } from "@/components/theme/brand-color-input";
 import { ThemeAnalyzer } from "@/components/theme/analyzer/theme-analyzer";
 import { ThemeComparison } from "@/components/theme/theme-comparison";
 import { ThemeEditor } from "@/components/theme/theme-editor";
-import { ThemePreview } from "@/components/theme/theme-preview";
 import { ThemeShowcase } from "@/components/theme/theme-showcase";
 import { ThemeSwitcher } from "@/components/theme/theme-switcher";
 import { Badge } from "@/components/ui/badge";
@@ -14,7 +12,7 @@ import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/ca
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TaskbarItemId, taskbarOptions } from "@/data/tabs";
 import { useThemeGenerator } from "@/hooks/theme-module/use-theme-generator";
-import { ThemeName, themes } from "@/lib/themes";
+import { ThemeName } from "@/lib/themes";
 import { useState } from "react";
 
 export const LandingPage = () => {
@@ -65,11 +63,6 @@ export const LandingPage = () => {
                       </TabsList>
                     </Tabs>
                   </div>
-                  <ThemePreview
-                    theme={themes[selectedBuiltInTheme].cssVars}
-                    themeName={currentTheme?.name ?? ""}
-                    mode={previewMode}
-                  />
                 </div>
               )}
             </TabsContent>
@@ -88,7 +81,6 @@ export const LandingPage = () => {
                       </TabsList>
                     </Tabs>
                   </div>
-                  <ThemePreview theme={currentTheme} themeName={currentTheme.name} mode={previewMode} />
                 </div>
               )}
             </TabsContent>
@@ -108,7 +100,6 @@ export const LandingPage = () => {
                         </TabsList>
                       </Tabs>
                     </div>
-                    <ThemePreview theme={currentTheme} themeName={currentTheme.name} mode={previewMode} />
                   </div>
                 </div>
               ) : (

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Palette, Wand2 } from "lucide-react";
-import { generateThemeFromBrandColors } from "@/lib/theme-kit/v2/color-utils";
+import { generateThemeFromBrandColors } from "@/lib/theme-kit/generators/theme";
 
 interface BrandColorInputProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -20,7 +20,7 @@ export function BrandColorInput({ onThemeGenerated }: BrandColorInputProps) {
   const [themeName, setThemeName] = useState("");
 
   const handleGenerateTheme = () => {
-    const theme = generateThemeFromBrandColors(primaryColor, secondaryColor || undefined, accentColor || undefined);
+    const theme = generateThemeFromBrandColors(primaryColor, secondaryColor, accentColor);
 
     const name = themeName || `Brand Theme ${Date.now()}`;
     onThemeGenerated(theme, name);

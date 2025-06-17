@@ -10,8 +10,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Edit3, Copy, Download } from "lucide-react";
-import type { OKLCHColor } from "@/types/theme";
-import { oklchToString, generateCSSVariables } from "@/lib/theme-kit/v2/color-utils";
+import { OKLCH } from "@/types/theme-kit/color-space";
+import { oklchToCss } from "@/lib/theme-kit/converters/to-css";
+import { generateCSSVariables } from "@/lib/theme-kit/generators/css";
 
 interface ThemeEditorProps {
   theme: any;
@@ -27,7 +28,7 @@ export function ThemeEditor({ theme, themeName, onThemeChange }: ThemeEditorProp
     setEditingTheme(theme);
   }, [theme]);
 
-  const updateColor = (mode: "light" | "dark", colorKey: string, newColor: OKLCHColor) => {
+  const updateColor = (mode: "light" | "dark", colorKey: string, newColor: OKLCH) => {
     const updatedTheme = {
       ...editingTheme,
       [mode]: {
@@ -47,14 +48,14 @@ export function ThemeEditor({ theme, themeName, onThemeChange }: ThemeEditorProp
   }: {
     mode: "light" | "dark";
     colorKey: string;
-    color: OKLCHColor;
+    color: OKLCH;
     label: string;
   }) => {
     return (
       <div className="space-y-2 p-3 border rounded-lg">
         <div className="flex items-center justify-between">
           <Label className="text-sm font-medium">{label}</Label>
-          <div className="w-6 h-6 rounded border" style={{ backgroundColor: oklchToString(color) }} />
+          <div className="w-6 h-6 rounded border" style={{ backgroundColor: oklchToCss(color) }} />
         </div>
 
         <div className="grid grid-cols-3 gap-2">
@@ -111,7 +112,7 @@ export function ThemeEditor({ theme, themeName, onThemeChange }: ThemeEditorProp
           </div>
         </div>
 
-        <div className="text-xs text-muted-foreground font-mono">{oklchToString(color)}</div>
+        <div className="text-xs text-muted-foreground font-mono">{oklchToCss(color)}</div>
       </div>
     );
   };

@@ -6,8 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { CheckCircle, XCircle, AlertTriangle } from "lucide-react";
-import { validateThemeContrast, type ContrastIssue } from "@/lib/theme-kit/v2/contrast-utils";
 import { themes } from "@/lib/themes";
+import { ContrastIssue } from "@/types/theme-kit";
+import { validateThemeContrast } from "@/lib/theme-kit/core";
 
 export function ContrastValidator() {
   const [validationResults, setValidationResults] = useState<Record<string, ContrastIssue[]>>({});

@@ -1,171 +1,23 @@
 import { THEME_FEELS_V4 } from "@/config/theme-feels";
+import { hexToOklch, oklchToCss, oklchToHsl } from "@/lib/theme-kit/converters";
+import { ensureOklchContrast } from "@/lib/theme-kit/core";
+
+import { adjustOklch, adjustOklchChroma, createOklchShade, createOklchTint } from "@/lib/theme-kit/core/adjustment";
+
 import {
-  type OKLCH,
-  oklchToCss,
-  createOklchTint,
-  createOklchShade,
-  adjustOklchChroma,
-  getOklchComplementary,
-  getOklchTriadic,
-  getOklchAnalogous,
-  getOklchSplitComplementary,
-  getOklchTetradic,
-  generateOklchForeground,
-  ensureOklchContrast,
-  generateOklchContrastPair,
+  generateBaseOklchColor,
+  generateOklchBackgrounds,
   generateOklchChartColors,
+  generateOklchColorPalette,
+  generateOklchContrastPair,
+  generateOklchDarkBackgrounds,
+  generateOklchForeground,
   generateOklchSidebarColors,
-  oklchToHsl,
-  adjustOklch,
-} from "./converters/oklch-converter";
+} from "@/lib/theme-kit/generators/palette";
 
-export interface TailwindV4Theme {
-  name: string;
-  description: string;
-  feel: string;
-  cssVars: { light: Record<string, string>; dark: Record<string, string> };
-  hslVars?: Record<string, string>;
-  previewColors: {
-    primary: string;
-    secondary: string;
-    accent: string;
-    lightBg: string;
-    darkBg: string;
-  };
-}
+import { randomChoice } from "@/lib/utils";
 
-type ColorHarmony = "complementary" | "triadic" | "analogous" | "splitComplementary" | "tetradic" | "monochromatic";
-
-function randomInRange(min: number, max: number): number {
-  return Math.random() * (max - min) + min;
-}
-
-function randomChoice<T>(array: T[]): T {
-  return array[Math.floor(Math.random() * array.length)];
-}
-
-function generateBaseOklchColor(feel: (typeof THEME_FEELS_V4)[0]): OKLCH {
-  const hue = randomChoice(feel.preferredHues) + randomInRange(-20, 20); // Add some variation
-  const lightness = randomInRange(feel.lightnessRange[0], feel.lightnessRange[1]);
-  const chroma = randomInRange(feel.chromaRange[0], feel.chromaRange[1]);
-
-  return {
-    h: (hue + 360) % 360, // Ensure positive
-    l: Math.max(0, Math.min(1, lightness)),
-    c: Math.max(0, Math.min(0.4, chroma)),
-  };
-}
-
-function generateOklchColorPalette(baseColor: OKLCH, harmony: ColorHarmony): OKLCH[] {
-  switch (harmony) {
-    case "complementary":
-      return [baseColor, getOklchComplementary(baseColor)];
-
-    case "triadic":
-      return [baseColor, ...getOklchTriadic(baseColor)];
-
-    case "analogous":
-      return [baseColor, ...getOklchAnalogous(baseColor)];
-
-    case "splitComplementary":
-      return [baseColor, ...getOklchSplitComplementary(baseColor)];
-
-    case "tetradic":
-      return [baseColor, ...getOklchTetradic(baseColor)];
-
-    case "monochromatic":
-      return [
-        baseColor,
-        adjustOklchChroma(createOklchShade(baseColor, 15), -5),
-        adjustOklchChroma(createOklchTint(baseColor, 20), 5),
-      ];
-
-    default:
-      return [baseColor, getOklchComplementary(baseColor)];
-  }
-}
-
-function generateOklchBackgrounds(primaryColor: OKLCH): {
-  background: OKLCH;
-  card: OKLCH;
-  muted: OKLCH;
-  border: OKLCH;
-  input: OKLCH;
-} {
-  // Create very light, desaturated backgrounds
-  const background = {
-    h: primaryColor.h,
-    l: +(Math.random() * 0.02 + 0.98).toFixed(2),
-    c: Math.min(0.005, primaryColor.c * 0.1),
-  };
-
-  const card = {
-    h: primaryColor.h,
-    l: 0.99,
-    c: Math.min(0.003, primaryColor.c * 0.08),
-  };
-
-  const muted = {
-    h: primaryColor.h,
-    l: 0.95,
-    c: Math.min(0.01, primaryColor.c * 0.15),
-  };
-
-  const border = {
-    h: primaryColor.h,
-    l: 0.9,
-    c: Math.min(0.015, primaryColor.c * 0.2),
-  };
-
-  const input = {
-    h: primaryColor.h,
-    l: 0.92,
-    c: Math.min(0.012, primaryColor.c * 0.18),
-  };
-
-  return { background, card, muted, border, input };
-}
-
-function generateOklchDarkBackgrounds(primaryColor: OKLCH): {
-  background: OKLCH;
-  card: OKLCH;
-  muted: OKLCH;
-  border: OKLCH;
-  input: OKLCH;
-} {
-  // Create very dark, slightly saturated backgrounds
-  const background = {
-    h: primaryColor.h,
-    l: 0.15,
-    c: Math.min(0.02, primaryColor.c * 0.3),
-  };
-
-  const card = {
-    h: primaryColor.h,
-    l: 0.3,
-    c: Math.min(0.025, primaryColor.c * 0.35),
-  };
-
-  const muted = {
-    h: primaryColor.h,
-    l: 0.25,
-    c: Math.min(0.03, primaryColor.c * 0.4),
-  };
-
-  const border = {
-    h: primaryColor.h,
-    l: 0.28,
-    c: Math.min(0.035, primaryColor.c * 0.45),
-  };
-
-  const input = {
-    h: primaryColor.h,
-    l: 0.33,
-    c: Math.min(0.032, primaryColor.c * 0.42),
-  };
-
-  return { background, card, muted, border, input };
-}
+import type { ColorHarmony, OKLCH, TailwindV4Theme } from "@/types/theme-kit";
 
 const groupThemeTokens = (theme: Record<string, string>) => {
   const light: Record<string, string> = {};
@@ -370,6 +222,7 @@ export function generateTailwindV4Theme(): TailwindV4Theme {
     name: themeName,
     description: feel.description,
     feel: feel.name,
+    theme: groupThemeTokens(cssVars),
     cssVars: groupThemeTokens(cssVars),
     hslVars,
     previewColors: {
@@ -401,4 +254,77 @@ export function generateTailwindV4ThemeCollection(count = 5): TailwindV4Theme[] 
   }
 
   return themes;
+}
+
+export function generateThemeFromBrandColors(primary: string, secondary?: string, accent?: string) {
+  const primaryOklch = hexToOklch(primary);
+  const secondaryOklch = secondary
+    ? hexToOklch(secondary)
+    : {
+        l: primaryOklch.l * 0.9,
+        c: primaryOklch.c * 0.7,
+        h: (primaryOklch.h + 30) % 360,
+      };
+  const accentOklch = accent
+    ? hexToOklch(accent)
+    : {
+        l: primaryOklch.l * 1.1,
+        c: primaryOklch.c * 0.8,
+        h: (primaryOklch.h + 180) % 360,
+      };
+
+  return {
+    light: {
+      background: { l: 0.98, c: 0.003, h: primaryOklch.h },
+      foreground: { l: 0.15, c: 0.02, h: primaryOklch.h },
+      card: { l: 0.99, c: 0.002, h: primaryOklch.h },
+      cardForeground: { l: 0.15, c: 0.02, h: primaryOklch.h },
+      popover: { l: 0.99, c: 0.002, h: primaryOklch.h },
+      popoverForeground: { l: 0.15, c: 0.02, h: primaryOklch.h },
+      primary: primaryOklch,
+      primaryForeground: { l: 0.98, c: 0.005, h: 0 },
+      secondary: secondaryOklch,
+      secondaryForeground: { l: 0.15, c: 0.02, h: 0 },
+      muted: { l: 0.95, c: 0.01, h: primaryOklch.h },
+      mutedForeground: { l: 0.55, c: 0.02, h: primaryOklch.h },
+      accent: accentOklch,
+      accentForeground: { l: 0.15, c: 0.02, h: 0 },
+      destructive: { l: 0.577, c: 0.245, h: 27.325 },
+      destructiveForeground: { l: 0.98, c: 0.005, h: 0 },
+      border: { l: 0.92, c: 0.01, h: primaryOklch.h },
+      input: { l: 0.92, c: 0.01, h: primaryOklch.h },
+      ring: primaryOklch,
+      chart1: primaryOklch,
+      chart2: secondaryOklch,
+      chart3: accentOklch,
+      chart4: { l: 0.828, c: 0.189, h: 84.429 },
+      chart5: { l: 0.769, c: 0.188, h: 70.08 },
+    },
+    dark: {
+      background: { l: 0.14, c: 0.02, h: primaryOklch.h },
+      foreground: { l: 0.98, c: 0.005, h: primaryOklch.h },
+      card: { l: 0.16, c: 0.02, h: primaryOklch.h },
+      cardForeground: { l: 0.98, c: 0.005, h: primaryOklch.h },
+      popover: { l: 0.16, c: 0.02, h: primaryOklch.h },
+      popoverForeground: { l: 0.98, c: 0.005, h: primaryOklch.h },
+      primary: { ...primaryOklch, l: Math.min(0.9, primaryOklch.l * 1.2) },
+      primaryForeground: { l: 0.16, c: 0.02, h: primaryOklch.h },
+      secondary: { l: 0.269, c: 0.05, h: secondaryOklch.h },
+      secondaryForeground: { l: 0.98, c: 0.005, h: primaryOklch.h },
+      muted: { l: 0.269, c: 0.02, h: primaryOklch.h },
+      mutedForeground: { l: 0.708, c: 0.02, h: primaryOklch.h },
+      accent: { ...accentOklch, l: Math.min(0.8, accentOklch.l * 0.8) },
+      accentForeground: { l: 0.16, c: 0.02, h: primaryOklch.h },
+      destructive: { l: 0.396, c: 0.141, h: 25.723 },
+      destructiveForeground: { l: 0.637, c: 0.237, h: 25.331 },
+      border: { l: 0.269, c: 0.02, h: primaryOklch.h },
+      input: { l: 0.269, c: 0.02, h: primaryOklch.h },
+      ring: { ...primaryOklch, l: Math.max(0.2, primaryOklch.l * 0.6) },
+      chart1: { ...primaryOklch, l: Math.max(0.2, primaryOklch.l * 0.8) },
+      chart2: { ...secondaryOklch, l: Math.max(0.2, secondaryOklch.l * 0.9) },
+      chart3: accentOklch,
+      chart4: { l: 0.627, c: 0.265, h: 303.9 },
+      chart5: { l: 0.645, c: 0.246, h: 16.439 },
+    },
+  };
 }

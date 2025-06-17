@@ -9,9 +9,10 @@ import { Progress } from "@/components/ui/progress";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search, AlertTriangle, CheckCircle, XCircle, Lightbulb, Palette, Eye, Layers, Target } from "lucide-react";
-import { analyzeTheme, type ThemeAnalysis } from "@/lib/theme-kit/v2/theme-analyzer";
+import { analyzeTheme } from "@/lib/theme-kit/analyzer";
 import { cn } from "@/lib/utils";
 import { ContrastValidator } from "./contrast-validator";
+import type { ThemeAnalysis } from "@/types/theme-kit/analyzer";
 
 const sampleThemes = {
   default: `:root {

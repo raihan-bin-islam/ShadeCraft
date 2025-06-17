@@ -1,4 +1,4 @@
-import type { ThemeConfig } from "@/types/theme";
+import type { ThemeConfig } from "@/types/theme-kit/theme";
 
 export const midnightTheme: ThemeConfig = {
   name: "midnight",
