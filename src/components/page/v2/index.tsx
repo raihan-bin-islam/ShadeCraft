@@ -6,7 +6,6 @@ import { BrandColorInput } from "@/components/theme/brand-color-input";
 import { ThemeAnalyzer } from "@/components/theme/theme-analyzer";
 import { ThemeComparison } from "@/components/theme/theme-comparison";
 import { ThemeEditor } from "@/components/theme/theme-editor";
-import { ThemeGeneratorV4 } from "@/components/theme/theme-generator";
 import { ThemePreview } from "@/components/theme/theme-preview";
 import { ThemeShowcase } from "@/components/theme/theme-showcase";
 import { ThemeSwitcher } from "@/components/theme/theme-switcher";
@@ -14,35 +13,17 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TaskbarItemId, taskbarOptions } from "@/data/tabs";
-import { TailwindV4Theme } from "@/lib/theme-kit/v2/theme-generator";
+import { useThemeGenerator } from "@/hooks/theme-module/use-theme-generator";
 import { ThemeName, themes } from "@/lib/themes";
 import { useState } from "react";
 
 export const LandingPage = () => {
-  const [currentTheme, setCurrentTheme] = useState<any>(null);
-  const [currentThemeName, setCurrentThemeName] = useState<string>("");
+  // const [currentTheme, setCurrentTheme] = useState<any>(null);
+  // const [currentThemeName, setCurrentThemeName] = useState<string>("");
   const [previewMode, setPreviewMode] = useState<"light" | "dark">("light");
   const [selectedBuiltInTheme, setSelectedBuiltInTheme] = useState<ThemeName>("aurora");
   const [selectedTab, setSelectedTab] = useState<TaskbarItemId>("generator");
-
-  const handleThemeGenerated = (theme: any, name: string) => {
-    setCurrentTheme(theme);
-    setCurrentThemeName(name);
-  };
-
-  const handleGeneratedThemeSelect = (theme: TailwindV4Theme) => {
-    // Convert GeneratedTheme to the format expected by ThemeEditor
-    const convertedTheme = {
-      light: theme.cssVars.light,
-      dark: theme.cssVars.dark,
-    };
-    setCurrentTheme(convertedTheme);
-    setCurrentThemeName(theme.name);
-  };
-
-  const handleThemeChange = (theme: any) => {
-    setCurrentTheme(theme);
-  };
+  const { currentTheme, selectTheme, generateSingle } = useThemeGenerator();
 
   return (
     <>
@@ -65,7 +46,7 @@ export const LandingPage = () => {
 
           <Tabs value={selectedTab} defaultValue="generator" className="space-y-6">
             <TabsContent value="generator" className="space-y-6">
-              <ThemeGeneratorV4
+              {/* <ThemeGeneratorV4
                 onThemeSelect={handleGeneratedThemeSelect}
                 currentTheme={
                   currentTheme
@@ -85,9 +66,14 @@ export const LandingPage = () => {
                       }
                     : undefined
                 }
-              />
+              /> */}
 
-              {currentTheme && <ThemeShowcase theme={currentTheme} themeName={currentThemeName} />}
+              {currentTheme && (
+                <ThemeShowcase
+                  theme={{ light: currentTheme.cssVars.light, dark: currentTheme.cssVars.dark }}
+                  themeName={currentTheme.name}
+                />
+              )}
             </TabsContent>
 
             <TabsContent value="themes" className="space-y-6">
@@ -103,13 +89,17 @@ export const LandingPage = () => {
                       </TabsList>
                     </Tabs>
                   </div>
-                  <ThemePreview theme={themes[selectedBuiltInTheme].cssVars} themeName={currentThemeName} mode={previewMode} />
+                  <ThemePreview
+                    theme={themes[selectedBuiltInTheme].cssVars}
+                    themeName={currentTheme?.name ?? ""}
+                    mode={previewMode}
+                  />
                 </div>
               )}
             </TabsContent>
 
             <TabsContent value="brand-input" className="space-y-6">
-              <BrandColorInput onThemeGenerated={handleThemeGenerated} />
+              <BrandColorInput onThemeGenerated={selectTheme} />
 
               {currentTheme && (
                 <div className="space-y-4">
@@ -122,7 +112,7 @@ export const LandingPage = () => {
                       </TabsList>
                     </Tabs>
                   </div>
-                  <ThemePreview theme={currentTheme} themeName={currentThemeName} mode={previewMode} />
+                  <ThemePreview theme={currentTheme} themeName={currentTheme.name} mode={previewMode} />
                 </div>
               )}
             </TabsContent>
@@ -130,7 +120,7 @@ export const LandingPage = () => {
             <TabsContent value="editor">
               {currentTheme ? (
                 <div className="space-y-6">
-                  <ThemeEditor theme={currentTheme} themeName={currentThemeName} onThemeChange={handleThemeChange} />
+                  <ThemeEditor theme={currentTheme} themeName={currentTheme.name} onThemeChange={selectTheme} />
 
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
@@ -142,7 +132,7 @@ export const LandingPage = () => {
                         </TabsList>
                       </Tabs>
                     </div>
-                    <ThemePreview theme={currentTheme} themeName={currentThemeName} mode={previewMode} />
+                    <ThemePreview theme={currentTheme} themeName={currentTheme.name} mode={previewMode} />
                   </div>
                 </div>
               ) : (
@@ -165,8 +155,8 @@ export const LandingPage = () => {
           </Tabs>
         </div>
         <StickyTaskbar
-          options={taskbarOptions.map((opt) => ({ ...opt }))}
-          idleTime={350}
+          options={taskbarOptions.map((opt) => ({ ...opt, onClick: opt.id === "generator" ? generateSingle : opt.onClick }))}
+          idleTime={1350}
           onClickOption={(opt) => setSelectedTab(opt.id as TaskbarItemId)}
         />
       </div>

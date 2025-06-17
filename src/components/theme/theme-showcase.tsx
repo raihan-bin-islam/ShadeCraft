@@ -1,5 +1,5 @@
 "use client";
-import { SidebarPreview } from "@/components/blocks/sidebar-16/preview/dashboard/page";
+import { SidebarPreview } from "@/components/preview-components/sidebar";
 import { ThemePreviewer } from "@/components/theme/theme-previewer";
 import { Button } from "@/components/ui/button";
 import { Moon, Sun } from "lucide-react";

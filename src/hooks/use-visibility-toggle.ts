@@ -9,12 +9,19 @@ export function useVisibilityToggle() {
     }
   }, []);
 
+  const handleDoubleClick = useCallback((e: MouseEvent) => {
+    e.preventDefault();
+    setIsVisible((prev) => !prev);
+  }, []);
+
   useEffect(() => {
     document.addEventListener("keypress", handleKeyPress);
+    // document.addEventListener("contextmenu", handleDoubleClick);
     return () => {
       document.removeEventListener("keypress", handleKeyPress);
+      // document.removeEventListener("contextmenu", handleDoubleClick);
     };
-  }, [handleKeyPress]);
+  }, [handleKeyPress, handleDoubleClick]);
 
   return { isVisible, setIsVisible };
 }

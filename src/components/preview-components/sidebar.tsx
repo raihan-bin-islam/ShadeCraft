@@ -1,5 +1,8 @@
 import { AppSidebar } from "@/components/blocks/sidebar-16/app-sidebar";
 import { SiteHeader } from "@/components/blocks/sidebar-16/site-header";
+import { ChartDemo } from "@/components/preview-components/chart";
+import { Badge } from "@/components/ui/badge";
+import { Calendar } from "@/components/ui/calendar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
 export const iframeHeight = "800px";
@@ -16,11 +19,14 @@ export const SidebarPreview = () => {
             <AppSidebar collapsible="icon" variant="inset" className="relative h-[calc(70vh)]" />
             <SidebarInset className="">
               <div className="flex flex-1 flex-col gap-4 p-4">
-                <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-                  <div className="bg-muted/50 aspect-video rounded-xl" />
-                  <div className="bg-muted/50 aspect-video rounded-xl" />
-                  <div className="bg-muted/50 aspect-video rounded-xl" />
+                <Calendar className="bg-background dark:text-foreground border rounded-lg" mode="range" />
+                <div className="flex w-full flex-wrap gap-2">
+                  <Badge>Badge</Badge>
+                  <Badge variant="secondary">Secondary</Badge>
+                  <Badge variant="destructive">Destructive</Badge>
+                  <Badge variant="outline">Outline</Badge>
                 </div>
+                <ChartDemo />
               </div>
             </SidebarInset>
           </div>
