@@ -32,7 +32,7 @@ export const ConnectingLines = ({ positions, radius = 0, animationDuration }: Co
             className="text-foreground pointer-events-none"
             style={{
               transition: `all ${animationDuration}ms cubic-bezier(0.4, 0, 0.2, 1)`,
-              opacity: 0.2,
+              opacity: 0.5,
             }}
           />
         </g>

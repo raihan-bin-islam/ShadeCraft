@@ -36,7 +36,7 @@ export const CircularOption = ({
       <div
         className={cn(
           "w-10 h-10 rounded-full shadow-lg flex items-center justify-center cursor-pointer",
-          option.color ?? "bg-slate-400 hover:bg-slate-600"
+          "bg-accent border hover:bg-border"
         )}
         style={{
           transition: `transform ${animationDuration}ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow ${animationDuration}ms ease, background-color ${animationDuration}ms ease`,
@@ -46,7 +46,7 @@ export const CircularOption = ({
         title={option.label}
       >
         <Icon
-          className="text-white"
+          className="text-foreground"
           size={20}
           style={{
             transition: `all ${animationDuration}ms cubic-bezier(0.4, 0, 0.2, 1)`,

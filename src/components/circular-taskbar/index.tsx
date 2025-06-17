@@ -7,6 +7,7 @@ import { useVisibilityToggle } from "@/hooks/use-visibility-toggle";
 import { calculateCircularPositions } from "@/lib/geometry.utils";
 import { StickyTaskbarProps, TaskbarOption } from "@/types/taskbar";
 import React, { useMemo, useCallback } from "react";
+import { AnimatePresence, motion } from "motion/react";
 
 export const StickyTaskbar = ({
   options,
@@ -31,8 +32,8 @@ export const StickyTaskbar = ({
 
   const handleOptionClick = useCallback(
     (option: TaskbarOption) => {
-      if (onClickOption) return onClickOption?.(option);
       if (option.onClick) return option?.onClick();
+      if (onClickOption) return onClickOption?.(option);
     },
     [onClickOption]
   );
@@ -48,30 +49,36 @@ export const StickyTaskbar = ({
   if (!isVisible) return null;
 
   return (
-    <div
-      className="fixed pointer-events-none z-50"
-      data-taskbar-area="true"
-      style={{
-        left: mousePosition.x - 24,
-        top: mousePosition.y - 24,
-        transform: `scale(${isExpanded ? 1 : 0.8})`,
-        transition: "transform 300ms cubic-bezier(0.4, 0, 0.2, 1)",
-        willChange: "transform",
-      }}
-    >
-      <TaskbarButton isExpanded={isExpanded} onExpand={handleExpand} />
+    <AnimatePresence mode="wait">
+      {isVisible ? (
+        <motion.div
+          key={isVisible.toString()}
+          className="fixed pointer-events-none z-50"
+          data-taskbar-area="true"
+          style={{
+            left: mousePosition.x - 24,
+            top: mousePosition.y - 24,
+            transform: `scale(${isExpanded ? 1 : 0.8})`,
+            transition: "transform 300ms cubic-bezier(0.4, 0, 0.2, 1)",
+            willChange: "transform",
+          }}
+          exit={{ opacity: 0, scale: 0 }}
+        >
+          <TaskbarButton isExpanded={isExpanded} onExpand={handleExpand} />
 
-      <ExpandedMenu
-        isExpanded={isExpanded}
-        options={options}
-        positions={circularPositions}
-        radius={radius}
-        centerColor={centerColor}
-        showConnectingLines={showConnectingLines}
-        animationDuration={animationDuration}
-        onCollapse={handleCollapse}
-        onClickOption={handleOptionClick}
-      />
-    </div>
+          <ExpandedMenu
+            isExpanded={isExpanded}
+            options={options}
+            positions={circularPositions}
+            radius={radius}
+            centerColor={centerColor}
+            showConnectingLines={showConnectingLines}
+            animationDuration={animationDuration}
+            onCollapse={handleCollapse}
+            onClickOption={handleOptionClick}
+          />
+        </motion.div>
+      ) : null}
+    </AnimatePresence>
   );
 };
