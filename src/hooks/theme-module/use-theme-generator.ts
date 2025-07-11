@@ -1,11 +1,21 @@
 import { useState, useCallback } from "react";
 import { generateTailwindV4Theme, generateTailwindV4ThemeCollection } from "@/lib/theme-kit/generators/theme";
 import { TailwindV4Theme } from "@/types/theme-kit/theme";
+import { THEME_FEELS_V4 } from "@/config/theme-feels";
+import { TONES } from "@/config/theme-tones";
+import { FONT_OBJECTS } from "@/config/fonts";
 
 export interface UseThemeGeneratorOptions {
   maxStoredThemes?: number;
   onThemeGenerated?: (theme: TailwindV4Theme) => void;
   onThemeSelected?: (theme: TailwindV4Theme) => void;
+}
+
+interface GenerateSingleParams {
+  feelId?: string;
+  toneId?: string;
+  fontClass?: string;
+  delay?: number;
 }
 
 export function useThemeGenerator(options: UseThemeGeneratorOptions = {}) {
@@ -16,11 +26,20 @@ export function useThemeGenerator(options: UseThemeGeneratorOptions = {}) {
   const [isGenerating, setIsGenerating] = useState(false);
 
   const generateSingle = useCallback(
-    async (delay = 300) => {
+    async (params?: GenerateSingleParams) => {
+      const feelId = params?.feelId;
+      const toneId = params?.toneId;
+      const fontClass = params?.fontClass;
+      const delay = params?.delay ?? 300;
+
       setIsGenerating(true);
       await new Promise((resolve) => setTimeout(resolve, delay));
 
-      const theme = generateTailwindV4Theme();
+      const feel = THEME_FEELS_V4.find((item) => item.id === feelId);
+      const tone = TONES.find((item) => item.id === toneId);
+      const font = Object.values(FONT_OBJECTS).find((item) => item.className === fontClass);
+
+      const theme = generateTailwindV4Theme({ feel, tone, font });
 
       setGeneratedThemes((prev) => [theme, ...prev.slice(0, maxStoredThemes - 1)]);
       setCurrentTheme(theme);

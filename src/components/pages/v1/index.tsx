@@ -5,12 +5,12 @@ import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { BrandColorInput } from "@/components/theme/brand-color-input";
-import { ThemeEditor } from "@/components/theme/theme-editor";
+import { BrandColorInput } from "@/components/organisms/theme/brand-color-input";
+import { ThemeEditor } from "@/components/organisms/theme/theme-editor";
 import { ThemePreview } from "@/components/theme/theme-preview";
-import { ThemeSwitcher } from "@/components/theme/theme-switcher";
-import { ThemeAnalyzer } from "@/components/theme/analyzer/theme-analyzer";
-import { ThemeComparison } from "@/components/theme/theme-comparison";
+import { ThemeSwitcher } from "@/components/organisms/theme/theme-switcher";
+import { ThemeAnalyzer } from "@/components/organisms/theme/analyzer/theme-analyzer";
+import { ThemeComparison } from "@/components/organisms/theme/theme-comparison";
 import {
   Palette,
   Wand2,
@@ -26,10 +26,10 @@ import {
   Download,
   Settings,
 } from "lucide-react";
-import { ThemeGeneratorV4 } from "@/components/theme/theme-generator";
+import { ThemeGeneratorV4 } from "@/components/organisms/theme/theme-generator";
 import { TailwindV4Theme } from "@/lib/theme-kit/generators/theme";
 import { ThemeName, themes } from "@/lib/themes";
-import { ThemeShowcase } from "@/components/theme/theme-showcase";
+import { ThemeShowcase } from "@/components/organisms/theme/theme-showcase";
 import { StickyTaskbar } from "@/components/common/sticky-taskbar";
 
 const taskbarOptions = [

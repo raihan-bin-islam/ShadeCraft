@@ -1,8 +1,10 @@
 import { THEME_FEELS_V4 } from "@/config/theme-feels";
+import { TONES } from "@/config/theme-tones";
 import { hexToOklch, oklchToCss, oklchToHsl } from "@/lib/theme-kit/converters";
 import { ensureOklchContrast } from "@/lib/theme-kit/core";
 
 import { adjustOklch, adjustOklchChroma, createOklchShade, createOklchTint } from "@/lib/theme-kit/core/adjustment";
+import { generateBalancedTheme } from "@/lib/theme-kit/palettes/balanced";
 
 import {
   generateBaseOklchColor,
@@ -13,7 +15,7 @@ import {
   generateOklchDarkBackgrounds,
   generateOklchForeground,
   generateOklchSidebarColors,
-} from "@/lib/theme-kit/generators/palette";
+} from "@/lib/theme-kit/palettes/default";
 
 import { randomChoice } from "@/lib/utils";
 
@@ -34,8 +36,16 @@ const groupThemeTokens = (theme: Record<string, string>) => {
   return { light, dark };
 };
 
-export function generateTailwindV4Theme(): TailwindV4Theme {
-  const feel = randomChoice(THEME_FEELS_V4);
+type GenerateThemeParams = {
+  feel?: (typeof THEME_FEELS_V4)[0];
+  tone?: (typeof TONES)[0];
+  font?: (typeof TONES)[0]["fonts"][0];
+};
+
+export function generateTailwindV4Theme(params?: GenerateThemeParams): TailwindV4Theme {
+  const feel = params?.feel ?? randomChoice(THEME_FEELS_V4);
+  const tone = params?.tone ?? randomChoice(TONES);
+  const font = params?.font ?? randomChoice(tone.fonts);
   const harmony = randomChoice<ColorHarmony>([
     "complementary",
     "triadic",
@@ -46,18 +56,33 @@ export function generateTailwindV4Theme(): TailwindV4Theme {
   ]);
 
   const baseColor = generateBaseOklchColor(feel);
-  const palette = generateOklchColorPalette(baseColor, harmony);
+  const randomHue = randomChoice(feel.preferredHues);
 
+  const paletteDefault = generateOklchColorPalette(baseColor, harmony); // This was the main theme before
+  const paletteBalanced = generateBalancedTheme(randomHue); // We have now added a balanced theme palette too
+
+  const paletteBalancedOklch: OKLCH[] = [
+    paletteBalanced.primary,
+    paletteBalanced.secondary,
+    paletteBalanced.accent,
+    paletteBalanced.background,
+  ];
+
+  const palettes = [paletteDefault, paletteBalancedOklch];
+  const palette = randomChoice(palettes); // Finally here we choose between the balanced and default palette randomly
+
+  // Selected Palette
   const primary = palette[0];
   const secondary = palette[1] || adjustOklchChroma(createOklchTint(primary, 20), -0.03);
   const accent = palette[2] || adjustOklchChroma(createOklchShade(primary, 10), 0.02);
+  const background = palette[3] || primary;
 
   const colorNames = ["Crimson", "Azure", "Emerald", "Amber", "Violet", "Coral", "Teal", "Rose", "Sage", "Indigo"];
   const suffixes = ["Dream", "Mist", "Glow", "Bloom", "Zen", "Vibe", "Flow", "Spark", "Aura", "Wave"];
   const themeName = `${randomChoice(colorNames)} ${randomChoice(suffixes)}`;
 
-  const lightBgs = generateOklchBackgrounds(primary);
-  const darkBgs = generateOklchDarkBackgrounds(primary);
+  const lightBgs = generateOklchBackgrounds(background);
+  const darkBgs = generateOklchDarkBackgrounds(background);
 
   const primaryPair = generateOklchContrastPair(primary);
   const secondaryPair = generateOklchContrastPair(secondary);
@@ -67,6 +92,11 @@ export function generateTailwindV4Theme(): TailwindV4Theme {
   const destructiveDark: OKLCH = { h: 0, l: 0.6, c: 0.25 };
 
   const cssVars = {
+    toneId: tone.id,
+    feelId: feel.id,
+    fontFamily: font.className,
+    fontName: font.name,
+    radius: tone.radius,
     background: oklchToCss(lightBgs.background),
     foreground: oklchToCss(generateOklchForeground(lightBgs.background)),
     card: oklchToCss(lightBgs.card),
@@ -87,6 +117,11 @@ export function generateTailwindV4Theme(): TailwindV4Theme {
     input: oklchToCss(lightBgs.input),
     ring: oklchToCss(primary),
 
+    "dark-toneId": tone.id,
+    "dark-feelId": feel.id,
+    "dark-fontFamily": font.className,
+    "dark-fontName": font.name,
+    "dark-radius": tone.radius,
     "dark-background": oklchToCss(darkBgs.background),
     "dark-foreground": oklchToCss(generateOklchForeground(darkBgs.background)),
     "dark-card": oklchToCss(darkBgs.card),
@@ -222,6 +257,7 @@ export function generateTailwindV4Theme(): TailwindV4Theme {
     name: themeName,
     description: feel.description,
     feel: feel.name,
+    tone,
     theme: groupThemeTokens(cssVars),
     cssVars: groupThemeTokens(cssVars),
     hslVars,

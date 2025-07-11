@@ -1,6 +1,6 @@
-import { CircularOption } from "@/components/circular-taskbar/circular-option";
-import { ConnectingLines } from "@/components/circular-taskbar/connecting-line";
-import { TriggerButton } from "@/components/circular-taskbar/trigger-button";
+import { CircularOption } from "@/components/molecules/circular-taskbar/circular-option";
+import { ConnectingLines } from "@/components/molecules/circular-taskbar/connecting-line";
+import { TriggerButton } from "@/components/molecules/circular-taskbar/trigger-button";
 import { CircularPosition, StickyTaskbarProps } from "@/types/taskbar";
 import React from "react";
 

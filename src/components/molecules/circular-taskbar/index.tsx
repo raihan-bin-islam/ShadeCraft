@@ -1,13 +1,13 @@
 "use client";
 
-import { ExpandedMenu } from "@/components/circular-taskbar/expanded-menu";
-import { TaskbarButton } from "@/components/circular-taskbar/taskbar-button";
 import { useMouseTracking } from "@/hooks/use-mouse-tracking";
 import { useVisibilityToggle } from "@/hooks/use-visibility-toggle";
 import { calculateCircularPositions } from "@/lib/geometry.utils";
 import { StickyTaskbarProps, TaskbarOption } from "@/types/taskbar";
 import React, { useMemo, useCallback } from "react";
 import { AnimatePresence, motion } from "motion/react";
+import { TaskbarButton } from "@/components/molecules/circular-taskbar/taskbar-button";
+import { ExpandedMenu } from "@/components/molecules/circular-taskbar/expanded-menu";
 
 export const StickyTaskbar = ({
   options,

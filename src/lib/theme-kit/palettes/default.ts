@@ -207,29 +207,3 @@ export function generateOklchColorPalette(baseColor: OKLCH, harmony: ColorHarmon
       return [baseColor, getOklchComplementary(baseColor)];
   }
 }
-
-// // Generate Beautiful Palette
-// type ThemeTokens = {
-//   primary: string; // HEX
-//   secondary: string;
-//   accent: string;
-//   background: string;
-// };
-
-// type GenerateThemeOptions = {
-//   mode?: "dark" | "light";
-//   baseChroma?: number;
-//   baseLightness?: number;
-// };
-// export function generateThemePalette(seedHue: number, options?: GenerateThemeOptions): ThemeTokens {
-//   const baseHue = seedHue;
-//   const bgLightness = 0.3 + rand(0, 0.05); // for dark themes
-//   const accentDelta = rand(100, 140) * (rand(0, 1) > 0.5 ? 1 : -1);
-
-//   return {
-//     primary: oklch(0.65 + rand(-0.05, 0.05), 0.22 + rand(-0.02, 0.03), baseHue),
-//     secondary: oklch(0.4 + rand(-0.03, 0.03), 0.05 + rand(-0.03, 0.03), baseHue + rand(-15, 15)),
-//     accent: oklch(0.45 + rand(-0.05, 0.05), 0.12 + rand(-0.03, 0.03), baseHue + accentDelta),
-//     background: oklch(bgLightness, 0.02 + rand(0, 0.02), baseHue + rand(-20, 20)),
-//   };
-// }
