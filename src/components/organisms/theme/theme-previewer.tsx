@@ -6,8 +6,8 @@ import { cn } from "@/lib/utils";
 type ThemeObject = Record<string, string>;
 
 interface ThemePreviewerProps {
-  theme: {
-    light: ThemeObject;
+  theme?: {
+    light?: ThemeObject;
     dark?: ThemeObject;
   };
   isDark?: boolean;
@@ -16,9 +16,9 @@ interface ThemePreviewerProps {
 }
 
 export const ThemePreviewer = ({ theme, isDark, children, className }: ThemePreviewerProps) => {
-  const mergedVars = isDark ? theme.dark ?? theme.light : theme.light;
+  const mergedVars = isDark ? theme?.dark ?? theme?.light : theme?.light;
   const cssMapping: Record<string, string> = {};
-  for (const [key, value] of Object.entries(mergedVars)) {
+  for (const [key, value] of Object?.entries(mergedVars ?? {})) {
     cssMapping[`--${key}`] = value;
   }
 

@@ -33,7 +33,7 @@ interface ComboboxInputProps {
   noneLabel?: string;
 }
 
-export function ComboboxInput({ items, groupedItems, value, onChange, placeholder, noneLabel = "None" }: ComboboxInputProps) {
+export function ComboboxInput({ items, groupedItems, value, onChange, placeholder }: ComboboxInputProps) {
   const [open, setOpen] = useState(false);
   const current =
     items?.find((item) => item.value === value) ??
@@ -44,8 +44,13 @@ export function ComboboxInput({ items, groupedItems, value, onChange, placeholde
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="outline" role="combobox" aria-expanded={open} className={cn("min-w-32 justify-between")}>
-          {current?.label ?? noneLabel}
+        <Button
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          className={cn("min-w-32 justify-between", current?.label ? "text-foreground" : "text-muted-foreground/80")}
+        >
+          {current?.label ?? `Select ${placeholder.toLowerCase()}`}
           <ChevronsUpDown className="ml-2 h-4 w-4 opacity-50" />
         </Button>
       </PopoverTrigger>

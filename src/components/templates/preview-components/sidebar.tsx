@@ -1,5 +1,7 @@
+import Calendar27 from "@/components/blocks/calendar-27";
 import { AppSidebar } from "@/components/blocks/sidebar-16/app-sidebar";
 import { SiteHeader } from "@/components/blocks/sidebar-16/site-header";
+import { Logo } from "@/components/icons/Logo";
 import { ChartAreaLegend } from "@/components/templates/preview-components/chart/area-chart-legend";
 import { ChartPieInteractive } from "@/components/templates/preview-components/chart/pie-chart-interactive";
 import { LoginForm } from "@/components/templates/preview-components/form/login-form";
@@ -44,14 +46,15 @@ export const SidebarPreview = () => {
                     <div className="flex items-start gap-5">
                       <div className="flex flex-col h-full space-y-5">
                         <Calendar className="bg-background dark:text-foreground border rounded-lg" mode="range" />
-                        <div className="w-full flex h-full bg-primary rounded-lg items-center justify-center">
-                          <h2 className="flex-1 text-primary-foreground font-bold text-2xl">ShadeCraft</h2>
+                        <div className="p-8.5 w-full flex h-full bg-sidebar rounded-lg items-center justify-center gap-3">
+                          <Logo className="size-8 [&>path:nth-of-type(1)]:fill-primary [&>path:nth-of-type(2)]:fill-secondary [&>path:nth-of-type(3)]:stroke-foreground" />
+                          <h2 className="flex-1 text-primary font-bold text-2xl">ShadeCraft</h2>
                         </div>
                       </div>
-
-                      <div className="min-w-sm">
+                      <div className="min-w-sm h-full">
                         <LoginForm />
                       </div>
+                      <Calendar27 />
                       {/* <div className="w-full bg-red-100"></div> */}
                     </div>
                   </div>

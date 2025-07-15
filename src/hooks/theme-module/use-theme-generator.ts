@@ -4,6 +4,8 @@ import { TailwindV4Theme } from "@/types/theme-kit/theme";
 import { THEME_FEELS_V4 } from "@/config/theme-feels";
 import { TONES } from "@/config/theme-tones";
 import { FONT_OBJECTS } from "@/config/fonts";
+import { useAtom } from "jotai";
+import { currentThemeAtom } from "@/store/theme";
 
 export interface UseThemeGeneratorOptions {
   maxStoredThemes?: number;
@@ -22,7 +24,7 @@ export function useThemeGenerator(options: UseThemeGeneratorOptions = {}) {
   const { maxStoredThemes = 10, onThemeGenerated, onThemeSelected } = options;
 
   const [generatedThemes, setGeneratedThemes] = useState<TailwindV4Theme[]>([]);
-  const [currentTheme, setCurrentTheme] = useState<TailwindV4Theme | undefined>();
+  const [currentTheme, setCurrentTheme] = useAtom<TailwindV4Theme | undefined>(currentThemeAtom);
   const [isGenerating, setIsGenerating] = useState(false);
 
   const generateSingle = useCallback(

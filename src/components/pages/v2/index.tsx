@@ -1,13 +1,12 @@
 "use client";
 
 import { StickyTaskbar } from "@/components/molecules/circular-taskbar";
-import { BrandColorInput } from "@/components/organisms/theme/brand-color-input";
 import { ThemeAnalyzer } from "@/components/organisms/theme/analyzer/theme-analyzer";
+import { BrandColorInput } from "@/components/organisms/theme/brand-color-input";
 import { ThemeComparison } from "@/components/organisms/theme/theme-comparison";
 import { ThemeEditor } from "@/components/organisms/theme/theme-editor";
 import { ThemeShowcase } from "@/components/organisms/theme/theme-showcase";
 import { ThemeSwitcher } from "@/components/organisms/theme/theme-switcher";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TaskbarItemId, taskbarOptions } from "@/data/tabs";
@@ -26,36 +25,20 @@ export const LandingPage = () => {
 
   return (
     <>
-      <div className="min-h-screen bg-background">
+      <div className="min-h-[calc(100dvh-85px)] bg-background">
         <div className="container mx-auto p-4">
-          <div className="text-center space-y-0 mb-2">
-            <h1 className="text-4xl font-bold tracking-tight">Stunning shadcn Themes</h1>
-            <div className="space-y-4">
-              <p className="text-muted-foreground max-w-2xl mx-auto">
-                Create beautiful, accessible themes for your shadcn/ui projects with OKLCH color space
-              </p>
-              <div className="flex justify-center gap-2">
-                <Badge variant="secondary">Tailwind v4 Ready</Badge>
-                <Badge variant="secondary">OKLCH Colors</Badge>
-                <Badge variant="secondary">Real-time Preview</Badge>
-              </div>
-            </div>
-          </div>
-
           <Tabs value={selectedTab} defaultValue="generator" className="space-y-6">
             <TabsContent value="generator" className="m-0">
-              {currentTheme && (
-                <ThemeShowcase
-                  theme={{ light: currentTheme.cssVars.light, dark: currentTheme.cssVars.dark }}
-                  themeName={currentTheme.name}
-                  selectedFont={selectedFont}
-                  selectedTone={selectedTone}
-                  selectedFeel={selectedFeel}
-                  onSelectFont={setSelectedFont}
-                  onSelectTone={setSelectedTone}
-                  onSelectFeel={setSelectedFeel}
-                />
-              )}
+              <ThemeShowcase
+                theme={{ light: currentTheme?.cssVars?.light, dark: currentTheme?.cssVars?.dark }}
+                themeName={currentTheme?.name}
+                selectedFont={selectedFont}
+                selectedTone={selectedTone}
+                selectedFeel={selectedFeel}
+                onSelectFont={setSelectedFont}
+                onSelectTone={setSelectedTone}
+                onSelectFeel={setSelectedFeel}
+              />
             </TabsContent>
 
             <TabsContent value="themes" className="space-y-6">

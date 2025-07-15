@@ -1,22 +1,25 @@
 "use client";
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Code, Moon, Sun } from "lucide-react";
-import { FONT_OBJECTS } from "@/config/fonts";
-import { TONES } from "@/config/theme-tones";
-import { THEME_FEELS_V4 } from "@/config/theme-feels";
-import { cn } from "@/lib/utils";
 import { ComboboxInput, ComboboxItem, GroupedComboboxItem } from "@/components/atoms/combobox-input";
+import { ShinyButton } from "@/components/magicui/shiny-button";
 import { ThemePreviewer } from "@/components/organisms/theme/theme-previewer";
+import ClickSpark from "@/components/react-bits/ClickSpark";
 import { SidebarPreview } from "@/components/templates/preview-components/sidebar";
+import { Button } from "@/components/ui/button";
+import { FONT_OBJECTS } from "@/config/fonts";
+import { THEME_FEELS_V4 } from "@/config/theme-feels";
+import { TONES } from "@/config/theme-tones";
+import { useThemeGenerator } from "@/hooks/theme-module/use-theme-generator";
+import { cn } from "@/lib/utils";
+import { Code2, Moon, Sparkles, Sun } from "lucide-react";
+import { useState } from "react";
 
 export type ThemeShowcaseProps = {
-  theme: {
-    light: Record<string, string>;
-    dark: Record<string, string>;
+  theme?: {
+    light?: Record<string, string>;
+    dark?: Record<string, string>;
   };
-  themeName: string;
+  themeName?: string;
   selectedFont?: string;
   selectedTone?: string;
   selectedFeel?: string;
@@ -36,10 +39,11 @@ export function ThemeShowcase({
   onSelectFeel = () => {},
 }: ThemeShowcaseProps) {
   const [isDark, setIsDark] = useState(false);
+  const { generateSingle } = useThemeGenerator();
 
-  const fontClass = selectedFont ?? theme.light.fontFamily ?? "";
-  const toneId = selectedTone ?? theme.light.toneId ?? "";
-  const feelId = selectedFeel ?? theme.light.feelId ?? "";
+  const fontClass = theme?.light?.fontFamily ?? "";
+  const toneId = theme?.light?.toneId ?? "";
+  const feelId = theme?.light?.feelId ?? "";
 
   const fontName = Object.values(FONT_OBJECTS).find((item) => item.className === fontClass)?.name ?? "-";
   const toneName = TONES.find((t) => t.id === toneId)?.name ?? "-";
@@ -90,11 +94,11 @@ export function ThemeShowcase({
             <p className={cn("text-sm", fontClass)}>
               <span className="font-medium text-xs text-muted-foreground">Font:</span> {fontName}
             </p>
-            <div className="h-2 w-2 bg-border rounded-full" />
+            <Separator />
             <p className="text-sm">
               <span className="text-xs text-muted-foreground">Tone:</span> {toneName}
             </p>
-            <div className="h-2 w-2 bg-border rounded-full" />
+            <Separator />
             <p className="text-sm">
               <span className="text-xs text-muted-foreground">Feel:</span> {feelName}
             </p>
@@ -103,12 +107,18 @@ export function ThemeShowcase({
 
         {/* Controls */}
         <div className="flex items-center gap-3">
-          <ComboboxInput groupedItems={fontGroups} value={fontClass} onChange={onSelectFont} placeholder="Font" />
-          <ComboboxInput items={toneItems} value={toneId} onChange={onSelectTone} placeholder="Tone" />
-          <ComboboxInput items={feelItems} value={feelId} onChange={onSelectFeel} placeholder="Feel" />
-          <Button variant="outline" size="icon">
-            <Code />
-          </Button>
+          <ComboboxInput groupedItems={fontGroups} value={selectedFont ?? ""} onChange={onSelectFont} placeholder="Font" />
+          <ComboboxInput items={toneItems} value={selectedTone ?? ""} onChange={onSelectTone} placeholder="Tone" />
+          <ComboboxInput items={feelItems} value={selectedFeel ?? ""} onChange={onSelectFeel} placeholder="Feel" />
+          <ShinyButton onClick={() => generateSingle({ feelId: selectedFeel, fontClass: selectedFont, toneId: selectedTone })}>
+            <Sparkles /> Generate
+          </ShinyButton>
+          <Separator />
+          <ClickSpark sparkColor="#9AE600" sparkSize={10} sparkRadius={15} sparkCount={8} duration={400}>
+            <Button variant="outline" size="icon" className="active:scale-95">
+              <Code2 />
+            </Button>
+          </ClickSpark>
           <Button variant="outline" size="icon" onClick={() => setIsDark(!isDark)}>
             {isDark ? <Moon /> : <Sun />}
           </Button>
@@ -124,3 +134,5 @@ export function ThemeShowcase({
     </main>
   );
 }
+
+const Separator = () => <div className="h-4 w-px bg-muted-foreground/30 shrink-0" />;

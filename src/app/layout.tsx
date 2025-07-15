@@ -1,10 +1,10 @@
-import type React from "react";
+import { Providers } from "@/components/atoms/providers";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Hanken_Grotesk } from "next/font/google";
+import type React from "react";
 import "./globals.css";
-import { CustomThemeProvider } from "@/components/organisms/theme/custom-theme-provider";
 
-const inter = Inter({ subsets: ["latin"] });
+const display = Hanken_Grotesk({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Beautiful shadcn Themes",
@@ -18,8 +18,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <CustomThemeProvider defaultTheme="aurora">{children}</CustomThemeProvider>
+      <body className={display.className}>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
