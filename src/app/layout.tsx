@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Hanken_Grotesk } from "next/font/google";
 import type React from "react";
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/next";
 
 const display = Hanken_Grotesk({ subsets: ["latin"] });
 
@@ -20,6 +21,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={display.className}>
         <Providers>{children}</Providers>
+        <Analytics />
       </body>
     </html>
   );
