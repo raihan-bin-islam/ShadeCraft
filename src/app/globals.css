@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import "tw-animate-css";
+/* @import "tw-animate-css"; */
 
 @custom-variant dark (&:is(.dark *));
 
@@ -37,13 +37,49 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  /* Custom Colors */
+  --color-brand-50: #f7f9ed;
+  --color-brand-100: #ecf1d0;
+  --color-brand-200: #dde4a4;
+  --color-brand-300: #cdd470;
+  --color-brand-400: #c6ca53;
+  --color-brand-500: #b7b63b;
+  --color-brand-600: #9e9430;
+  --color-brand-700: #7f7029;
+  --color-brand-800: #6a5a29;
+  --color-brand-900: #5c4c27;
+  --color-brand-950: #352a13;
+
+  --color-brand-secondary-50: #f5f5f6;
+  --color-brand-secondary-100: #e6e6e7;
+  --color-brand-secondary-200: #d0cfd2;
+  --color-brand-secondary-300: #afadb3;
+  --color-brand-secondary-400: #86848c;
+  --color-brand-secondary-500: #6b6971;
+  --color-brand-secondary-600: #5c5a60;
+  --color-brand-secondary-700: #555358;
+  --color-brand-secondary-800: #454347;
+  --color-brand-secondary-900: #3d3b3e;
+  --color-brand-secondary-950: #262527;
+
+  /* Radius */
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  /* Animations */
+  --animate-shine: shine 5s linear infinite;
+  @keyframes shine {
+    0% {
+      background-position: 100%;
+    }
+    100% {
+      background-position: -100%;
+    }
+  }
 }
 
-/* :root {
+:root {
   --radius: 0.65rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -111,90 +147,6 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
-} */
-:root {
-  --radius: 0.65rem;
-
-  --background: oklch(0.95 0.05 120); /* very pale moss */
-  --foreground: oklch(0.25 0.1 130); /* dark fern green */
-
-  --card: oklch(0.97 0.06 125);
-  --card-foreground: var(--foreground);
-
-  --popover: oklch(0.97 0.05 115);
-  --popover-foreground: var(--foreground);
-
-  --secondary: oklch(0.65 0.22 140); /* soft pine green */
-  --secondary-foreground: oklch(0.97 0.02 140);
-
-  --muted: oklch(0.9 0.04 120);
-  --muted-foreground: oklch(0.3 0.1 125);
-
-  --accent: oklch(0.7 0.35 90); /* leafy lime */
-  --accent-foreground: oklch(0.95 0.02 90);
-
-  --destructive: oklch(0.6 0.28 20); /* muted berry */
-  --destructive-foreground: oklch(0.95 0.02 20);
-
-  --border: oklch(0.85 0.03 120);
-  --input: oklch(0.94 0.04 120);
-  --ring: oklch(0.65 0.22 140);
-
-  --chart-1: oklch(0.6 0.3 90);
-  --chart-2: oklch(0.65 0.25 200);
-  --chart-3: oklch(0.55 0.2 250);
-  --chart-4: oklch(0.75 0.3 100);
-  --chart-5: oklch(0.7 0.28 60);
-
-  --sidebar: oklch(0.95 0.04 125);
-  --sidebar-foreground: var(--foreground);
-  --sidebar-primary: var(--secondary);
-  --sidebar-primary-foreground: var(--secondary-foreground);
-  --sidebar-accent: var(--muted);
-  --sidebar-accent-foreground: var(--muted-foreground);
-  --sidebar-border: oklch(0.85 0.04 120);
-  --sidebar-ring: oklch(0.65 0.25 140);
-}
-
-.dark {
-  --background: oklch(0.14 0.1 120);
-  --foreground: oklch(0.9 0.05 120);
-  --card: oklch(0.28 0.08 125);
-  --card-foreground: var(--foreground);
-
-  --popover: oklch(0.28 0.1 115);
-  --popover-foreground: var(--foreground);
-
-  --secondary: oklch(0.75 0.3 140);
-  --secondary-foreground: oklch(0.15 0.06 140);
-
-  --muted: oklch(0.32 0.08 120);
-  --muted-foreground: oklch(0.7 0.12 125);
-
-  --accent: oklch(0.7 0.4 90);
-  --accent-foreground: oklch(0.15 0.06 90);
-
-  --destructive: oklch(0.8 0.32 20);
-  --destructive-foreground: oklch(0.15 0.05 20);
-
-  --border: oklch(0.3 0.06 120 / 50%);
-  --input: oklch(0.25 0.08 120 / 40%);
-  --ring: oklch(0.6 0.25 140);
-
-  --chart-1: oklch(0.6 0.34 90);
-  --chart-2: oklch(0.65 0.28 200);
-  --chart-3: oklch(0.55 0.22 250);
-  --chart-4: oklch(0.75 0.3 100);
-  --chart-5: oklch(0.7 0.28 60);
-
-  --sidebar: oklch(0.28 0.07 125);
-  --sidebar-foreground: var(--foreground);
-  --sidebar-primary: var(--secondary);
-  --sidebar-primary-foreground: var(--secondary-foreground);
-  --sidebar-accent: var(--muted);
-  --sidebar-accent-foreground: var(--muted-foreground);
-  --sidebar-border: oklch(0.3 0.08 120 / 40%);
-  --sidebar-ring: oklch(0.6 0.25 140);
 }
 
 @layer base {
