@@ -10,8 +10,9 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
 import { Palette, Eye, Zap, Info, CheckCircle, AlertTriangle, Monitor, Smartphone } from "lucide-react";
 import { themes } from "@/lib/themes";
-import { compareColors, legacyHslThemes, type ColorComparison } from "@/lib/theme-kit/core/color-comparison";
+import { compareColors, legacyHslThemes } from "@/lib/theme-kit/core/color-comparison";
 import { cn } from "@/lib/utils";
+import { ColorComparison } from "@/types/theme-kit";
 
 export function ThemeComparison() {
   const [selectedTheme, setSelectedTheme] = useState<string>("aurora");
