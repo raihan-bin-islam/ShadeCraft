@@ -1,4 +1,3 @@
-import { OKLCH } from "@/types/theme-kit";
 import { ThemeTokens } from "@/types/theme-kit/palette";
 import Color from "colorjs.io";
 
@@ -8,15 +7,6 @@ function rand(min: number, max: number): number {
 
 function clampHue(h: number): number {
   return ((h % 360) + 360) % 360;
-}
-
-function extractOKLCH(color: Color): OKLCH {
-  const [l, c, h] = color.oklch;
-  return {
-    l: +l.toFixed(4),
-    c: +c.toFixed(4),
-    h: +clampHue(h).toFixed(2),
-  };
 }
 
 export function generateBalancedTheme(seedHue: number): ThemeTokens {
@@ -33,9 +23,9 @@ export function generateBalancedTheme(seedHue: number): ThemeTokens {
   const background = new Color("oklch", [bgLightness, 0.02 + rand(0, 0.02), clampHue(baseHue + rand(-20, 20))]);
 
   return {
-    primary: extractOKLCH(primary),
-    secondary: extractOKLCH(secondary),
-    accent: extractOKLCH(accent),
-    background: extractOKLCH(background),
+    primary: primary,
+    secondary: secondary,
+    accent: accent,
+    background: background,
   };
 }

@@ -2,16 +2,27 @@
 
 import { ComboboxInput, ComboboxItem, GroupedComboboxItem } from "@/components/atoms/combobox-input";
 import { ShinyButton } from "@/components/magicui/shiny-button";
+import { ThemeEditor } from "@/components/organisms/theme/theme-editor";
 import { ThemePreviewer } from "@/components/organisms/theme/theme-previewer";
 import ClickSpark from "@/components/react-bits/ClickSpark";
-import { SidebarPreview } from "@/components/templates/preview-components/sidebar";
+import { InboxPreview } from "@/components/templates/preview-components/inbox";
 import { Button } from "@/components/ui/button";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { FONT_OBJECTS } from "@/config/fonts";
 import { THEME_FEELS_V4 } from "@/config/theme-feels";
 import { TONES } from "@/config/theme-tones";
 import { useThemeGenerator } from "@/hooks/theme-module/use-theme-generator";
 import { cn } from "@/lib/utils";
-import { Code2, Moon, Sparkles, Sun } from "lucide-react";
+import { Code2, Edit, Moon, Sparkles, Sun } from "lucide-react";
 import { useState } from "react";
 
 export type ThemeShowcaseProps = {
@@ -114,6 +125,26 @@ export function ThemeShowcase({
             <Sparkles /> Generate
           </ShinyButton>
           <Separator />
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="outline" size="icon">
+                <Edit />
+              </Button>
+            </SheetTrigger>
+            <SheetContent>
+              <SheetHeader>
+                <SheetTitle>Edit theme</SheetTitle>
+                <SheetDescription>Make changes to your theme here. Click save when you&apos;re done.</SheetDescription>
+              </SheetHeader>
+              <ThemeEditor theme={theme} onThemeChange={() => {}} themeName="" />
+              <SheetFooter className="grid grid-cols-2">
+                <Button type="submit">Save changes</Button>
+                <SheetClose asChild>
+                  <Button variant="outline">Close</Button>
+                </SheetClose>
+              </SheetFooter>
+            </SheetContent>
+          </Sheet>
           <ClickSpark sparkColor="#9AE600" sparkSize={10} sparkRadius={15} sparkCount={8} duration={400}>
             <Button variant="outline" size="icon" className="active:scale-95">
               <Code2 />
@@ -128,7 +159,7 @@ export function ThemeShowcase({
       {/* Preview */}
       <ThemePreviewer theme={theme} isDark={isDark}>
         <div className="relative overflow-hidden rounded-xl border">
-          <SidebarPreview />
+          <InboxPreview />
         </div>
       </ThemePreviewer>
     </main>

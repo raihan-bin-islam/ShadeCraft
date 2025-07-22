@@ -1,10 +1,10 @@
-import { HSL, OKLCH } from "@/types/theme-kit/color-space";
+import { HSL } from "@/types/theme-kit/color-space";
+import Color from "colorjs.io";
 
-export function oklchToCss(oklch: OKLCH): string {
-  if (oklch.a !== undefined && oklch.a < 1) {
-    return `oklch(${oklch.l.toFixed(3)} ${oklch.c.toFixed(3)} ${oklch.h.toFixed(1)} / ${(oklch.a * 100).toFixed(0)}%)`;
-  }
-  return `oklch(${oklch.l.toFixed(3)} ${oklch.c.toFixed(3)} ${oklch.h.toFixed(1)})`;
+export function oklchToCss(oklch: Pick<Color, "l" | "c" | "h">): string {
+  const color = new Color("oklch", [oklch.l, oklch.c, oklch.h]);
+  const safe = color.toGamut({ method: "clip", space: "srgb" });
+  return safe.toString({ format: "css" });
 }
 
 export function hslToCss(hsl: HSL): string {

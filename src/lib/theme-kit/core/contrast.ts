@@ -1,13 +1,15 @@
-import { oklchToRgb } from "@/lib/theme-kit/converters";
 import { parseOklchString } from "@/lib/theme-kit/core/parser";
+import { binarySearch } from "@/lib/utils";
 import { TailwindV4Theme } from "@/types/theme-kit";
-import { OKLCH } from "@/types/theme-kit/color-space";
 import { ContrastIssue } from "@/types/theme-kit/contrast";
+import Color from "colorjs.io";
 
+/**
+ * Validate theme contrast pairs for WCAG compliance using colorjs contrast method
+ */
 export function validateThemeContrast(theme: TailwindV4Theme["theme"]["light"]): ContrastIssue[] {
   const issues: ContrastIssue[] = [];
 
-  // Define color pairs that should have good contrast
   const contrastPairs = [
     { fg: "foreground", bg: "background", name: "body text" },
     { fg: "primary-foreground", bg: "primary", name: "primary button" },
@@ -28,7 +30,10 @@ export function validateThemeContrast(theme: TailwindV4Theme["theme"]["light"]):
         const bgOklch = parseOklchString(bgValue);
 
         if (fgOklch && bgOklch) {
-          const contrast = getContrastRatio(fgOklch, bgOklch);
+          const fgColor = new Color("oklch", [fgOklch.l, fgOklch.c, fgOklch.h]);
+          const bgColor = new Color("oklch", [bgOklch.l, bgOklch.c, bgOklch.h]);
+
+          const contrast = fgColor.contrast(bgColor, "WCAG21");
 
           if (contrast < 4.5) {
             issues.push({
@@ -48,62 +53,124 @@ export function validateThemeContrast(theme: TailwindV4Theme["theme"]["light"]):
   return issues;
 }
 
-export function isOklchLight(oklch: OKLCH): boolean {
-  return oklch.l > 0.5;
+/**
+ * Check if an OKLCH color is light based on lightness channel
+ */
+export function isOklchLight(color: Color): boolean {
+  // color.oklch returns [l, c, h], l is lightness
+  const [l] = color.oklch;
+  return l > 0.5;
 }
 
-export function ensureOklchContrast(foreground: OKLCH, background: OKLCH, minContrast = 5): OKLCH {
-  const adjustedForeground = { ...foreground };
+/**
+ * Adjust foreground color to ensure minimum contrast against background
+ */
+export function ensureOklchContrast(foreground: Color, background: Color, minContrast = 5): Color {
+  const maxAttempts = 20;
+  const delta = 0.05;
+  let adjusted = foreground.clone();
 
-  // Simple contrast approximation using lightness difference
-  // For production, you'd want to convert to RGB and use proper contrast calculation
-  for (let attempts = 0; attempts < 20; attempts++) {
-    const lightnessDiff = Math.abs(adjustedForeground.l - background.l);
-    const approximateContrast = lightnessDiff * 20; // Rough approximation
-
-    if (approximateContrast >= minContrast / 2) {
-      // Adjusted threshold for OKLCH
-      return adjustedForeground;
+  for (let i = 0; i < maxAttempts; i++) {
+    const contrast = adjusted.contrast(background, "WCAG21");
+    if (contrast >= minContrast) {
+      return adjusted;
     }
+    const [l, c, h] = adjusted.oklch;
+    const isBgLight = isOklchLight(background);
 
-    // Adjust lightness for better contrast
-    if (isOklchLight(background)) {
-      adjustedForeground.l = Math.max(0, adjustedForeground.l - 0.05);
-    } else {
-      adjustedForeground.l = Math.min(1, adjustedForeground.l + 0.05);
-    }
+    // Adjust lightness opposite direction of bg to increase contrast
+    const newL = isBgLight ? Math.max(0, l - delta) : Math.min(1, l + delta);
+    adjusted = new Color("oklch", [newL, c, h]);
   }
 
-  // Fallback to high contrast
-  if (isOklchLight(background)) {
-    return { h: background.h, c: 0.01, l: 0.1 };
+  // If no suitable contrast found, fallback to black or white foreground
+  const white = new Color("#fff");
+  const black = new Color("#000");
+  const whiteContrast = white.contrast(background, "WCAG21");
+  const blackContrast = black.contrast(background, "WCAG21");
+  return whiteContrast > blackContrast ? white : black;
+}
+
+/**
+ * Check if foreground/background colors have good contrast according to WCAG 2.1
+ */
+export function hasGoodContrast(foreground: Color, background: Color): boolean {
+  return foreground.contrast(background, "WCAG21") >= 4.5;
+}
+
+/**
+ * Generates a readable contrasting color from a background (returns Colors)
+ */
+export function getReadableForeground(
+  background: Color,
+  {
+    desiredContrast = 4.5,
+    direction = "auto",
+    tolerance = 0.005,
+    maxIterations = 20,
+  }: {
+    desiredContrast?: number;
+    direction?: "lighter" | "darker" | "auto";
+    tolerance?: number;
+    maxIterations?: number;
+  } = {}
+): { background: Color; foreground: Color } {
+  const oklch = background.oklch;
+  if (!oklch || oklch.length < 3) {
+    throw new Error(`Invalid OKLCH color input ${oklch}`);
+  }
+  const [l, c, h] = oklch;
+  console.log({ readableFg: { l, c, h } });
+
+  const isDark = l < 0.5;
+  const searchDirection = direction === "auto" ? (isDark ? "lighter" : "darker") : direction;
+
+  // let low = 0;
+  // let high = 1;
+
+  const range = 0.4;
+  let low = Math.max(0, l - (searchDirection === "darker" ? range : 0));
+  let high = Math.min(1, l + (searchDirection === "lighter" ? range : 0));
+
+  if (searchDirection === "lighter") {
+    low = l;
   } else {
-    return { h: background.h, c: 0.01, l: 0.98 };
+    high = l;
   }
-}
 
-export function getRelativeLuminance(oklch: OKLCH): number {
-  const rgb = oklchToRgb(oklch);
-  const rsRGB = rgb.r / 255;
-  const gsRGB = rgb.g / 255;
-  const bsRGB = rgb.b / 255;
+  const bestLightness = binarySearch(
+    low,
+    high,
+    (testL) => {
+      // Clamp testL just in case
+      const clampedL = Math.min(1, Math.max(0, testL));
+      // const testColor = new Color("oklch", [clampedL, c, h]);
+      const testColor = new Color("oklch", [clampedL, Math.max(0, c - 0.02), h]);
 
-  const r = rsRGB <= 0.03928 ? rsRGB / 12.92 : Math.pow((rsRGB + 0.055) / 1.055, 2.4);
-  const g = gsRGB <= 0.03928 ? gsRGB / 12.92 : Math.pow((gsRGB + 0.055) / 1.055, 2.4);
-  const b = bsRGB <= 0.03928 ? bsRGB / 12.92 : Math.pow((bsRGB + 0.055) / 1.055, 2.4);
+      if (!testColor.inGamut("srgb")) return false;
 
-  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
-}
+      const contrast = testColor.contrast(background, "WCAG21");
+      return contrast >= desiredContrast;
+    },
+    { tolerance, maxIterations }
+  );
 
-export function getContrastRatio(color1: OKLCH, color2: OKLCH): number {
-  const l1 = getRelativeLuminance(color1);
-  const l2 = getRelativeLuminance(color2);
-  const lighter = Math.max(l1, l2);
-  const darker = Math.min(l1, l2);
-  return (lighter + 0.05) / (darker + 0.05);
-}
+  if (bestLightness === null || bestLightness === undefined) {
+    // fallback to black or white
+    const white = new Color("#fff");
+    const black = new Color("#000");
+    const whiteContrast = white.contrast(background, "WCAG21");
+    const blackContrast = black.contrast(background, "WCAG21");
+    const bestFallback = whiteContrast > blackContrast ? white : black;
+    const bestFallbackOklch = bestFallback.to("oklch"); // ✅ convert to OKLCH
 
-// Check if contrast meets WCAG AA standards (4.5:1 for normal text)
-export function hasGoodContrast(foreground: OKLCH, background: OKLCH): boolean {
-  return getContrastRatio(foreground, background) >= 4.5;
+    console.log({ bestFallback: bestFallbackOklch });
+
+    return { background, foreground: bestFallbackOklch };
+  }
+
+  const bestColor = new Color("oklch", [bestLightness, c, h]);
+  console.log({ bestColor: bestColor });
+
+  return { background, foreground: bestColor };
 }

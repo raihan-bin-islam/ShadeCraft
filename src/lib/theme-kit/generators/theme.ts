@@ -1,13 +1,14 @@
 import { THEME_FEELS_V4 } from "@/config/theme-feels";
 import { TONES } from "@/config/theme-tones";
 import { hexToOklch, oklchToCss, oklchToHsl } from "@/lib/theme-kit/converters";
-import { ensureOklchContrast } from "@/lib/theme-kit/core";
+import { ensureOklchContrast, getReadableForeground } from "@/lib/theme-kit/core";
 
 import { adjustOklch, adjustOklchChroma, createOklchShade, createOklchTint } from "@/lib/theme-kit/core/adjustment";
 import { generateBalancedTheme } from "@/lib/theme-kit/palettes/balanced";
 
 import {
   generateBaseOklchColor,
+  generateDestructiveColor,
   generateOklchBackgrounds,
   generateOklchChartColors,
   generateOklchColorPalette,
@@ -17,9 +18,10 @@ import {
   generateOklchSidebarColors,
 } from "@/lib/theme-kit/palettes/default";
 
-import { randomChoice } from "@/lib/utils";
+import { randomChoice, weightedChoice } from "@/lib/utils";
 
 import type { ColorHarmony, OKLCH, TailwindV4Theme } from "@/types/theme-kit";
+import Color from "colorjs.io";
 
 const groupThemeTokens = (theme: Record<string, string>) => {
   const light: Record<string, string> = {};
@@ -61,7 +63,7 @@ export function generateTailwindV4Theme(params?: GenerateThemeParams): TailwindV
   const paletteDefault = generateOklchColorPalette(baseColor, harmony); // This was the main theme before
   const paletteBalanced = generateBalancedTheme(randomHue); // We have now added a balanced theme palette too
 
-  const paletteBalancedOklch: OKLCH[] = [
+  const paletteBalancedOklch: Color[] = [
     paletteBalanced.primary,
     paletteBalanced.secondary,
     paletteBalanced.accent,
@@ -75,7 +77,7 @@ export function generateTailwindV4Theme(params?: GenerateThemeParams): TailwindV
   const primary = palette[0];
   const secondary = palette[1] || adjustOklchChroma(createOklchTint(primary, 20), -0.03);
   const accent = palette[2] || adjustOklchChroma(createOklchShade(primary, 10), 0.02);
-  const background = palette[3] || primary;
+  const background = palette[3] || secondary;
 
   const colorNames = ["Crimson", "Azure", "Emerald", "Amber", "Violet", "Coral", "Teal", "Rose", "Sage", "Indigo"];
   const suffixes = ["Dream", "Mist", "Glow", "Bloom", "Zen", "Vibe", "Flow", "Spark", "Aura", "Wave"];
@@ -84,12 +86,14 @@ export function generateTailwindV4Theme(params?: GenerateThemeParams): TailwindV
   const lightBgs = generateOklchBackgrounds(background);
   const darkBgs = generateOklchDarkBackgrounds(background);
 
-  const primaryPair = generateOklchContrastPair(primary);
-  const secondaryPair = generateOklchContrastPair(secondary);
-  const accentPair = generateOklchContrastPair(accent);
+  const primaryPair = getReadableForeground(primary);
+  console.log({ primaryPair });
 
-  const destructive: OKLCH = { h: 0, l: 0.55, c: 0.22 }; // Red in OKLCH
-  const destructiveDark: OKLCH = { h: 0, l: 0.6, c: 0.25 };
+  const secondaryPair = getReadableForeground(secondary);
+  const accentPair = getReadableForeground(accent);
+
+  const destructive = generateDestructiveColor(); // Red in OKLCH
+  const destructiveDark = new Color("oklch", [Math.min(1, destructive.l + 0.05), destructive.c, destructive.h]);
 
   const cssVars = {
     toneId: tone.id,
@@ -159,8 +163,20 @@ export function generateTailwindV4Theme(params?: GenerateThemeParams): TailwindV
   });
   Object.assign(cssVars, darkChartVars);
 
+  const lightSidebarBase = [lightBgs.background, accentPair.foreground, secondaryPair.foreground, primaryPair.foreground];
+  const darkSidebarBase = [darkBgs.background, accentPair.background, secondaryPair.background, primaryPair.background];
+
+  const totalWeight = 100;
+  const mostDesiredBgWeight = 80;
+  const indicesWithWeight = lightSidebarBase.map((_, item, arr) => ({
+    item,
+    weight: item === 0 ? mostDesiredBgWeight : (totalWeight - mostDesiredBgWeight) / arr.length,
+  }));
+
+  const chosenIndex = weightedChoice(indicesWithWeight);
+
   // Add sidebar colors (light mode) - create subtle lightness difference for better contrast
-  const lightSidebarBg = adjustOklch(lightBgs.background, { lightness: -0.02 }); // Slightly darker than main background
+  const lightSidebarBg = adjustOklch(lightSidebarBase[chosenIndex], { lightness: -0.02 }); // Slightly darker than main background
   const sidebarColors = generateOklchSidebarColors(
     lightSidebarBg,
     generateOklchForeground(lightSidebarBg),
@@ -171,7 +187,7 @@ export function generateTailwindV4Theme(params?: GenerateThemeParams): TailwindV
   Object.assign(cssVars, sidebarColors);
 
   // Add dark mode sidebar colors - create subtle lightness difference for better contrast
-  const darkSidebarBg = adjustOklch(darkBgs.background, { lightness: 0.1 }); // Slightly lighter than main background
+  const darkSidebarBg = adjustOklch(darkSidebarBase[chosenIndex], { lightness: 0.1 }); // Slightly lighter than main background
   const darkSidebarColors = generateOklchSidebarColors(
     darkSidebarBg,
     generateOklchForeground(darkSidebarBg),
@@ -290,77 +306,4 @@ export function generateTailwindV4ThemeCollection(count = 5): TailwindV4Theme[] 
   }
 
   return themes;
-}
-
-export function generateThemeFromBrandColors(primary: string, secondary?: string, accent?: string) {
-  const primaryOklch = hexToOklch(primary);
-  const secondaryOklch = secondary
-    ? hexToOklch(secondary)
-    : {
-        l: primaryOklch.l * 0.9,
-        c: primaryOklch.c * 0.7,
-        h: (primaryOklch.h + 30) % 360,
-      };
-  const accentOklch = accent
-    ? hexToOklch(accent)
-    : {
-        l: primaryOklch.l * 1.1,
-        c: primaryOklch.c * 0.8,
-        h: (primaryOklch.h + 180) % 360,
-      };
-
-  return {
-    light: {
-      background: { l: 0.98, c: 0.003, h: primaryOklch.h },
-      foreground: { l: 0.15, c: 0.02, h: primaryOklch.h },
-      card: { l: 0.99, c: 0.002, h: primaryOklch.h },
-      cardForeground: { l: 0.15, c: 0.02, h: primaryOklch.h },
-      popover: { l: 0.99, c: 0.002, h: primaryOklch.h },
-      popoverForeground: { l: 0.15, c: 0.02, h: primaryOklch.h },
-      primary: primaryOklch,
-      primaryForeground: { l: 0.98, c: 0.005, h: 0 },
-      secondary: secondaryOklch,
-      secondaryForeground: { l: 0.15, c: 0.02, h: 0 },
-      muted: { l: 0.95, c: 0.01, h: primaryOklch.h },
-      mutedForeground: { l: 0.55, c: 0.02, h: primaryOklch.h },
-      accent: accentOklch,
-      accentForeground: { l: 0.15, c: 0.02, h: 0 },
-      destructive: { l: 0.577, c: 0.245, h: 27.325 },
-      destructiveForeground: { l: 0.98, c: 0.005, h: 0 },
-      border: { l: 0.92, c: 0.01, h: primaryOklch.h },
-      input: { l: 0.92, c: 0.01, h: primaryOklch.h },
-      ring: primaryOklch,
-      chart1: primaryOklch,
-      chart2: secondaryOklch,
-      chart3: accentOklch,
-      chart4: { l: 0.828, c: 0.189, h: 84.429 },
-      chart5: { l: 0.769, c: 0.188, h: 70.08 },
-    },
-    dark: {
-      background: { l: 0.14, c: 0.02, h: primaryOklch.h },
-      foreground: { l: 0.98, c: 0.005, h: primaryOklch.h },
-      card: { l: 0.16, c: 0.02, h: primaryOklch.h },
-      cardForeground: { l: 0.98, c: 0.005, h: primaryOklch.h },
-      popover: { l: 0.16, c: 0.02, h: primaryOklch.h },
-      popoverForeground: { l: 0.98, c: 0.005, h: primaryOklch.h },
-      primary: { ...primaryOklch, l: Math.min(0.9, primaryOklch.l * 1.2) },
-      primaryForeground: { l: 0.16, c: 0.02, h: primaryOklch.h },
-      secondary: { l: 0.269, c: 0.05, h: secondaryOklch.h },
-      secondaryForeground: { l: 0.98, c: 0.005, h: primaryOklch.h },
-      muted: { l: 0.269, c: 0.02, h: primaryOklch.h },
-      mutedForeground: { l: 0.708, c: 0.02, h: primaryOklch.h },
-      accent: { ...accentOklch, l: Math.min(0.8, accentOklch.l * 0.8) },
-      accentForeground: { l: 0.16, c: 0.02, h: primaryOklch.h },
-      destructive: { l: 0.396, c: 0.141, h: 25.723 },
-      destructiveForeground: { l: 0.637, c: 0.237, h: 25.331 },
-      border: { l: 0.269, c: 0.02, h: primaryOklch.h },
-      input: { l: 0.269, c: 0.02, h: primaryOklch.h },
-      ring: { ...primaryOklch, l: Math.max(0.2, primaryOklch.l * 0.6) },
-      chart1: { ...primaryOklch, l: Math.max(0.2, primaryOklch.l * 0.8) },
-      chart2: { ...secondaryOklch, l: Math.max(0.2, secondaryOklch.l * 0.9) },
-      chart3: accentOklch,
-      chart4: { l: 0.627, c: 0.265, h: 303.9 },
-      chart5: { l: 0.645, c: 0.246, h: 16.439 },
-    },
-  };
 }
