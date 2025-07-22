@@ -107,3 +107,62 @@ export function getContrastRatio(color1: OKLCH, color2: OKLCH): number {
 export function hasGoodContrast(foreground: OKLCH, background: OKLCH): boolean {
   return getContrastRatio(foreground, background) >= 4.5;
 }
+
+import Color from "colorjs.io";
+
+/**
+ * Generates a readable contrasting color from a background
+ */
+export function getReadableForeground(
+  backgroundInput: OKLCH,
+  {
+    desiredContrast = 4.5,
+    direction = "auto", // "lighter", "darker", or "auto"
+  }: {
+    desiredContrast?: number;
+    direction?: "lighter" | "darker" | "auto";
+  } = {}
+): { background: OKLCH; foreground: OKLCH } {
+  const background = new Color("oklch", [backgroundInput.l, backgroundInput.c, backgroundInput.h]);
+  const { l, c, h } = background;
+
+  const maxSteps = 25;
+  const delta = 0.025;
+
+  const isDark = l < 0.5;
+  const searchDirection = direction === "auto" ? (isDark ? "lighter" : "darker") : direction;
+
+  for (let i = 1; i <= maxSteps; i++) {
+    const newL = searchDirection === "lighter" ? Math.min(l + delta * i, 1) : Math.max(l - delta * i, 0);
+
+    const test = new Color("oklch", [newL, c, h]);
+
+    if (test.inGamut("srgb")) {
+      const contrast = test.contrast(background, "WCAG21");
+      if (contrast >= desiredContrast) {
+        return {
+          background: backgroundInput,
+          foreground: { l: test.l, c: test.c, h: test.h },
+          // oklch: best.to("oklch").toString({ format: "oklch", precision: 3 }),
+          // hex: best.to("srgb").toString({ format: "hex" }),
+          // contrast: Math.max(whiteContrast, blackContrast),
+        };
+      }
+    }
+  }
+
+  // fallback to white or black
+  const white = new Color("#fff");
+  const black = new Color("#000");
+  const whiteContrast = white.contrast(background, "WCAG21");
+  const blackContrast = black.contrast(background, "WCAG21");
+  const best = whiteContrast > blackContrast ? white : black;
+
+  return {
+    background: backgroundInput,
+    foreground: { l: best.l, c: best.c, h: best.h },
+    // oklch: best.to("oklch").toString({ format: "oklch", precision: 3 }),
+    // hex: best.to("srgb").toString({ format: "hex" }),
+    // contrast: Math.max(whiteContrast, blackContrast),
+  };
+}

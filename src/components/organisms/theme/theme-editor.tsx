@@ -1,18 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Edit3, Copy, Download } from "lucide-react";
 import { OKLCH } from "@/types/theme-kit/color-space";
 import { oklchToCss } from "@/lib/theme-kit/converters/to-css";
-import { generateCSSVariables } from "@/lib/theme-kit/generators/css";
+// import { generateCSSVariables } from "@/lib/theme-kit/generators/css";
+import { cssToOklch, hexToOklch, oklchToRgb, rgbToHex } from "@/lib/theme-kit/converters";
+import Color from "colorjs.io";
 
 interface ThemeEditorProps {
   theme: any;
@@ -43,102 +42,83 @@ export function ThemeEditor({ theme, themeName, onThemeChange }: ThemeEditorProp
   const ColorEditor = ({
     mode,
     colorKey,
-    color,
+    cssColor,
     label,
   }: {
     mode: "light" | "dark";
     colorKey: string;
-    color: OKLCH;
+    cssColor: string;
     label: string;
   }) => {
+    console.log({ colorKey, cssColor });
+    return;
+    const color = cssToOklch(cssColor);
+    const oklch = new Color("oklch", [color.l, color.c, color.h]);
+    const srgbColor = oklch?.to("srgb"); // Converts to sRGB color space
+
+    const hex = srgbColor.toString({ format: "hex" });
+
+    console.log({ colorKey, cssColor, hex });
+
+    return;
+
     return (
       <div className="space-y-2 p-3 border rounded-lg">
         <div className="flex items-center justify-between">
           <Label className="text-sm font-medium">{label}</Label>
-          <div className="w-6 h-6 rounded border" style={{ backgroundColor: oklchToCss(color) }} />
+          <input
+            className="w-6 h-6"
+            type="color"
+            value={hex}
+            onChange={(e) => {
+              console.log({ oklchOnChange: hexToOklch(e.target.value) });
+
+              return;
+              updateColor(mode, colorKey, hexToOklch(e.target.value));
+            }}
+          />
+          {/* <div onClick={inputRef.current?.click} style={{ backgroundColor: hex }} /> */}
         </div>
 
-        <div className="grid grid-cols-3 gap-2">
-          <div className="space-y-1">
-            <Label className="text-xs text-muted-foreground">L</Label>
-            <Input
-              type="number"
-              min="0"
-              max="1"
-              step="0.01"
-              value={color.l}
-              onChange={(e) =>
-                updateColor(mode, colorKey, {
-                  ...color,
-                  l: Number.parseFloat(e.target.value) || 0,
-                })
-              }
-              className="h-8 text-xs"
-            />
-          </div>
-          <div className="space-y-1">
-            <Label className="text-xs text-muted-foreground">C</Label>
-            <Input
-              type="number"
-              min="0"
-              max="1"
-              step="0.01"
-              value={color.c}
-              onChange={(e) =>
-                updateColor(mode, colorKey, {
-                  ...color,
-                  c: Number.parseFloat(e.target.value) || 0,
-                })
-              }
-              className="h-8 text-xs"
-            />
-          </div>
-          <div className="space-y-1">
-            <Label className="text-xs text-muted-foreground">H</Label>
-            <Input
-              type="number"
-              min="0"
-              max="360"
-              step="1"
-              value={Math.round(color.h)}
-              onChange={(e) =>
-                updateColor(mode, colorKey, {
-                  ...color,
-                  h: Number.parseFloat(e.target.value) || 0,
-                })
-              }
-              className="h-8 text-xs"
-            />
-          </div>
+        <div className="grid gap-2 space-y-1">
+          <Label className="text-xs text-muted-foreground">L</Label>
+          <Input
+            type="text"
+            min="0"
+            max="6"
+            value={hex}
+            onChange={(e) => updateColor(mode, colorKey, hexToOklch(e.target.value))}
+            className="h-8 text-xs"
+          />
         </div>
 
-        <div className="text-xs text-muted-foreground font-mono">{oklchToCss(color)}</div>
+        <div className="text-xs text-muted-foreground font-mono">{oklchToCss(oklch)}</div>
       </div>
     );
   };
 
-  const exportTheme = () => {
-    const cssVariables = `/* ${themeName} Theme */\n:root {\n${generateCSSVariables(
-      editingTheme,
-      "light"
-    )}\n}\n\n.dark {\n${generateCSSVariables(editingTheme, "dark")}\n}`;
+  // const exportTheme = () => {
+  //   const cssVariables = `/* ${themeName} Theme */\n:root {\n${generateCSSVariables(
+  //     editingTheme,
+  //     "light"
+  //   )}\n}\n\n.dark {\n${generateCSSVariables(editingTheme, "dark")}\n}`;
 
-    const blob = new Blob([cssVariables], { type: "text/css" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${themeName.toLowerCase().replace(/\s+/g, "-")}-theme.css`;
-    a.click();
-    URL.revokeObjectURL(url);
-  };
+  //   const blob = new Blob([cssVariables], { type: "text/css" });
+  //   const url = URL.createObjectURL(blob);
+  //   const a = document.createElement("a");
+  //   a.href = url;
+  //   a.download = `${themeName.toLowerCase().replace(/\s+/g, "-")}-theme.css`;
+  //   a.click();
+  //   URL.revokeObjectURL(url);
+  // };
 
-  const copyTheme = () => {
-    const cssVariables = `/* ${themeName} Theme */\n:root {\n${generateCSSVariables(
-      editingTheme,
-      "light"
-    )}\n}\n\n.dark {\n${generateCSSVariables(editingTheme, "dark")}\n}`;
-    navigator.clipboard.writeText(cssVariables);
-  };
+  // const copyTheme = () => {
+  //   const cssVariables = `/* ${themeName} Theme */\n:root {\n${generateCSSVariables(
+  //     editingTheme,
+  //     "light"
+  //   )}\n}\n\n.dark {\n${generateCSSVariables(editingTheme, "dark")}\n}`;
+  //   navigator.clipboard.writeText(cssVariables);
+  // };
 
   const colorGroups = {
     "Base Colors": ["background", "foreground", "card", "cardForeground", "popover", "popoverForeground"],
@@ -149,29 +129,8 @@ export function ThemeEditor({ theme, themeName, onThemeChange }: ThemeEditorProp
   };
 
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle className="flex items-center gap-2">
-              <Edit3 className="h-5 w-5" />
-              Theme Editor
-            </CardTitle>
-            <CardDescription>Fine-tune your theme colors with real-time preview</CardDescription>
-          </div>
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={copyTheme}>
-              <Copy className="h-4 w-4 mr-2" />
-              Copy CSS
-            </Button>
-            <Button variant="outline" size="sm" onClick={exportTheme}>
-              <Download className="h-4 w-4 mr-2" />
-              Export
-            </Button>
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent>
+    <>
+      <div className="px-4">
         <Tabs value={activeMode} onValueChange={(value) => setActiveMode(value as "light" | "dark")}>
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="light">Light Mode</TabsTrigger>
@@ -185,14 +144,14 @@ export function ThemeEditor({ theme, themeName, onThemeChange }: ThemeEditorProp
                   <h3 className="text-lg font-semibold">{groupName}</h3>
                   <Badge variant="secondary">{colorKeys.length} colors</Badge>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {colorKeys.map((colorKey) => {
                     const color = editingTheme[activeMode][colorKey];
                     if (!color) return null;
 
                     const label = colorKey.replace(/([A-Z])/g, " $1").replace(/^./, (str) => str.toUpperCase());
 
-                    return <ColorEditor key={colorKey} mode={activeMode} colorKey={colorKey} color={color} label={label} />;
+                    return <ColorEditor key={colorKey} mode={activeMode} colorKey={colorKey} cssColor={color} label={label} />;
                   })}
                 </div>
                 {groupName !== "Chart Colors" && <Separator />}
@@ -200,7 +159,7 @@ export function ThemeEditor({ theme, themeName, onThemeChange }: ThemeEditorProp
             ))}
           </TabsContent>
         </Tabs>
-      </CardContent>
-    </Card>
+      </div>
+    </>
   );
 }

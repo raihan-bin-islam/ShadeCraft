@@ -1,7 +1,7 @@
 import { THEME_FEELS_V4 } from "@/config/theme-feels";
 import { TONES } from "@/config/theme-tones";
 import { hexToOklch, oklchToCss, oklchToHsl } from "@/lib/theme-kit/converters";
-import { ensureOklchContrast } from "@/lib/theme-kit/core";
+import { ensureOklchContrast, getReadableForeground } from "@/lib/theme-kit/core";
 
 import { adjustOklch, adjustOklchChroma, createOklchShade, createOklchTint } from "@/lib/theme-kit/core/adjustment";
 import { generateBalancedTheme } from "@/lib/theme-kit/palettes/balanced";
@@ -84,7 +84,7 @@ export function generateTailwindV4Theme(params?: GenerateThemeParams): TailwindV
   const lightBgs = generateOklchBackgrounds(background);
   const darkBgs = generateOklchDarkBackgrounds(background);
 
-  const primaryPair = generateOklchContrastPair(primary);
+  const primaryPair = getReadableForeground(primary);
   const secondaryPair = generateOklchContrastPair(secondary);
   const accentPair = generateOklchContrastPair(accent);
 

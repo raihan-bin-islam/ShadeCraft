@@ -1,4 +1,24 @@
 import { HSL, OKLCH } from "@/types/theme-kit/color-space";
+import Color from "colorjs.io";
+//! ------------------------------------------- CSS TO OKLCH --------------------------------------------
+
+export function cssToOklch(css: string): OKLCH {
+  const regex = /^oklch\(\s*([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*([\d.]+)%?)?\s*\)$/i;
+  const match = css.match(regex);
+
+  if (!match) {
+    throw new Error(`Invalid OKLCH CSS string: ${css}`);
+  }
+
+  const [, lStr, cStr, hStr, aStr] = match;
+  const l = parseFloat(lStr);
+  const c = parseFloat(cStr);
+  const h = parseFloat(hStr);
+  const a = aStr !== undefined ? parseFloat(aStr) / 100 : undefined;
+
+  return { l, c, h, ...(a !== undefined ? { a } : {}) };
+}
+
 //! ------------------------------------------- HSL TO OKLCH --------------------------------------------
 export function hslToOklch(hsl: HSL): OKLCH {
   // First convert HSL to RGB
@@ -67,6 +87,10 @@ export function hslToOklch(hsl: HSL): OKLCH {
 
 //! ------------------------------------------- HEX TO OKLCH --------------------------------------------
 export function hexToOklch(hex: string): OKLCH {
+  const color = new Color("#ff164a");
+  const oklch = color.to("oklch");
+  return { l: oklch.l, c: oklch.c, h: oklch.h };
+
   // Remove # if present
   hex = hex.replace("#", "");
 
