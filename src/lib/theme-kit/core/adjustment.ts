@@ -1,42 +1,54 @@
-import { OKLCH } from "@/types/theme-kit/color-space";
+import Color from "colorjs.io";
 
-// Create OKLCH color with adjustments
+// Adjust OKLCH color with optional lightness, chroma, hue, alpha changes.
+// Automatically clips to sRGB gamut only if out of gamut.
 export function adjustOklch(
-  base: OKLCH,
+  base: Color,
   adjustments: {
     lightness?: number;
     chroma?: number;
     hue?: number;
     alpha?: number;
+  } = {}
+): Color {
+  const [l, c, h] = base.oklch;
+  const alpha = base.alpha ?? 1;
+
+  const newColor = new Color("oklch", [
+    Math.max(0, Math.min(1, l + (adjustments.lightness ?? 0))),
+    Math.max(0, Math.min(0.4, c + (adjustments.chroma ?? 0))),
+    (h + (adjustments.hue ?? 0) + 360) % 360,
+  ]);
+
+  newColor.alpha = adjustments.alpha !== undefined ? adjustments.alpha : alpha;
+
+  // Clip to sRGB gamut only if out of gamut
+  if (!newColor.inGamut("srgb")) {
+    return newColor.toGamut({ method: "clip", space: "srgb" });
   }
-): OKLCH {
-  return {
-    l: Math.max(0, Math.min(1, base.l + (adjustments.lightness || 0))),
-    c: Math.max(0, Math.min(0.4, base.c + (adjustments.chroma || 0))),
-    h: (base.h + (adjustments.hue || 0) + 360) % 360,
-    a: adjustments.alpha !== undefined ? adjustments.alpha : base.a,
-  };
+
+  return newColor;
 }
 
-// Generate tint (lighter version) in OKLCH
-export function createOklchTint(oklch: OKLCH, amount: number): OKLCH {
-  return adjustOklch(oklch, {
-    lightness: amount * 0.01, // Convert percentage to decimal
-    chroma: -amount * 0.001, // Slightly reduce chroma for lighter colors
+// Generate a lighter tint by increasing lightness and slightly reducing chroma
+export function createOklchTint(base: Color, amount: number): Color {
+  return adjustOklch(base, {
+    lightness: amount * 0.01, // increase lightness by percent
+    chroma: -amount * 0.001, // reduce chroma slightly
   });
 }
 
-// Generate shade (darker version) in OKLCH
-export function createOklchShade(oklch: OKLCH, amount: number): OKLCH {
-  return adjustOklch(oklch, {
-    lightness: -amount * 0.01, // Convert percentage to decimal
-    chroma: amount * 0.001, // Slightly increase chroma for darker colors
+// Generate a darker shade by decreasing lightness and slightly increasing chroma
+export function createOklchShade(base: Color, amount: number): Color {
+  return adjustOklch(base, {
+    lightness: -amount * 0.01, // decrease lightness by percent
+    chroma: amount * 0.001, // increase chroma slightly
   });
 }
 
-// Adjust chroma (saturation equivalent)
-export function adjustOklchChroma(oklch: OKLCH, amount: number): OKLCH {
-  return adjustOklch(oklch, {
-    chroma: amount * 0.001, // Convert to appropriate scale
+// Adjust chroma (saturation equivalent) by given amount
+export function adjustOklchChroma(base: Color, amount: number): Color {
+  return adjustOklch(base, {
+    chroma: amount * 0.001,
   });
 }

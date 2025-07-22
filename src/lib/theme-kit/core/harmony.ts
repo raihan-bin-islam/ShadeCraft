@@ -1,29 +1,27 @@
+import Color from "colorjs.io";
 import { adjustOklch } from "@/lib/theme-kit/core/adjustment";
-import { OKLCH } from "@/types/theme-kit/color-space";
 
-// Generate complementary color in OKLCH
-export function getOklchComplementary(oklch: OKLCH): OKLCH {
-  return adjustOklch(oklch, {
-    hue: 180,
-  });
+// Generate complementary color in OKLCH (Color.js instance)
+export function getOklchComplementary(base: Color): Color {
+  return adjustOklch(base, { hue: 180 });
 }
 
 // Generate triadic colors in OKLCH
-export function getOklchTriadic(oklch: OKLCH): [OKLCH, OKLCH] {
-  return [adjustOklch(oklch, { hue: 120 }), adjustOklch(oklch, { hue: 240 })];
+export function getOklchTriadic(base: Color): [Color, Color] {
+  return [adjustOklch(base, { hue: 120 }), adjustOklch(base, { hue: 240 })];
 }
 
 // Generate analogous colors in OKLCH
-export function getOklchAnalogous(oklch: OKLCH): [OKLCH, OKLCH] {
-  return [adjustOklch(oklch, { hue: 30 }), adjustOklch(oklch, { hue: -30 })];
+export function getOklchAnalogous(base: Color): [Color, Color] {
+  return [adjustOklch(base, { hue: 30 }), adjustOklch(base, { hue: -30 })];
 }
 
 // Generate split-complementary colors in OKLCH
-export function getOklchSplitComplementary(oklch: OKLCH): [OKLCH, OKLCH] {
-  return [adjustOklch(oklch, { hue: 150 }), adjustOklch(oklch, { hue: 210 })];
+export function getOklchSplitComplementary(base: Color): [Color, Color] {
+  return [adjustOklch(base, { hue: 150 }), adjustOklch(base, { hue: 210 })];
 }
 
 // Generate tetradic colors in OKLCH
-export function getOklchTetradic(oklch: OKLCH): [OKLCH, OKLCH, OKLCH] {
-  return [adjustOklch(oklch, { hue: 90 }), adjustOklch(oklch, { hue: 180 }), adjustOklch(oklch, { hue: 270 })];
+export function getOklchTetradic(base: Color): [Color, Color, Color] {
+  return [adjustOklch(base, { hue: 90 }), adjustOklch(base, { hue: 180 }), adjustOklch(base, { hue: 270 })];
 }

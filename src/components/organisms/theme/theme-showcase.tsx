@@ -5,7 +5,7 @@ import { ShinyButton } from "@/components/magicui/shiny-button";
 import { ThemeEditor } from "@/components/organisms/theme/theme-editor";
 import { ThemePreviewer } from "@/components/organisms/theme/theme-previewer";
 import ClickSpark from "@/components/react-bits/ClickSpark";
-import { SidebarPreview } from "@/components/templates/preview-components/sidebar";
+import { InboxPreview } from "@/components/templates/preview-components/inbox";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -159,7 +159,7 @@ export function ThemeShowcase({
       {/* Preview */}
       <ThemePreviewer theme={theme} isDark={isDark}>
         <div className="relative overflow-hidden rounded-xl border">
-          <SidebarPreview />
+          <InboxPreview />
         </div>
       </ThemePreviewer>
     </main>

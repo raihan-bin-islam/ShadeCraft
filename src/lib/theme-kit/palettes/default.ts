@@ -12,127 +12,88 @@ import {
 import { randomChoice, randomInRange } from "@/lib/utils";
 import { OKLCH } from "@/types/theme-kit/color-space";
 import { ColorHarmony } from "@/types/theme-kit/harmony";
+import { Adjustment, Adjustments, BackgroundKey } from "@/types/theme-kit/palette";
+import Color from "colorjs.io";
 
-export function generateBaseOklchColor(feel: (typeof THEME_FEELS_V4)[0]): OKLCH {
+// Helper: extract OKLCH values from Color instance safely (without alpha)
+const getOklch = (color: Color) => {
+  const [l, c, h] = color.oklch;
+  return { l, c, h };
+};
+
+export function generateBaseOklchColor(feel: (typeof THEME_FEELS_V4)[0]): Color {
   const hue = randomChoice(feel.preferredHues) + randomInRange(-20, 20); // Add some variation
   const lightness = randomInRange(feel.lightnessRange[0], feel.lightnessRange[1]);
   const chroma = randomInRange(feel.chromaRange[0], feel.chromaRange[1]);
 
+  return new Color("oklch", [lightness, chroma, hue]);
+}
+
+export function generateOklchBackgrounds(base: Color, adjustments?: Adjustments): Record<BackgroundKey, Color> {
+  const defaultAdjustments: Record<BackgroundKey, Adjustment> = {
+    background: { lightness: 0.98, chromaRatio: 0.1, maxChroma: 0.005, lightnessVariance: 0.02 },
+    card: { lightness: 0.96, chromaRatio: 0.08, maxChroma: 0.003 },
+    muted: { lightness: 0.92, chromaRatio: 0.05, maxChroma: 0.01 },
+    border: { lightness: 0.9, chromaRatio: 0.03, maxChroma: 0.015 },
+    input: { lightness: 0.94, chromaRatio: 0.06, maxChroma: 0.012 },
+  };
+
+  const usedAdjustments: Record<BackgroundKey, Adjustment> = {
+    ...defaultAdjustments,
+    ...adjustments,
+  };
+
+  const safeBase = base.toGamut({ method: "clip", space: "srgb" });
+  const [, baseChroma, baseHue, alpha] = safeBase.oklch;
+
+  const shouldUseComplementaryHue = Math.random() < 0.4;
+  const baseHueForBg = shouldUseComplementaryHue ? (baseHue + 180) % 360 : baseHue;
+
+  const clamp = (val: number, min: number, max: number) => Math.min(max, Math.max(min, val));
+
+  const results = {} as Record<BackgroundKey, Color>;
+
+  (Object.keys(usedAdjustments) as BackgroundKey[]).forEach((key) => {
+    const { lightness, chromaRatio, maxChroma = 0.04, lightnessVariance = 0 } = usedAdjustments[key];
+
+    const hue = key === "background" ? baseHueForBg : baseHue;
+    const adjustedLightness = clamp(lightness + (lightnessVariance ? Math.random() * lightnessVariance : 0), 0, 1);
+    const adjustedChroma = clamp(chromaRatio * baseChroma, 0, maxChroma);
+
+    results[key] = new Color("oklch", [adjustedLightness, adjustedChroma, hue]).toGamut({ method: "clip", space: "srgb" });
+  });
+
+  return results;
+}
+
+export function generateOklchDarkBackgrounds(primaryColor: Color): Record<string, Color> {
+  const { c, h } = getOklch(primaryColor);
   return {
-    h: (hue + 360) % 360, // Ensure positive
-    l: Math.max(0, Math.min(1, lightness)),
-    c: Math.max(0, Math.min(0.4, chroma)),
+    background: new Color("oklch", [0.15, Math.min(0.02, c * 0.3), h]),
+    card: new Color("oklch", [0.3, Math.min(0.025, c * 0.35), h]),
+    muted: new Color("oklch", [0.25, Math.min(0.03, c * 0.4), h]),
+    border: new Color("oklch", [0.28, Math.min(0.035, c * 0.45), h]),
+    input: new Color("oklch", [0.33, Math.min(0.032, c * 0.42), h]),
   };
 }
 
-export function generateOklchBackgrounds(primaryColor: OKLCH): {
-  background: OKLCH;
-  card: OKLCH;
-  muted: OKLCH;
-  border: OKLCH;
-  input: OKLCH;
-} {
-  // Create very light, desaturated backgrounds
-  const background = {
-    h: primaryColor.h,
-    l: +(Math.random() * 0.02 + 0.98).toFixed(2),
-    c: Math.min(0.005, primaryColor.c * 0.1),
-  };
+export function generateOklchForeground(background: Color): Color {
+  const { c, h, l } = getOklch(background);
+  const light = isOklchLight(background);
 
-  const card = {
-    h: primaryColor.h,
-    l: 0.99,
-    c: Math.min(0.003, primaryColor.c * 0.08),
-  };
-
-  const muted = {
-    h: primaryColor.h,
-    l: 0.95,
-    c: Math.min(0.01, primaryColor.c * 0.15),
-  };
-
-  const border = {
-    h: primaryColor.h,
-    l: 0.9,
-    c: Math.min(0.015, primaryColor.c * 0.2),
-  };
-
-  const input = {
-    h: primaryColor.h,
-    l: 0.92,
-    c: Math.min(0.012, primaryColor.c * 0.18),
-  };
-
-  return { background, card, muted, border, input };
-}
-
-export function generateOklchDarkBackgrounds(primaryColor: OKLCH): {
-  background: OKLCH;
-  card: OKLCH;
-  muted: OKLCH;
-  border: OKLCH;
-  input: OKLCH;
-} {
-  // Create very dark, slightly saturated backgrounds
-  const background = {
-    h: primaryColor.h,
-    l: 0.15,
-    c: Math.min(0.02, primaryColor.c * 0.3),
-  };
-
-  const card = {
-    h: primaryColor.h,
-    l: 0.3,
-    c: Math.min(0.025, primaryColor.c * 0.35),
-  };
-
-  const muted = {
-    h: primaryColor.h,
-    l: 0.25,
-    c: Math.min(0.03, primaryColor.c * 0.4),
-  };
-
-  const border = {
-    h: primaryColor.h,
-    l: 0.28,
-    c: Math.min(0.035, primaryColor.c * 0.45),
-  };
-
-  const input = {
-    h: primaryColor.h,
-    l: 0.33,
-    c: Math.min(0.032, primaryColor.c * 0.42),
-  };
-
-  return { background, card, muted, border, input };
-}
-
-export function generateOklchForeground(background: OKLCH): OKLCH {
-  const isLight = isOklchLight(background);
-
-  if (isLight) {
-    // For light backgrounds, use dark text
-    return {
-      h: background.h,
-      c: Math.min(0.02, background.c * 0.5), // Very low chroma for readability
-      l: 0.15, // Very dark
-    };
+  if (light) {
+    return new Color("oklch", [0.15, Math.min(0.02, c * 0.5), h]);
   } else {
-    // For dark backgrounds, use light text
-    return {
-      h: background.h,
-      c: Math.min(0.01, background.c * 0.3), // Very low chroma for readability
-      l: 0.95, // Very light
-    };
+    return new Color("oklch", [0.95, Math.min(0.01, c * 0.3), h]);
   }
 }
 
 export function generateOklchSidebarColors(
-  background: OKLCH,
-  foreground: OKLCH,
-  primary: OKLCH,
-  accent: OKLCH,
-  border: OKLCH
+  background: Color,
+  foreground: Color,
+  primary: Color,
+  accent: Color,
+  border: Color
 ): Record<string, string> {
   return {
     sidebar: oklchToCss(background),
@@ -146,32 +107,28 @@ export function generateOklchSidebarColors(
   };
 }
 
-export function generateOklchChartColors(baseOklch: OKLCH): Record<string, string> {
+export function generateOklchChartColors(baseOklch: Color): Record<string, string> {
   const charts: Record<string, string> = {};
+  const { l, c, h } = getOklch(baseOklch);
 
-  // Generate 5 chart colors with different hues and chromas
   for (let i = 1; i <= 5; i++) {
-    const hueShift = (i - 1) * 72; // 72 degrees apart for good contrast
-    const newHue = (baseOklch.h + hueShift) % 360;
-    const chromaVariation = Math.min(0.25, baseOklch.c * (0.8 + i * 0.1)); // Vary chroma slightly
-    const lightnessVariation = Math.max(0.3, Math.min(0.8, baseOklch.l + (i % 2 === 0 ? 0.1 : -0.1)));
+    const hueShift = (i - 1) * 72;
+    const newHue = (h + hueShift) % 360;
+    const chromaVariation = Math.min(0.25, c * (0.8 + i * 0.1));
+    const lightnessVariation = Math.max(0.3, Math.min(0.8, l + (i % 2 === 0 ? 0.1 : -0.1)));
 
-    const chartColor: OKLCH = {
-      l: lightnessVariation,
-      c: chromaVariation,
-      h: newHue,
-    };
-
+    const chartColor = new Color("oklch", [lightnessVariation, chromaVariation, newHue]);
     charts[`chart-${i}`] = oklchToCss(chartColor);
   }
 
   return charts;
 }
 
-export function generateOklchContrastPair(baseColor: OKLCH): { background: OKLCH; foreground: OKLCH } {
+export function generateOklchContrastPair(baseColor: Color): { background: Color; foreground: Color } {
   const background = baseColor;
   const foreground = generateOklchForeground(background);
   const adjustedForeground = ensureOklchContrast(foreground, background);
+  console.log({ background, foreground, adjustedForeground });
 
   return {
     background,
@@ -179,31 +136,39 @@ export function generateOklchContrastPair(baseColor: OKLCH): { background: OKLCH
   };
 }
 
-export function generateOklchColorPalette(baseColor: OKLCH, harmony: ColorHarmony): OKLCH[] {
+export function generateOklchColorPalette(baseColor: Color, harmony: ColorHarmony): Color[] {
   switch (harmony) {
     case "complementary":
       return [baseColor, getOklchComplementary(baseColor)];
-
     case "triadic":
       return [baseColor, ...getOklchTriadic(baseColor)];
-
     case "analogous":
       return [baseColor, ...getOklchAnalogous(baseColor)];
-
     case "splitComplementary":
       return [baseColor, ...getOklchSplitComplementary(baseColor)];
-
     case "tetradic":
       return [baseColor, ...getOklchTetradic(baseColor)];
-
     case "monochromatic":
       return [
         baseColor,
         adjustOklchChroma(createOklchShade(baseColor, 15), -5),
         adjustOklchChroma(createOklchTint(baseColor, 20), 5),
       ];
-
     default:
       return [baseColor, getOklchComplementary(baseColor)];
   }
+}
+
+export function generateDestructiveColor(): Color {
+  // Red hue range in OKLCH — roughly 20° to 40°, but you can adjust as needed
+  const redHueRange = [20, 40];
+  const h = Math.random() * (redHueRange[1] - redHueRange[0]) + redHueRange[0];
+
+  // Chroma: fairly saturated but not extreme
+  const c = 0.18 + Math.random() * 0.1; // 0.18 to 0.28 approx.
+
+  // Lightness: moderate for good visibility (adjust as needed)
+  const l = 0.5 + Math.random() * 0.2; // 0.5 to 0.7 approx.
+
+  return new Color("oklch", [l, c, h]);
 }
