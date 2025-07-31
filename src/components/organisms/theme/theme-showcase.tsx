@@ -5,7 +5,6 @@ import { ShinyButton } from "@/components/magicui/shiny-button";
 import { ThemeEditor } from "@/components/organisms/theme/theme-editor";
 import { ThemePreviewer } from "@/components/organisms/theme/theme-previewer";
 import ClickSpark from "@/components/react-bits/ClickSpark";
-import { InboxPreview } from "@/components/templates/inbox/inbox";
 import MailPage from "@/components/templates/mail/page";
 import { Button } from "@/components/ui/button";
 import {
@@ -161,7 +160,6 @@ export function ThemeShowcase({
       <ThemePreviewer theme={theme} isDark={isDark} className="grow overflow-y-auto flex flex-col">
         <div className="relative rounded-xl border grow flex flex-col overflow-y-auto">
           <MailPage />
-          {/* <InboxPreview /> */}
         </div>
       </ThemePreviewer>
     </main>
