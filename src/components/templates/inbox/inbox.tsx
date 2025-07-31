@@ -93,7 +93,7 @@ export const InboxPreview = () => {
 
   return (
     <div className="text-foreground [--header-height:calc(--spacing(14))] flex flex-col overflow-y-auto">
-      <SidebarProvider className="relative flex flex-col min-h-0 h-[calc(100vh-200px)] overflow-y-auto">
+      <SidebarProvider className="relative flex flex-col min-h-0  overflow-y-auto">
         <div className="flex flex-1 h-full overflow-y-auto">
           <AppSidebar collapsible="icon" variant="inset" className="relative h-full" />
           <SidebarInset className="flex flex-col relative overflow-y-auto">

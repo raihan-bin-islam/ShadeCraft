@@ -5,7 +5,7 @@ import { THEME_FEELS_V4 } from "@/config/theme-feels";
 import { TONES } from "@/config/theme-tones";
 import { FONT_OBJECTS } from "@/config/fonts";
 import { useAtom } from "jotai";
-import { currentThemeAtom } from "@/store/theme";
+import { currentThemeAtom, updateFontAtom } from "@/store/theme";
 
 export interface UseThemeGeneratorOptions {
   maxStoredThemes?: number;
@@ -25,6 +25,7 @@ export function useThemeGenerator(options: UseThemeGeneratorOptions = {}) {
 
   const [generatedThemes, setGeneratedThemes] = useState<TailwindV4Theme[]>([]);
   const [currentTheme, setCurrentTheme] = useAtom<TailwindV4Theme | undefined>(currentThemeAtom);
+  const [currentFont, seCurrentFont] = useAtom(updateFontAtom);
   const [isGenerating, setIsGenerating] = useState(false);
 
   const generateSingle = useCallback(
@@ -52,7 +53,7 @@ export function useThemeGenerator(options: UseThemeGeneratorOptions = {}) {
       setIsGenerating(false);
       return theme;
     },
-    [maxStoredThemes, onThemeGenerated, onThemeSelected]
+    [maxStoredThemes, onThemeGenerated, onThemeSelected, setCurrentTheme]
   );
 
   const generateMultiple = useCallback(async (count = 5, delay = 500) => {
@@ -101,6 +102,9 @@ export function useThemeGenerator(options: UseThemeGeneratorOptions = {}) {
     selectTheme,
     clearThemes,
     removeTheme,
+
+    updateFont: seCurrentFont,
+    selectedFont: currentFont,
 
     // Utilities
     hasThemes: generatedThemes.length > 0,

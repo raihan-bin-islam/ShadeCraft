@@ -5,7 +5,8 @@ import { ShinyButton } from "@/components/magicui/shiny-button";
 import { ThemeEditor } from "@/components/organisms/theme/theme-editor";
 import { ThemePreviewer } from "@/components/organisms/theme/theme-previewer";
 import ClickSpark from "@/components/react-bits/ClickSpark";
-import { InboxPreview } from "@/components/templates/preview-components/inbox";
+import { InboxPreview } from "@/components/templates/inbox/inbox";
+import MailPage from "@/components/templates/mail/page";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -96,7 +97,7 @@ export function ThemeShowcase({
   }));
 
   return (
-    <main className="space-y-4">
+    <main className="space-y-4 grow flex flex-col overflow-y-auto">
       {/* Header */}
       <div className="flex items-center justify-between gap-5 mb-4">
         <div className="flex items-center gap-3">
@@ -157,9 +158,10 @@ export function ThemeShowcase({
       </div>
 
       {/* Preview */}
-      <ThemePreviewer theme={theme} isDark={isDark}>
-        <div className="relative overflow-hidden rounded-xl border">
-          <InboxPreview />
+      <ThemePreviewer theme={theme} isDark={isDark} className="grow overflow-y-auto flex flex-col">
+        <div className="relative rounded-xl border grow flex flex-col overflow-y-auto">
+          <MailPage />
+          {/* <InboxPreview /> */}
         </div>
       </ThemePreviewer>
     </main>
