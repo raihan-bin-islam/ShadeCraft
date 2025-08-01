@@ -50,6 +50,7 @@ export function ThemeShowcase({
   onSelectFeel = () => {},
 }: ThemeShowcaseProps) {
   const [isDark, setIsDark] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
   const { generateSingle } = useThemeGenerator();
 
   const fontClass = theme?.light?.fontFamily ?? "";
@@ -96,7 +97,12 @@ export function ThemeShowcase({
   }));
 
   return (
-    <main className="space-y-4 grow flex flex-col overflow-y-auto">
+    <main
+      className={cn(
+        "space-y-4 grow flex flex-col overflow-y-auto transition-all duration-600 ease-[cubic-bezier(.61,.14,.08,.99)]",
+        isEditOpen && "pr-52"
+      )}
+    >
       {/* Header */}
       <div className="flex items-center justify-between gap-5 mb-4">
         <div className="flex items-center gap-3">
@@ -125,13 +131,13 @@ export function ThemeShowcase({
             <Sparkles /> Generate
           </ShinyButton>
           <Separator />
-          <Sheet>
+          <Sheet open={isEditOpen} onOpenChange={setIsEditOpen}>
             <SheetTrigger asChild>
               <Button variant="outline" size="icon">
                 <Edit />
               </Button>
             </SheetTrigger>
-            <SheetContent>
+            <SheetContent hideOverlay>
               <SheetHeader>
                 <SheetTitle>Edit theme</SheetTitle>
                 <SheetDescription>Make changes to your theme here. Click save when you&apos;re done.</SheetDescription>

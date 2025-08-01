@@ -1,11 +1,12 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { generateTailwindV4Theme, generateTailwindV4ThemeCollection } from "@/lib/theme-kit/generators/theme";
 import { TailwindV4Theme } from "@/types/theme-kit/theme";
 import { THEME_FEELS_V4 } from "@/config/theme-feels";
 import { TONES } from "@/config/theme-tones";
 import { FONT_OBJECTS } from "@/config/fonts";
-import { useAtom } from "jotai";
-import { currentThemeAtom, updateFontAtom } from "@/store/theme";
+import { useAtom, useSetAtom } from "jotai";
+import { currentThemeAtom, updateFontAtom, updateThemeTokenAtom } from "@/store/theme";
+import { debounce } from "lodash";
 
 export interface UseThemeGeneratorOptions {
   maxStoredThemes?: number;
@@ -26,6 +27,7 @@ export function useThemeGenerator(options: UseThemeGeneratorOptions = {}) {
   const [generatedThemes, setGeneratedThemes] = useState<TailwindV4Theme[]>([]);
   const [currentTheme, setCurrentTheme] = useAtom<TailwindV4Theme | undefined>(currentThemeAtom);
   const [currentFont, seCurrentFont] = useAtom(updateFontAtom);
+  const updateThemeToken = useSetAtom(updateThemeTokenAtom);
   const [isGenerating, setIsGenerating] = useState(false);
 
   const generateSingle = useCallback(
@@ -67,12 +69,22 @@ export function useThemeGenerator(options: UseThemeGeneratorOptions = {}) {
     return themes;
   }, []);
 
+  // Memoize the debounced version
+  const debouncedUpdateThemeToken = useMemo(() => {
+    return debounce(
+      (update: Parameters<typeof updateThemeToken>[0]) => {
+        updateThemeToken(update);
+      },
+      250 // debounce delay
+    );
+  }, [updateThemeToken]);
+
   const selectTheme = useCallback(
     (theme: TailwindV4Theme) => {
       setCurrentTheme(theme);
       onThemeSelected?.(theme);
     },
-    [onThemeSelected]
+    [onThemeSelected, setCurrentTheme]
   );
 
   const clearThemes = useCallback(() => {
@@ -105,6 +117,8 @@ export function useThemeGenerator(options: UseThemeGeneratorOptions = {}) {
 
     updateFont: seCurrentFont,
     selectedFont: currentFont,
+
+    updateThemeToken: debouncedUpdateThemeToken,
 
     // Utilities
     hasThemes: generatedThemes.length > 0,

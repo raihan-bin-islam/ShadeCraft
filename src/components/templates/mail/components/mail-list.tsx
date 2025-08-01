@@ -25,7 +25,7 @@ export function MailList({ items }: MailListProps) {
             className={cn(
               "cursor-pointer backdrop-blur-2xl flex flex-col items-start gap-2 border p-3 text-left text-sm transition-all hover:bg-background hover:border-border hover:text-card-foreground",
               mail.selected === item.id &&
-                "bg-primary/70 text-primary-foreground border-primary hover:bg-primary/85 hover:text-primary-foreground hover:border-primary",
+                "bg-primary/85 text-primary-foreground border-primary hover:bg-primary/90 hover:text-primary-foreground hover:border-primary",
               !item?.read && "border-l-6 border-secondary hover:border-secondary"
             )}
             onClick={() =>
@@ -54,11 +54,18 @@ export function MailList({ items }: MailListProps) {
               </div>
               <div className="text-xs font-medium">{item.subject}</div>
             </div>
-            <div className="line-clamp-2 text-xs text-muted-foreground ">{item.text.substring(0, 300)}</div>
+            <div
+              className={cn(
+                "line-clamp-2 text-xs text-muted-foreground",
+                mail.selected === item.id && "text-secondary-foreground"
+              )}
+            >
+              {item.text.substring(0, 300)}
+            </div>
             {item.labels.length ? (
               <div className="flex items-center gap-2">
                 {item.labels.map((label) => (
-                  <Badge key={label} variant={getBadgeVariantFromLabel(label)}>
+                  <Badge key={label} variant={getBadgeVariantFromLabel(label)} className="border">
                     {label}
                   </Badge>
                 ))}

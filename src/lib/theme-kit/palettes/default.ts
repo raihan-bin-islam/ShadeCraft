@@ -44,7 +44,7 @@ export function generateOklchBackgrounds(base: Color, adjustments?: Adjustments)
   };
 
   const safeBase = base.toGamut({ method: "clip", space: "srgb" });
-  const [, baseChroma, baseHue, alpha] = safeBase.oklch;
+  const [, baseChroma, baseHue] = safeBase.oklch;
 
   const shouldUseComplementaryHue = Math.random() < 0.4;
   const baseHueForBg = shouldUseComplementaryHue ? (baseHue + 180) % 360 : baseHue;
