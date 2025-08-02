@@ -95,6 +95,8 @@ export function generateTailwindV4Theme(params?: GenerateThemeParams): TailwindV
   const destructive = generateDestructiveColor(); // Red in OKLCH
   const destructiveDark = new Color("oklch", [Math.min(1, destructive.l + 0.05), destructive.c, destructive.h]);
 
+  console.log({ muted: lightBgs.muted, dark: darkBgs.muted });
+
   const cssVars = {
     toneId: tone.id,
     feelId: feel.id,
@@ -112,7 +114,7 @@ export function generateTailwindV4Theme(params?: GenerateThemeParams): TailwindV
     secondary: oklchToCss(secondaryPair.background),
     "secondary-foreground": oklchToCss(secondaryPair.foreground),
     muted: oklchToCss(lightBgs.muted),
-    "muted-foreground": oklchToCss({ ...lightBgs.muted, l: 0.6 }),
+    "muted-foreground": oklchToCss(lightBgs.muted.set("oklch.l", 0.6)),
     accent: oklchToCss(accentPair.background),
     "accent-foreground": oklchToCss(accentPair.foreground),
     destructive: oklchToCss(destructive),
@@ -141,7 +143,7 @@ export function generateTailwindV4Theme(params?: GenerateThemeParams): TailwindV
       ensureOklchContrast(secondaryPair.foreground, createOklchTint(secondaryPair.background, 15))
     ),
     "dark-muted": oklchToCss(darkBgs.muted),
-    "dark-muted-foreground": oklchToCss({ ...lightBgs.muted, l: 0.5 }),
+    "dark-muted-foreground": oklchToCss(lightBgs.muted.set("oklch.l", 0.5)),
     "dark-accent": oklchToCss(createOklchTint(accentPair.background, 15)),
     "dark-accent-foreground": oklchToCss(ensureOklchContrast(accentPair.foreground, createOklchTint(accentPair.background, 15))),
     "dark-destructive": oklchToCss(destructiveDark),

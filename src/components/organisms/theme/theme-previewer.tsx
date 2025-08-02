@@ -25,7 +25,7 @@ export const ThemePreviewer = ({ theme, isDark, children, className }: ThemePrev
   const fontClass = cssMapping["--fontFamily"];
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 grow flex flex-col overflow-y-auto">
       <div
         className={cn("transition-colors duration-300", isDark && "dark", fontClass, className)}
         style={cssMapping as React.CSSProperties}
