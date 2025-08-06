@@ -32,29 +32,31 @@ export const ThemeCode = () => {
           </Button>
         </ClickSpark>
       </DialogTrigger>
-      <DialogContent className="flex flex-col gap-0 max-h-[80vh] min-w-4xl overflow-y-auto p-0">
-        <DialogHeader className="bg-input border-b p-5">
+      <DialogContent className="flex flex-col gap-0 max-h-[80vh] md:min-w-4xl overflow-y-auto p-0">
+        <DialogHeader className="bg-input border-b md:p-5 p-4">
           <DialogTitle>Export Theme</DialogTitle>
         </DialogHeader>
-        <div className="relative grow overflow-y-auto p-5">
+        <div className="relative grow overflow-y-auto md:p-5 p-4">
           <Button
             disabled={isCopied}
             onClick={copyToClipboard}
             variant="secondary"
-            className="active:scale-95 min-w-28 justify-start sticky left-full top-0 w-fit"
+            className="active:scale-95 md:min-w-28 justify-start sticky left-full top-0 w-fit"
           >
             {isCopied ? (
               <>
-                <Check strokeWidth={2} /> Copied
+                <Check strokeWidth={2} />
+                <span className="hidden md:inline-block"> Copied</span>
               </>
             ) : (
               <>
-                <Copy strokeWidth={2} /> Copy CSS
+                <Copy strokeWidth={2} />
+                <span className="hidden md:inline-block"> Copy CSS</span>
               </>
             )}
           </Button>
           <pre
-            className="text-pretty text-sm -mt-9"
+            className="text-pretty text-xs md:text-sm -mt-9 pr-8"
             dangerouslySetInnerHTML={{ __html: `<code class="font-code">${css ?? ""}</code>` }}
           />
         </div>

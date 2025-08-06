@@ -25,6 +25,7 @@ export interface GroupedComboboxItem {
   items: ComboboxItem[];
 }
 interface ComboboxInputProps {
+  className?: string;
   items?: ComboboxItem[];
   groupedItems?: GroupedComboboxItem[];
   value: string;
@@ -33,7 +34,7 @@ interface ComboboxInputProps {
   noneLabel?: string;
 }
 
-export function ComboboxInput({ items, groupedItems, value, onChange, placeholder }: ComboboxInputProps) {
+export function ComboboxInput({ items, groupedItems, value, onChange, placeholder, className }: ComboboxInputProps) {
   const [open, setOpen] = useState(false);
   const current =
     items?.find((item) => item.value === value) ??
@@ -48,7 +49,7 @@ export function ComboboxInput({ items, groupedItems, value, onChange, placeholde
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className={cn("min-w-32 justify-between", current?.label ? "text-foreground" : "text-muted-foreground/80")}
+          className={cn("min-w-32 justify-between", current?.label ? "text-foreground" : "text-muted-foreground/80", className)}
         >
           {current?.label ?? `Select ${placeholder.toLowerCase()}`}
           <ChevronsUpDown className="ml-2 h-4 w-4 opacity-50" />
