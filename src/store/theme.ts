@@ -1,17 +1,33 @@
 import { atom } from "jotai";
-import type { TailwindV4Theme } from "@/types/theme-kit";
+import type { TailwindV4Theme, Theme } from "@/types/theme-kit";
+import { FONT_OBJECTS } from "@/config/fonts";
 
 export const currentThemeAtom = atom<TailwindV4Theme>();
 
 type TokenKey = keyof TailwindV4Theme["cssVars"]["light"];
 export const updateThemeTokenAtom = atom(
   null,
-  (get, set, { mode, token, value }: { mode: keyof TailwindV4Theme["cssVars"]; token: TokenKey; value?: string }) => {
+  (get, set, { mode, value }: { mode: keyof TailwindV4Theme["cssVars"] | "both"; value?: Theme }) => {
     set(currentThemeAtom, (prev) => {
       if (!prev) return prev;
 
-      const updated = value ? { [token]: value } : {};
+      const updated = value ?? {};
 
+      if (mode === "both") {
+        return {
+          ...prev,
+          cssVars: {
+            ...prev.cssVars,
+            light: { ...prev.cssVars.light, ...updated },
+            dark: { ...prev.cssVars.dark, ...updated },
+          },
+          theme: {
+            ...prev.cssVars,
+            light: { ...prev.cssVars.light, ...updated },
+            dark: { ...prev.cssVars.dark, ...updated },
+          },
+        };
+      }
       return {
         ...prev,
         cssVars: {
@@ -28,12 +44,15 @@ export const updateThemeTokenAtom = atom(
 );
 
 export const updateFontAtom = atom(
-  (get) => get(currentThemeAtom)?.cssVars?.light?.fontFamily,
+  (get) => undefined,
   (get, set, font?: string) => {
+    const fontObject = Object.values(FONT_OBJECTS).find((item) => item.className === font);
     set(updateThemeTokenAtom, {
-      mode: "light",
-      token: "fontFamily",
-      value: font,
+      mode: "both",
+      value: {
+        fontFamily: font as string,
+        fontName: `${fontObject?.name}, ${fontObject?.fallback}`,
+      },
     });
   }
 );

@@ -5,6 +5,13 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export function randomHueFromRanges(ranges: [number, number][]): number {
+  if (!ranges.length) throw new Error("No hue ranges provided");
+
+  const [start, end] = ranges[Math.floor(Math.random() * ranges.length)];
+  return start + Math.random() * (end - start);
+}
+
 export function randomInRange(min: number, max: number): number {
   return Math.random() * (max - min) + min;
 }
