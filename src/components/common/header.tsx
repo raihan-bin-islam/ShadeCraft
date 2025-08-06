@@ -6,22 +6,24 @@ import { cn } from "@/lib/utils";
 
 export const Header = () => {
   return (
-    <header className="flex flex-col relative w-full h-full bg-accent border-b">
+    <header className="flex flex-col relative w-full h-full bg-background border-b">
       <div className="flex items-center justify-between container mx-auto p-4">
         <div className="flex items-center gap-3 min-w-48">
           <SparklesText
             className="text-sm"
             sparklesCount={3}
-            colors={{ first: "var(--color-yellow-400)", second: "var(--color-lime-400)" }}
+            colors={{ first: "var(--color-primary)", second: "var(--color-secondary)" }}
           >
-            <Logo className="size-8" />
+            <Logo className="size-8 fill-primary" />
           </SparklesText>
-          <h2 className={cn("text-2xl text-cyan-900 font-bold overflow-visible", spaceGrotesk.className)}>ShadeCraft</h2>
+          <h2 className={cn("text-2xl text-primary font-bold overflow-visible", spaceGrotesk.className)}>
+            Shade<span className="text-secondary">Craft</span>
+          </h2>
         </div>
         <div className="flex flex-col">
           <RotatingText
             texts={["Stunning shadcn Themes", "Tailwind v4 Ready", "Real-time Preview", "OKLCH Colors!"]}
-            mainClassName="px-2 sm:px-2 md:px-3 text-2xl font-bold text-black overflow-hidden justify-center rounded-lg"
+            mainClassName="px-2 sm:px-2 md:px-3 text-2xl font-bold text-foreground overflow-hidden justify-center rounded-lg"
             staggerFrom={"last"}
             initial={{ y: "100%" }}
             animate={{ y: 0 }}

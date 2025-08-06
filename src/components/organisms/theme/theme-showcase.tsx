@@ -2,6 +2,7 @@
 
 import { ComboboxInput, ComboboxItem, GroupedComboboxItem } from "@/components/atoms/combobox-input";
 import { ShinyButton } from "@/components/magicui/shiny-button";
+import { ThemeCode } from "@/components/organisms/theme/theme-code";
 import { ThemeEditor } from "@/components/organisms/theme/theme-editor";
 import { ThemePreviewer } from "@/components/organisms/theme/theme-previewer";
 import ClickSpark from "@/components/react-bits/ClickSpark";
@@ -51,7 +52,7 @@ export function ThemeShowcase({
 }: ThemeShowcaseProps) {
   const [isDark, setIsDark] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
-  const { generateSingle } = useThemeGenerator();
+  const { generateSingle, updateFont } = useThemeGenerator();
 
   const fontClass = theme?.light?.fontFamily ?? "";
   const toneId = theme?.light?.toneId ?? "";
@@ -96,17 +97,19 @@ export function ThemeShowcase({
     label: f.name,
   }));
 
+  console.log("font:", { selectedFont });
+
   return (
     <main
       className={cn(
-        "space-y-4 grow flex flex-col overflow-y-auto transition-all duration-600 ease-[cubic-bezier(.61,.14,.08,.99)]",
-        isEditOpen && "pr-52"
+        "space-y-4 grow flex flex-col overflow-y-auto transition-discrete duration-400 ease-[cubic-bezier(.66,.27,.3,.85)]",
+        isEditOpen && "pr-64"
       )}
     >
       {/* Header */}
       <div className="flex items-center justify-between gap-5 mb-4">
         <div className="flex items-center gap-3">
-          <h1 className="text-2xl font-semibold">{themeName} Preview</h1>
+          <h1 className="text-2xl font-semibold">Preview</h1>
           <div className="flex items-center gap-2">
             <p className={cn("text-sm", fontClass)}>
               <span className="font-medium text-xs text-muted-foreground">Font:</span> {fontName}
@@ -124,38 +127,49 @@ export function ThemeShowcase({
 
         {/* Controls */}
         <div className="flex items-center gap-3">
-          <ComboboxInput groupedItems={fontGroups} value={selectedFont ?? ""} onChange={onSelectFont} placeholder="Font" />
+          <ComboboxInput
+            groupedItems={fontGroups}
+            value={fontClass ?? ""}
+            onChange={(val) => {
+              onSelectFont(val);
+              if (val) updateFont(val);
+            }}
+            placeholder="Font"
+          />
           <ComboboxInput items={toneItems} value={selectedTone ?? ""} onChange={onSelectTone} placeholder="Tone" />
           <ComboboxInput items={feelItems} value={selectedFeel ?? ""} onChange={onSelectFeel} placeholder="Feel" />
           <ShinyButton onClick={() => generateSingle({ feelId: selectedFeel, fontClass: selectedFont, toneId: selectedTone })}>
             <Sparkles /> Generate
           </ShinyButton>
           <Separator />
-          <Sheet open={isEditOpen} onOpenChange={setIsEditOpen}>
+          <Sheet modal={false} open={isEditOpen} onOpenChange={setIsEditOpen}>
             <SheetTrigger asChild>
               <Button variant="outline" size="icon">
                 <Edit />
               </Button>
             </SheetTrigger>
-            <SheetContent hideOverlay>
+            <SheetContent hideOverlay className="min-w-md" onInteractOutside={(e) => e.preventDefault()}>
               <SheetHeader>
                 <SheetTitle>Edit theme</SheetTitle>
                 <SheetDescription>Make changes to your theme here. Click save when you&apos;re done.</SheetDescription>
               </SheetHeader>
-              <ThemeEditor theme={theme} onThemeChange={() => {}} themeName="" />
+              <ThemeEditor defaultMode={isDark ? "dark" : "light"} theme={theme} onThemeChange={() => {}} themeName="" />
               <SheetFooter className="grid grid-cols-2">
-                <Button type="submit">Save changes</Button>
+                <SheetClose asChild>
+                  <Button>Save changes</Button>
+                </SheetClose>
                 <SheetClose asChild>
                   <Button variant="outline">Close</Button>
                 </SheetClose>
               </SheetFooter>
             </SheetContent>
           </Sheet>
-          <ClickSpark sparkColor="#9AE600" sparkSize={10} sparkRadius={15} sparkCount={8} duration={400}>
+          <ThemeCode />
+          {/* <ClickSpark sparkColor="#9AE600" sparkSize={10} sparkRadius={15} sparkCount={8} duration={400}>
             <Button variant="outline" size="icon" className="active:scale-95">
               <Code2 />
             </Button>
-          </ClickSpark>
+          </ClickSpark> */}
           <Button variant="outline" size="icon" onClick={() => setIsDark(!isDark)}>
             {isDark ? <Moon /> : <Sun />}
           </Button>
