@@ -4,7 +4,7 @@ import { StickyTaskbar } from "@/components/molecules/circular-taskbar";
 import { ThemeShowcase } from "@/components/organisms/theme/theme-showcase";
 import { TaskbarItemId, taskbarOptions } from "@/data/tabs";
 import { useThemeGenerator } from "@/hooks/theme-module/use-theme-generator";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export const LandingPage = () => {
   const [selectedFont, setSelectedFont] = useState<string>();
@@ -13,11 +13,9 @@ export const LandingPage = () => {
   const [selectedTab, setSelectedTab] = useState<TaskbarItemId>("generator");
   const { currentTheme, generateSingle } = useThemeGenerator();
 
-  console.log({ theme: currentTheme?.theme });
-
   return (
     <>
-      <div className="h-[calc(100dvh-85px)] bg-background grow flex flex-col overflow-y-auto">
+      <div className="max-h-[calc(100dvh-129px)] grow bg-background flex flex-col overflow-y-auto">
         <div className="container mx-auto p-4 grow flex flex-col overflow-y-auto">
           <ThemeShowcase
             theme={{ light: currentTheme?.cssVars?.light, dark: currentTheme?.cssVars?.dark }}

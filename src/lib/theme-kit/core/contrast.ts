@@ -88,7 +88,7 @@ export function ensureOklchContrast(foreground: Color, background: Color, minCon
   const black = new Color("#000");
   const whiteContrast = white.contrast(background, "WCAG21");
   const blackContrast = black.contrast(background, "WCAG21");
-  return whiteContrast > blackContrast ? white : black;
+  return whiteContrast > blackContrast ? white.to("oklch") : black.to("oklch");
 }
 
 /**

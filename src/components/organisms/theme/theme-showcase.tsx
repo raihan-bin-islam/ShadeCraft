@@ -50,9 +50,8 @@ export function ThemeShowcase({
   selectedFeel,
   onSelectFeel = () => {},
 }: ThemeShowcaseProps) {
-  const [isDark, setIsDark] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
-  const { generateSingle, updateFont } = useThemeGenerator();
+  const { isDark, setIsDark, toggleDarkMode, generateSingle, updateFont } = useThemeGenerator();
 
   const fontClass = theme?.light?.fontFamily ?? "";
   const toneId = theme?.light?.toneId ?? "";
@@ -103,7 +102,7 @@ export function ThemeShowcase({
     <main
       className={cn(
         "space-y-4 grow flex flex-col overflow-y-auto transition-discrete duration-400 ease-[cubic-bezier(.66,.27,.3,.85)]",
-        isEditOpen && "pr-64"
+        isEditOpen && "pr-66"
       )}
     >
       {/* Header */}
@@ -129,7 +128,7 @@ export function ThemeShowcase({
         <div className="flex items-center gap-3">
           <ComboboxInput
             groupedItems={fontGroups}
-            value={fontClass ?? ""}
+            value={selectedFont ?? ""}
             onChange={(val) => {
               onSelectFont(val);
               if (val) updateFont(val);
@@ -165,12 +164,8 @@ export function ThemeShowcase({
             </SheetContent>
           </Sheet>
           <ThemeCode />
-          {/* <ClickSpark sparkColor="#9AE600" sparkSize={10} sparkRadius={15} sparkCount={8} duration={400}>
-            <Button variant="outline" size="icon" className="active:scale-95">
-              <Code2 />
-            </Button>
-          </ClickSpark> */}
-          <Button variant="outline" size="icon" onClick={() => setIsDark(!isDark)}>
+
+          <Button variant="outline" size="icon" onClick={toggleDarkMode}>
             {isDark ? <Moon /> : <Sun />}
           </Button>
         </div>

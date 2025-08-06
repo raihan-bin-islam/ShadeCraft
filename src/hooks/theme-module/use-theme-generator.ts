@@ -1,12 +1,14 @@
-import { useState, useCallback, useMemo } from "react";
+"use client";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import { generateTailwindV4Theme, generateTailwindV4ThemeCollection } from "@/lib/theme-kit/generators/theme";
 import { TailwindV4Theme } from "@/types/theme-kit/theme";
 import { THEME_FEELS_V4 } from "@/config/theme-feels";
 import { TONES } from "@/config/theme-tones";
 import { FONT_OBJECTS } from "@/config/fonts";
 import { useAtom, useSetAtom } from "jotai";
-import { currentThemeAtom, updateFontAtom, updateThemeTokenAtom } from "@/store/theme";
+import { currentThemeAtom, isDarkModeAtom, updateFontAtom, updateThemeTokenAtom } from "@/store/theme";
 import { debounce } from "lodash";
+import { exportThemeToCss, generateCssVars } from "@/lib/theme-kit/generators/css";
 
 export interface UseThemeGeneratorOptions {
   maxStoredThemes?: number;
@@ -23,19 +25,23 @@ interface GenerateSingleParams {
 
 export function useThemeGenerator(options: UseThemeGeneratorOptions = {}) {
   const { maxStoredThemes = 10, onThemeGenerated, onThemeSelected } = options;
-
   const [generatedThemes, setGeneratedThemes] = useState<TailwindV4Theme[]>([]);
   const [currentTheme, setCurrentTheme] = useAtom<TailwindV4Theme | undefined>(currentThemeAtom);
   const [currentFont, seCurrentFont] = useAtom(updateFontAtom);
   const updateThemeToken = useSetAtom(updateThemeTokenAtom);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isDark, setIsDark] = useAtom(isDarkModeAtom);
+
+  const toggleDarkMode = useCallback(() => {
+    setIsDark((prev) => !prev);
+  }, [setIsDark]);
 
   const generateSingle = useCallback(
     async (params?: GenerateSingleParams) => {
       const feelId = params?.feelId;
       const toneId = params?.toneId;
       const fontClass = params?.fontClass;
-      const delay = params?.delay ?? 300;
+      const delay = params?.delay ?? 200;
 
       setIsGenerating(true);
       await new Promise((resolve) => setTimeout(resolve, delay));
@@ -102,7 +108,14 @@ export function useThemeGenerator(options: UseThemeGeneratorOptions = {}) {
     [currentTheme]
   );
 
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", isDark);
+  }, [isDark]);
+
   return {
+    isDark,
+    setIsDark,
+    toggleDarkMode,
     // State
     generatedThemes,
     currentTheme,

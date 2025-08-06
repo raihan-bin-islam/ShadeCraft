@@ -28,7 +28,7 @@ const renameKey = (obj: Record<string, string>, oldKey: string, newKey: string) 
 /**
  * Converts a flat key-value theme object into CSS custom properties.
  */
-function generateCssVars(vars: TailwindV4Theme["cssVars"]["light"]): string {
+export function generateCssVars(vars: TailwindV4Theme["cssVars"]["light"]): string {
   renameKey(vars, "fontName", "font-display");
 
   const normalKeys = Object.keys(vars).filter((k) => !filterKeys.includes(k) && k !== "radius" && !k.startsWith("font-"));

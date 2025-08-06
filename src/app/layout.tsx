@@ -9,8 +9,9 @@ const display = Hanken_Grotesk({ subsets: ["latin"] });
 const code = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jetbrains-mono" });
 
 export const metadata: Metadata = {
-  title: "Beautiful shadcn Themes",
-  description: "Five stunning themes for shadcn/ui components with OKLCH color space support",
+  title: "ShadeCraft – Shadcn theme generator",
+  description:
+    "Generate stunning themes for shadcn/ui components with OKLCH color space support. Customize colors, typography, and more.",
 };
 
 export default function RootLayout({

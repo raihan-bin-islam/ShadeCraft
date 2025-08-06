@@ -19,8 +19,7 @@ interface ThemeEditorProps {
 }
 
 export function ThemeEditor({ theme, defaultMode = "light" }: ThemeEditorProps) {
-  const [activeMode, setActiveMode] = useState<"light" | "dark">(() => defaultMode);
-
+  const [activeMode, setActiveMode] = useState<"light" | "dark">(defaultMode);
   useEffect(() => setActiveMode(defaultMode), [defaultMode]);
 
   const colorGroups = {
@@ -95,7 +94,6 @@ const ColorEditor = ({
 
   useEffect(() => {
     try {
-      console.log({ [colorKey]: cssColor });
       if (cssColor) setHex(oklchCssToHex(cssColor));
     } catch (error) {
       console.log("Error converting color:", error);

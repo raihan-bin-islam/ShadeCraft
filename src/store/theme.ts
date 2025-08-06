@@ -4,7 +4,6 @@ import { FONT_OBJECTS } from "@/config/fonts";
 
 export const currentThemeAtom = atom<TailwindV4Theme>();
 
-type TokenKey = keyof TailwindV4Theme["cssVars"]["light"];
 export const updateThemeTokenAtom = atom(
   null,
   (get, set, { mode, value }: { mode: keyof TailwindV4Theme["cssVars"] | "both"; value?: Theme }) => {
@@ -56,3 +55,5 @@ export const updateFontAtom = atom(
     });
   }
 );
+
+export const isDarkModeAtom = atom(false);
