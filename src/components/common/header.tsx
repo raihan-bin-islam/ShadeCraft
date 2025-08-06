@@ -15,7 +15,7 @@ export const Header = () => {
 
   return (
     <header className="z-50 sticky top-0 backdrop-blur-2xl flex flex-col w-full bg-foreground/3 border-b">
-      <div className="flex items-center justify-between container mx-auto p-4">
+      <div className="flex items-center justify-between container mx-auto md:p-4 p-3">
         <div className="flex items-center gap-3 min-w-48">
           <SparklesText
             className="text-sm"
@@ -28,7 +28,7 @@ export const Header = () => {
             Shade<span className="text-secondary">Craft</span>
           </h2>
         </div>
-        <div className="flex flex-col">
+        <div className="hidden md:flex flex-col">
           <RotatingText
             texts={["Stunning shadcn Themes", "Tailwind v4 Ready", "Real-time Preview", "OKLCH Colors!"]}
             mainClassName="px-2 sm:px-2 md:px-3 text-2xl font-bold text-foreground overflow-hidden justify-center rounded-lg"

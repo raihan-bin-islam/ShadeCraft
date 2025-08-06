@@ -15,8 +15,8 @@ export const LandingPage = () => {
 
   return (
     <>
-      <div className="max-h-[calc(100dvh-129px)] grow bg-background flex flex-col overflow-y-auto">
-        <div className="container mx-auto p-4 grow flex flex-col overflow-y-auto">
+      <div className="md:max-h-[calc(100dvh-129px)] grow bg-background flex flex-col overflow-y-auto">
+        <div className="container mx-auto md:p-4 p-3 grow flex flex-col overflow-y-auto">
           <ThemeShowcase
             theme={{ light: currentTheme?.cssVars?.light, dark: currentTheme?.cssVars?.dark }}
             themeName={currentTheme?.name}
