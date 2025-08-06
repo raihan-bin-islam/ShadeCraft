@@ -1,5 +1,6 @@
 {
-  "name": "shadcn-theme-generator",
+  "license": "MIT",
+  "name": "shadecraft",
   "version": "0.1.0",
   "private": true,
   "scripts": {
