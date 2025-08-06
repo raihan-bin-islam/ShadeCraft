@@ -49,43 +49,6 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-## Usage
-
-### Basic Usage
-
-```typescript
-import { generateTheme } from "./utils/theme-generator";
-
-// Generate a theme with default settings (analogous harmony, CSS output)
-const theme = generateTheme("#3b82f6"); // Use any hex color as your primary color
-
-// Apply the theme to your application
-console.log(theme); // CSS string with all theme variables
-```
-
-### Advanced Usage
-
-```typescript
-import { generateTheme } from "./utils/theme-generator";
-
-// Generate a theme with custom settings
-const theme = generateTheme(
-  "#3b82f6", // Primary color (hex)
-  "complementary", // Color harmony
-  "both", // Output format: "css", "json", or "both"
-  true // Include hex values in CSS comments (for debugging)
-);
-
-// If output format is "both", you get an object with CSS and palette properties
-const { css, palette } = theme;
-
-// Apply the CSS to your application
-document.documentElement.style.cssText = css;
-
-// Or use the palette object for custom processing
-console.log(palette);
-```
-
 ### Available Color Harmonies
 
 - `"analogous"` - Colors that are adjacent to each other on the color wheel
@@ -108,7 +71,7 @@ The generated theme includes variables for:
 
 ## Upcoming Features
 
-- **Custom Color Palette Editor**: Visual interface for creating and editing custom color palettes
+- **Palette Generator From Brand Color**: Visual interface for creating color palettes from a single brand color
 - **Theme Export Options**: Additional export formats including Tailwind config
 - **Accessibility Checker**: Built-in tools to verify WCAG compliance for generated themes
 - **Theme Sharing**: Ability to share themes via URL or community gallery

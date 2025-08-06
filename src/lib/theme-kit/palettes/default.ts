@@ -1,6 +1,6 @@
 import { THEME_FEELS_V4 } from "@/config/theme-feels";
 import { oklchToCss } from "@/lib/theme-kit/converters/to-css";
-import { ensureOklchContrast, isOklchLight } from "@/lib/theme-kit/core";
+import { ensureOklchContrast, hasGoodContrast, isOklchLight } from "@/lib/theme-kit/core";
 import { adjustOklch, adjustOklchChroma, createOklchShade, createOklchTint } from "@/lib/theme-kit/core/adjustment";
 import {
   getOklchAnalogous,
@@ -9,7 +9,7 @@ import {
   getOklchTetradic,
   getOklchTriadic,
 } from "@/lib/theme-kit/core/harmony";
-import { randomChoice, randomInRange } from "@/lib/utils";
+import { randomChoice, randomHueFromRanges, randomInRange } from "@/lib/utils";
 import { OKLCH } from "@/types/theme-kit/color-space";
 import { ColorHarmony } from "@/types/theme-kit/harmony";
 import { Adjustment, Adjustments, BackgroundKey } from "@/types/theme-kit/palette";
@@ -22,7 +22,8 @@ const getOklch = (color: Color) => {
 };
 
 export function generateBaseOklchColor(feel: (typeof THEME_FEELS_V4)[0]): Color {
-  const hue = randomChoice(feel.preferredHues) + randomInRange(-20, 20); // Add some variation
+  // const hue = randomChoice(feel.preferredHues) + randomInRange(-20, 20); // Add some variation
+  const hue = randomHueFromRanges(feel?.preferredHueRanges);
   const lightness = randomInRange(feel.lightnessRange[0], feel.lightnessRange[1]);
   const chroma = randomInRange(feel.chromaRange[0], feel.chromaRange[1]);
 
@@ -33,9 +34,9 @@ export function generateOklchBackgrounds(base: Color, adjustments?: Adjustments)
   const defaultAdjustments: Record<BackgroundKey, Adjustment> = {
     background: { lightness: 0.98, chromaRatio: 0.1, maxChroma: 0.005, lightnessVariance: 0.02 },
     card: { lightness: 0.96, chromaRatio: 0.08, maxChroma: 0.003 },
-    muted: { lightness: 0.92, chromaRatio: 0.05, maxChroma: 0.01 },
+    muted: { lightness: 0.88, chromaRatio: 0.05, maxChroma: 0.01 },
     border: { lightness: 0.9, chromaRatio: 0.03, maxChroma: 0.015 },
-    input: { lightness: 0.94, chromaRatio: 0.06, maxChroma: 0.012 },
+    input: { lightness: 0.89, chromaRatio: 0.06, maxChroma: 0.012 },
   };
 
   const usedAdjustments: Record<BackgroundKey, Adjustment> = {
@@ -60,7 +61,9 @@ export function generateOklchBackgrounds(base: Color, adjustments?: Adjustments)
     const adjustedLightness = clamp(lightness + (lightnessVariance ? Math.random() * lightnessVariance : 0), 0, 1);
     const adjustedChroma = clamp(chromaRatio * baseChroma, 0, maxChroma);
 
-    results[key] = new Color("oklch", [adjustedLightness, adjustedChroma, hue]).toGamut({ method: "clip", space: "srgb" });
+    const color = new Color("oklch", [adjustedLightness, adjustedChroma, hue]).toGamut({ method: "clip", space: "srgb" });
+
+    results[key] = color;
   });
 
   return results;

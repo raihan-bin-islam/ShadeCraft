@@ -51,7 +51,7 @@ export function Mail({ accounts, mails, defaultLayout = [20, 32, 48], defaultCol
         onLayout={(sizes: number[]) => {
           document.cookie = `react-resizable-panels:layout:mail=${JSON.stringify(sizes)}`;
         }}
-        className="bg-background text-foreground h-full grow flex flex-col overflow-y-auto items-stretch"
+        className="bg-sidebar text-sidebar-foreground h-full grow flex flex-col overflow-y-auto items-stretch"
       >
         <ResizablePanel
           defaultSize={defaultLayout[0]}
@@ -67,10 +67,7 @@ export function Mail({ accounts, mails, defaultLayout = [20, 32, 48], defaultCol
             setIsCollapsed(false);
             document.cookie = `react-resizable-panels:collapsed=${JSON.stringify(false)}`;
           }}
-          className={cn(
-            "bg-sidebar text-sidebar-foreground",
-            isCollapsed && "min-w-[50px] transition-all duration-300 ease-in-out"
-          )}
+          className={cn("my-3 pt-px -mr-px", isCollapsed && "min-w-[50px] transition-all duration-300 ease-in-out")}
         >
           <div className={cn(" flex h-[52px] items-center justify-center", isCollapsed ? "h-[52px]" : "px-2")}>
             <AccountSwitcher isCollapsed={isCollapsed} accounts={accounts} />
@@ -154,8 +151,12 @@ export function Mail({ accounts, mails, defaultLayout = [20, 32, 48], defaultCol
             ]}
           />
         </ResizablePanel>
-        <ResizableHandle withHandle />
-        <ResizablePanel defaultSize={defaultLayout[1]} minSize={30} className="grow flex flex-col overflow-y-auto bg-accent/1">
+        <ResizableHandle withHandle className="my-5 bg-transparent" />
+        <ResizablePanel
+          defaultSize={defaultLayout[1]}
+          minSize={30}
+          className="grow flex flex-col overflow-y-auto bg-accent/5 border-y border-l my-3 rounded-l-lg"
+        >
           <Tabs defaultValue="all" className="gap-0 grow flex flex-col overflow-y-auto">
             <div className="flex items-center px-4 py-2">
               <h1 className="text-xl font-bold">Inbox</h1>
@@ -186,8 +187,12 @@ export function Mail({ accounts, mails, defaultLayout = [20, 32, 48], defaultCol
             </TabsContent>
           </Tabs>
         </ResizablePanel>
-        <ResizableHandle withHandle />
-        <ResizablePanel defaultSize={defaultLayout[2]} minSize={30} className="bg-accent/1">
+        <ResizableHandle withHandle className="my-3" />
+        <ResizablePanel
+          defaultSize={defaultLayout[2]}
+          minSize={30}
+          className="bg-accent/5 border-y border-r rounded-r-lg my-3 mr-3"
+        >
           <MailDisplay mail={mails.find((item) => item.id === mail.selected) || null} />
         </ResizablePanel>
       </ResizablePanelGroup>

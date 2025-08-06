@@ -25,7 +25,7 @@ export function MailList({ items }: MailListProps) {
             className={cn(
               "cursor-pointer backdrop-blur-2xl flex flex-col items-start gap-2 border p-3 text-left text-sm transition-all hover:bg-background hover:border-border hover:text-card-foreground",
               mail.selected === item.id &&
-                "bg-primary/85 text-primary-foreground border-primary hover:bg-primary/90 hover:text-primary-foreground hover:border-primary",
+                "bg-primary/75 text-primary-foreground border-primary hover:bg-primary/80 hover:text-primary-foreground hover:border-primary",
               !item?.read && "border-l-6 border-secondary hover:border-secondary"
             )}
             onClick={() =>
@@ -57,7 +57,7 @@ export function MailList({ items }: MailListProps) {
             <div
               className={cn(
                 "line-clamp-2 text-xs text-muted-foreground",
-                mail.selected === item.id && "text-secondary-foreground"
+                mail.selected === item.id && "text-primary-foreground/70"
               )}
             >
               {item.text.substring(0, 300)}

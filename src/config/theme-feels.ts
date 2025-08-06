@@ -1,4 +1,13 @@
-export const THEME_FEELS_V4 = [
+type ThemFeelType = {
+  id: string;
+  name: string;
+  description: string;
+  lightnessRange: number[];
+  chromaRange: number[];
+  preferredHues: number[];
+  preferredHueRanges: [number, number][];
+};
+export const THEME_FEELS_V4: ThemFeelType[] = [
   {
     id: "ethereal",
     name: "Ethereal",
@@ -6,6 +15,11 @@ export const THEME_FEELS_V4 = [
     lightnessRange: [0.35, 0.75],
     chromaRange: [0.06, 0.16],
     preferredHues: [240, 280, 320, 200],
+    preferredHueRanges: [
+      [200, 220],
+      [240, 260],
+      [280, 320],
+    ],
   },
   {
     id: "vibrant",
@@ -14,6 +28,11 @@ export const THEME_FEELS_V4 = [
     lightnessRange: [0.3, 0.7],
     chromaRange: [0.15, 0.25],
     preferredHues: [0, 30, 120, 240],
+    preferredHueRanges: [
+      [0, 30],
+      [120, 140],
+      [240, 260],
+    ],
   },
   {
     id: "serene",
@@ -22,6 +41,11 @@ export const THEME_FEELS_V4 = [
     lightnessRange: [0.4, 0.85],
     chromaRange: [0.02, 0.07],
     preferredHues: [200, 220, 180, 60],
+    preferredHueRanges: [
+      [60, 80],
+      [180, 200],
+      [200, 220],
+    ],
   },
   {
     id: "warm",
@@ -30,6 +54,11 @@ export const THEME_FEELS_V4 = [
     lightnessRange: [0.4, 0.7],
     chromaRange: [0.08, 0.18],
     preferredHues: [20, 40, 60, 300],
+    preferredHueRanges: [
+      [20, 40],
+      [40, 60],
+      [300, 320],
+    ],
   },
   {
     id: "cool",
@@ -38,6 +67,11 @@ export const THEME_FEELS_V4 = [
     lightnessRange: [0.5, 0.8],
     chromaRange: [0.06, 0.16],
     preferredHues: [180, 200, 240, 280],
+    preferredHueRanges: [
+      [180, 200],
+      [240, 260],
+      [260, 280],
+    ],
   },
   {
     id: "elegant",
@@ -46,6 +80,11 @@ export const THEME_FEELS_V4 = [
     lightnessRange: [0.2, 0.6],
     chromaRange: [0.05, 0.15],
     preferredHues: [260, 280, 20, 340],
+    preferredHueRanges: [
+      [260, 280],
+      [20, 40],
+      [340, 360],
+    ],
   },
   {
     id: "playful",
@@ -54,6 +93,12 @@ export const THEME_FEELS_V4 = [
     lightnessRange: [0.5, 0.85],
     chromaRange: [0.12, 0.22],
     preferredHues: [300, 60, 120, 200],
+    preferredHueRanges: [
+      [60, 80],
+      [120, 140],
+      [200, 220],
+      [300, 320],
+    ],
   },
   {
     id: "noir",
@@ -62,6 +107,11 @@ export const THEME_FEELS_V4 = [
     lightnessRange: [0.1, 0.4],
     chromaRange: [0.02, 0.08],
     preferredHues: [260, 280, 20, 0],
+    preferredHueRanges: [
+      [0, 20],
+      [20, 40],
+      [260, 280],
+    ],
   },
   {
     id: "sunset",
@@ -70,6 +120,11 @@ export const THEME_FEELS_V4 = [
     lightnessRange: [0.5, 0.8],
     chromaRange: [0.11, 0.22],
     preferredHues: [30, 45, 20, 340],
+    preferredHueRanges: [
+      [20, 35],
+      [30, 45],
+      [340, 360],
+    ],
   },
   {
     id: "nature",
@@ -78,6 +133,11 @@ export const THEME_FEELS_V4 = [
     lightnessRange: [0.35, 0.7],
     chromaRange: [0.08, 0.18],
     preferredHues: [100, 120, 40, 20],
+    preferredHueRanges: [
+      [20, 40],
+      [40, 60],
+      [100, 120],
+    ],
   },
   {
     id: "cyber",
@@ -86,6 +146,12 @@ export const THEME_FEELS_V4 = [
     lightnessRange: [0.4, 0.75],
     chromaRange: [0.15, 0.25],
     preferredHues: [300, 180, 220, 0],
+    preferredHueRanges: [
+      [0, 20],
+      [180, 200],
+      [200, 220],
+      [300, 320],
+    ],
   },
   {
     id: "monochrome",
@@ -94,6 +160,10 @@ export const THEME_FEELS_V4 = [
     lightnessRange: [0.2, 0.9],
     chromaRange: [0.0, 0.03],
     preferredHues: [0, 220, 0, 220],
+    preferredHueRanges: [
+      [0, 10],
+      [220, 240],
+    ],
   },
   {
     id: "vintage",
@@ -102,6 +172,11 @@ export const THEME_FEELS_V4 = [
     lightnessRange: [0.35, 0.65],
     chromaRange: [0.05, 0.12],
     preferredHues: [30, 300, 60, 340],
+    preferredHueRanges: [
+      [30, 60],
+      [300, 320],
+      [340, 360],
+    ],
   },
   {
     id: "frosted",
@@ -110,6 +185,11 @@ export const THEME_FEELS_V4 = [
     lightnessRange: [0.6, 0.9],
     chromaRange: [0.04, 0.1],
     preferredHues: [200, 220, 240, 260],
+    preferredHueRanges: [
+      [200, 220],
+      [220, 240],
+      [240, 260],
+    ],
   },
   {
     id: "pastel",
@@ -118,6 +198,12 @@ export const THEME_FEELS_V4 = [
     lightnessRange: [0.7, 0.9],
     chromaRange: [0.05, 0.12],
     preferredHues: [40, 60, 280, 120],
+    preferredHueRanges: [
+      [40, 60],
+      [60, 80],
+      [120, 140],
+      [280, 300],
+    ],
   },
   {
     id: "industrial",
@@ -126,6 +212,11 @@ export const THEME_FEELS_V4 = [
     lightnessRange: [0.3, 0.6],
     chromaRange: [0.02, 0.08],
     preferredHues: [0, 220, 240, 60],
+    preferredHueRanges: [
+      [0, 20],
+      [60, 80],
+      [220, 240],
+    ],
   },
   {
     id: "forest",
@@ -134,6 +225,11 @@ export const THEME_FEELS_V4 = [
     lightnessRange: [0.25, 0.6],
     chromaRange: [0.08, 0.16],
     preferredHues: [120, 140, 160, 100],
+    preferredHueRanges: [
+      [100, 120],
+      [120, 140],
+      [140, 160],
+    ],
   },
   {
     id: "ocean",
@@ -142,6 +238,10 @@ export const THEME_FEELS_V4 = [
     lightnessRange: [0.3, 0.7],
     chromaRange: [0.1, 0.2],
     preferredHues: [190, 200, 210, 230],
+    preferredHueRanges: [
+      [190, 210],
+      [210, 230],
+    ],
   },
   {
     id: "jewel",
@@ -150,6 +250,12 @@ export const THEME_FEELS_V4 = [
     lightnessRange: [0.35, 0.65],
     chromaRange: [0.15, 0.25],
     preferredHues: [150, 270, 320, 40],
+    preferredHueRanges: [
+      [40, 60],
+      [150, 170],
+      [270, 290],
+      [300, 320],
+    ],
   },
   {
     id: "aurora",
@@ -158,6 +264,12 @@ export const THEME_FEELS_V4 = [
     lightnessRange: [0.4, 0.8],
     chromaRange: [0.08, 0.18],
     preferredHues: [160, 280, 300, 140],
+    preferredHueRanges: [
+      [140, 160],
+      [160, 180],
+      [280, 300],
+      [300, 320],
+    ],
   },
   {
     id: "terracotta",
@@ -166,6 +278,11 @@ export const THEME_FEELS_V4 = [
     lightnessRange: [0.35, 0.65],
     chromaRange: [0.1, 0.18],
     preferredHues: [15, 25, 35, 350],
+    preferredHueRanges: [
+      [15, 25],
+      [25, 35],
+      [340, 360],
+    ],
   },
   {
     id: "midnight",
@@ -174,5 +291,10 @@ export const THEME_FEELS_V4 = [
     lightnessRange: [0.15, 0.45],
     chromaRange: [0.05, 0.12],
     preferredHues: [240, 260, 280, 220],
+    preferredHueRanges: [
+      [220, 240],
+      [240, 260],
+      [260, 280],
+    ],
   },
 ];

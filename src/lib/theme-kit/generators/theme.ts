@@ -45,6 +45,8 @@ type GenerateThemeParams = {
 };
 
 export function generateTailwindV4Theme(params?: GenerateThemeParams): TailwindV4Theme {
+  console.log({ defaultFont: params?.font });
+
   const feel = params?.feel ?? randomChoice(THEME_FEELS_V4);
   const tone = params?.tone ?? randomChoice(TONES);
   const font = params?.font ?? randomChoice(tone.fonts);
@@ -98,11 +100,6 @@ export function generateTailwindV4Theme(params?: GenerateThemeParams): TailwindV
   console.log({ muted: lightBgs.muted, dark: darkBgs.muted });
 
   const cssVars = {
-    toneId: tone.id,
-    feelId: feel.id,
-    fontFamily: font.className,
-    fontName: font.name,
-    radius: tone.radius,
     background: oklchToCss(lightBgs.background),
     foreground: oklchToCss(generateOklchForeground(lightBgs.background)),
     card: oklchToCss(lightBgs.card),
@@ -122,12 +119,12 @@ export function generateTailwindV4Theme(params?: GenerateThemeParams): TailwindV
     border: oklchToCss(lightBgs.border),
     input: oklchToCss(lightBgs.input),
     ring: oklchToCss(primary),
+    toneId: tone.id,
+    feelId: feel.id,
+    fontFamily: font.className,
+    fontName: `${font.name}, ${font.fallback}`,
+    radius: tone.radius,
 
-    "dark-toneId": tone.id,
-    "dark-feelId": feel.id,
-    "dark-fontFamily": font.className,
-    "dark-fontName": font.name,
-    "dark-radius": tone.radius,
     "dark-background": oklchToCss(darkBgs.background),
     "dark-foreground": oklchToCss(generateOklchForeground(darkBgs.background)),
     "dark-card": oklchToCss(darkBgs.card),
@@ -151,6 +148,11 @@ export function generateTailwindV4Theme(params?: GenerateThemeParams): TailwindV
     "dark-border": oklchToCss(darkBgs.border),
     "dark-input": oklchToCss(darkBgs.input),
     "dark-ring": oklchToCss(createOklchTint(primary, 10)),
+    "dark-toneId": tone.id,
+    "dark-feelId": feel.id,
+    "dark-fontFamily": font.className,
+    "dark-fontName": `${font.name}, ${font.fallback}`,
+    "dark-radius": tone.radius,
   };
 
   // Add chart colors (light mode)
