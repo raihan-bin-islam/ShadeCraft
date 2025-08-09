@@ -181,7 +181,7 @@ export function ThemeShowcase({
           className="grow"
           onClick={() => generateSingle({ feelId: selectedFeel, fontClass: selectedFont, toneId: selectedTone })}
         >
-          <Sparkles /> Generate
+          <Sparkles /> Randomize
         </ShinyButton>
         <Separator />
         <EditorModal isDark={isDark} theme={theme} isEditOpen={isEditOpen} setIsEditOpen={setIsEditOpen} />
