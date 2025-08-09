@@ -1,4 +1,5 @@
 "use client";
+import { Github } from "@/components/icons/Github";
 import { Logo } from "@/components/icons/Logo";
 import { SparklesText } from "@/components/magicui/sparkles-text";
 import RotatingText from "@/components/react-bits/RotatingText";
@@ -16,15 +17,15 @@ export const Header = () => {
   return (
     <header className="z-50 sticky top-0 backdrop-blur-2xl flex flex-col w-full bg-foreground/3 border-b">
       <div className="flex items-center justify-between container mx-auto md:p-4 p-3">
-        <div className="flex items-center gap-3 min-w-48">
+        <div className="flex items-center gap-1.5 lg:gap-3 lg:min-w-48">
           <SparklesText
             className="text-sm"
             sparklesCount={3}
             colors={{ first: "var(--color-primary)", second: "var(--color-secondary)" }}
           >
-            <Logo className="size-8 fill-primary" />
+            <Logo className="size-6 lg:size-8 fill-primary" />
           </SparklesText>
-          <h2 className={cn("text-2xl text-primary font-bold overflow-visible", spaceGrotesk.className)}>
+          <h2 className={cn("lg:text-2xl text-lg text-primary font-bold overflow-visible", spaceGrotesk.className)}>
             Shade<span className="text-secondary">Craft</span>
           </h2>
         </div>
@@ -71,6 +72,11 @@ export const Header = () => {
           </Dialog>
           <Button variant="outline" size="icon" onClick={toggleDarkMode}>
             {isDark ? <Moon /> : <Sun />}
+          </Button>
+          <Button asChild variant="outline" size="icon" className="hover:bg-border">
+            <a target="_blank" href="https://github.com/raihan-bin-islam/ShadeCraft.git">
+              <Github className="size-5" />
+            </a>
           </Button>
         </div>
       </div>

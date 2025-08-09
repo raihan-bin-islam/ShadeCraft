@@ -1,27 +1,16 @@
-# Shadcn Theme Generator
+# ShadeCraft
 
-A powerful and flexible theme generator for [shadcn/ui](https://ui.shadcn.com/) components, leveraging modern color science with OKLCH color space to create beautiful, accessible, and harmonious themes.
+⚠️ **Work in Progress:** The codebase is evolving and might not be fully polished yet.  
+Contributions and feedback are very welcome!
 
-## Features
+Generate a complete, accessible Shadcn UI theme in **1 click** — powered by OKLCH color science.  
+Supports light/dark mode, real-time editing, and instant Tailwind config export.
 
-- **Advanced Color Harmonies**: Generate themes using various color harmony models:
+🚀 **Live Demo:** [shade-craft.vercel.app](https://shade-craft.vercel.app)
 
-  - Analogous
-  - Complementary
-  - Triadic
-  - Tetradic
-  - Monochromatic
-  - Split-complementary
+![ShadeCraft Demo](public/demo/shadecraft-demo.gif)
 
-- **OKLCH Color Space**: Uses perceptually uniform OKLCH color space for better color representation and accessibility
-
-- **Dark/Light Mode Support**: Automatically generates appropriate colors for both dark and light modes
-
-- **Flexible Output Formats**: Export your theme as CSS variables or JSON
-
-- **Chart Colors**: Includes a set of chart colors that work well with your theme
-
-## Installation
+## Quick Start
 
 ```bash
 # Clone the repository
@@ -34,12 +23,8 @@ npm install
 yarn
 # or
 pnpm install
-```
 
-## Development
-
-```bash
-# Start the development server with Turbopack
+# Start the development server
 npm run dev
 # or
 yarn dev
@@ -47,7 +32,19 @@ yarn dev
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Why ShadeCraft?
+
+Customizing Shadcn UI to match your brand often takes hours of tweaking CSS variables.
+ShadeCraft turns that into one click — generating beautiful, accessible themes instantly.
+
+### Features
+
+- Advanced Color Harmonies – Analogous, Complementary, Triadic, Tetradic, Monochromatic, Split-Complementary
+- OKLCH Color Space – Perfectly balanced, accessible colors
+- Dark/Light Mode – Automatic dual theme generation
+- Flexible Output – Export as CSS variables or JSON
+- Chart Colors – Matching data visualization palette
+- Lets you tweak colors in real time — with radius and tone editing coming soon.
 
 ### Available Color Harmonies
 
@@ -58,7 +55,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 - `"monochromatic"` - Different shades and tints of a single color
 - `"split-complementary"` - A color and two colors adjacent to its complement
 
-## Theme Structure
+### Theme Structure
 
 The generated theme includes variables for:
 
@@ -69,7 +66,7 @@ The generated theme includes variables for:
 - Input and border styles
 - Chart colors for data visualization
 
-## Upcoming Features
+### Upcoming Features
 
 - **Palette Generator From Brand Color**: Visual interface for creating color palettes from a single brand color
 - **Theme Export Options**: Additional export formats including Tailwind config
@@ -78,10 +75,13 @@ The generated theme includes variables for:
 - **Component Preview**: Live preview of all shadcn/ui components with your theme applied
 - **Theme Version Control**: Save and track changes to your themes
 
-## Contributing
+### Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
+See [Contributing](#contributing) for how to help improve ShadeCraft.
 
-## License
+⭐ If you find this useful, please star the repo to help others discover it!
+
+### License
 
 [MIT](LICENSE.txt)
