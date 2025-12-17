@@ -153,7 +153,10 @@ export function ThemeShowcase({
             placeholder="Feel"
           />
           <div className="hidden md:flex items-center gap-3">
-            <ShinyButton onClick={() => generateSingle({ feelId: selectedFeel, fontClass: selectedFont, toneId: selectedTone })}>
+            <ShinyButton
+              className="border-primary"
+              onClick={() => generateSingle({ feelId: selectedFeel, fontClass: selectedFont, toneId: selectedTone })}
+            >
               <Sparkles /> Randomize
             </ShinyButton>
             <Separator />
