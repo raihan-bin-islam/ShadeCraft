@@ -1,6 +1,6 @@
 # ShadeCraft vs TweakCN: Strategic Analysis & Product Differentiation
 
-**Executive Summary**: Your color-science approach is strategically sound but faces a critical challenge: users don't care *how* themes are generated if the results work. TweakCN wins with manual control + AI backup. To differentiate, you need to shift from "better algorithms" to "better outcomes and workflows."
+**Executive Summary**: Your color-science approach is strategically sound but faces a critical challenge: users don't care _how_ themes are generated if the results work. TweakCN wins with manual control + AI backup. To differentiate, you need to shift from "better algorithms" to "better outcomes and workflows."
 
 ---
 
@@ -9,6 +9,7 @@
 ### TweakCN (The Incumbent)
 
 **Strengths:**
+
 - **Manual Control**: Users can adjust every color slider individually—what users actually want
 - **AI Generator**: Generates themes from images/text (paid feature, $10-30)
 - **Perceived Agency**: Users feel creative control, even if results are same quality
@@ -18,6 +19,7 @@
 - **Simplicity**: Straightforward value prop—"visual theme editor"
 
 **Weaknesses:**
+
 - Manual work required (though this is sometimes a feature, not a bug)
 - AI generation is behind paywall
 - No systematic approach to coherence; relies on user taste
@@ -29,7 +31,8 @@
 ### ShadeCraft (Your Tool)
 
 **Strengths:**
-- **Programmatic Generation**: One-click themes that *should* be coherent
+
+- **Programmatic Generation**: One-click themes that _should_ be coherent
 - **Color Science Backbone**: OKLCH, perceptual uniformity, contrast optimization
 - **Dual Palette Strategy**: Two algorithms competing = more variation
 - **Dark Mode Automatic**: Not a manual afterthought
@@ -41,10 +44,11 @@
 - **Educational**: Demonstrates color theory in action
 
 **Weaknesses (Critical):**
+
 - **No Manual Control**: Users can't adjust individual colors post-generation (or only at margins)
-- **"Black Box" Feel**: Why did it generate *these* colors? Users want to understand
+- **"Black Box" Feel**: Why did it generate _these_ colors? Users want to understand
 - **No AI Fallback**: If algorithm produces ugly theme, no alternative path
-- **Randomness Problem**: "Run again" works, but frustrates users who want *agency*
+- **Randomness Problem**: "Run again" works, but frustrates users who want _agency_
 - **Feel Profiles Limit Options**: Only 4-6 feels might be restrictive
 - **Font/Tone Separation**: Good UX, but users might want more radical customization
 - **Market Positioning**: "Color theory" isn't a user problem—"I want a beautiful theme" is
@@ -58,6 +62,7 @@
 **Your Premise**: "AI struggles to generate coherent themes; science does better."
 
 **Reality Check**:
+
 1. **You're partially right**: AI (without constraints) can generate clashing colors. But modern AI (GPT-4, Claude) does surprisingly well with good prompts.
 2. **You're partially wrong**: Users don't validate "coherence" the way color scientists do. They validate "I like it" and "it looks professional." These are different metrics.
 3. **Hybrid is the real advantage**: OKLCH algorithms + constraints + manual tweaking beats pure algorithms OR pure AI alone.
@@ -76,21 +81,21 @@ These aren't the same. You're optimizing for the wrong metric.
 
 ### Head-to-Head Comparison
 
-| Feature | ShadeCraft | TweakCN | Winner |
-|---------|-----------|---------|--------|
-| One-click generation | ✓ | ✓ (AI, paid) | Tie |
-| Manual color control | Minimal | Full | TweakCN |
-| Dark mode | Auto-generated | Manual | ShadeCraft |
-| AI generation | None | ✓ (paid) | TweakCN |
-| Contrast optimization | ✓ | Manual | ShadeCraft |
-| Chart colors | ✓ | ✓ | Tie |
-| Accessibility checks | ✓ | ✓ | Tie |
-| Ease of use | ✓ | ✓ | Tie |
-| Free tier | Yes | Yes | Tie |
-| Export | ✓ | ✓ | Tie |
-| Open source | Unknown | ✓ | TweakCN |
-| Real-time editing | Limited | ✓ | TweakCN |
-| Customization depth | Medium | High | TweakCN |
+| Feature               | ShadeCraft     | TweakCN      | Winner     |
+| --------------------- | -------------- | ------------ | ---------- |
+| One-click generation  | ✓              | ✓ (AI, paid) | Tie        |
+| Manual color control  | Minimal        | Full         | TweakCN    |
+| Dark mode             | Auto-generated | Manual       | ShadeCraft |
+| AI generation         | None           | ✓ (paid)     | TweakCN    |
+| Contrast optimization | ✓              | Manual       | ShadeCraft |
+| Chart colors          | ✓              | ✓            | Tie        |
+| Accessibility checks  | ✓              | ✓            | Tie        |
+| Ease of use           | ✓              | ✓            | Tie        |
+| Free tier             | Yes            | Yes          | Tie        |
+| Export                | ✓              | ✓            | Tie        |
+| Open source           | Unknown        | ✓            | TweakCN    |
+| Real-time editing     | Limited        | ✓            | TweakCN    |
+| Customization depth   | Medium         | High         | TweakCN    |
 
 **The verdict**: TweakCN wins on control & flexibility. ShadeCraft wins on automation & accessibility. **Neither is clearly better—they target different user segments.**
 
@@ -118,9 +123,10 @@ You can't win on "better algorithms"—that's a commodity. You can win on:
 [Edit details if needed]
 ```
 
-Use your OKLCH strength, but *respect user intent first*.
+Use your OKLCH strength, but _respect user intent first_.
 
 **Why it works**:
+
 - Same algorithm quality, but filtered by user values
 - Users feel agency ("I told you what I want")
 - Reduces "regenerate" friction
@@ -140,12 +146,14 @@ Step 6: Export with documentation
 ```
 
 **Why it's powerful**:
+
 - Solves real problem: "I have a brand, I need a theme"
 - You use color science (advantage) + user intent (solves TweakCN's weakness)
 - 10x faster than manual tweaking
 - Can be paid feature ($20-50)
 
 **Competitors can't easily do this**:
+
 - TweakCN requires manual brand color extraction
 - Pure AI doesn't understand shadcn/ui tokens
 - Your OKLCH implementation makes this technically feasible
@@ -160,6 +168,7 @@ New: "Generate a design system with theme, spacing scale, typography scale, anim
 ```
 
 Offer:
+
 - Token generation (not just colors—spacing, font scales, shadows)
 - Component theming guides (how to apply theme to custom components)
 - Figma integration (export theme to Figma library)
@@ -167,6 +176,7 @@ Offer:
 - Version control for themes (track changes over time)
 
 **Why it matters**:
+
 - Design systems are higher-value than themes alone
 - Sticky customers (if you're in their workflow)
 - Can charge more ($50-200/month)
@@ -188,7 +198,7 @@ Your contrast optimization is genuinely good. **Make it the differentiator.**
 
 Positioning: **"Design with accessibility first, not as an afterthought"**
 
-Tools like WebAIM help check contrast; you'd help *prevent* bad contrast in generation. Huge value for teams under accessibility pressure (WCAG, ADA compliance, etc.).
+Tools like WebAIM help check contrast; you'd help _prevent_ bad contrast in generation. Huge value for teams under accessibility pressure (WCAG, ADA compliance, etc.).
 
 ### **5. Component-Specific Theming**
 
@@ -204,6 +214,7 @@ Most theme generators treat themes as flat color tokens. You know shadcn/ui comp
 ```
 
 **Why it's strong**:
+
 - Nobody does this well
 - Requires deep component knowledge (you have it)
 - Saves 50% of theme fine-tuning time
@@ -227,6 +238,7 @@ Don't compete with TweakCN's AI directly. **Combine it with your science.**
 ```
 
 **Why this beats both**:
+
 - TweakCN's AI is just "generate random theme"
 - Your OKLCH ensures quality + validations
 - User description ensures relevance
@@ -324,17 +336,20 @@ Don't compete with TweakCN's AI directly. **Combine it with your science.**
 ## Part 6: Positioning & Go-to-Market Strategy
 
 ### Current Positioning (Implicit)
+
 "Advanced theme generator with color science"
 → **Problem**: Nobody wants color science; they want results.
 
 ### Recommended Positioning
 
 **Option A (Accessibility-First):**
+
 > "The only theme generator that guarantees accessibility. Generate beautiful themes without contrast violations."
 
 **Target**: Design teams under WCAG compliance pressure, enterprises, gov't contractors
 **Pricing**: Free for light/basic, $20-50/mo for team features + accessibility reports
 **Why it works**:
+
 - Solves specific, paid problem (compliance)
 - Nobody else focuses here
 - B2B-friendly positioning
@@ -342,11 +357,13 @@ Don't compete with TweakCN's AI directly. **Combine it with your science.**
 ---
 
 **Option B (Designer-Centric):**
+
 > "Go from brand to design system in minutes. Transform your brand colors into a complete, accessible shadcn/ui theme."
 
 **Target**: Designers, design-focused teams, SaaS builders, indie hackers
 **Pricing**: Free generation, $5-15/mo for Figma integration + design system export
 **Why it works**:
+
 - Solves end-to-end workflow problem
 - Brand → theme is unique
 - Design system export is premium feature
@@ -354,11 +371,13 @@ Don't compete with TweakCN's AI directly. **Combine it with your science.**
 ---
 
 **Option C (Developer-Centric):**
+
 > "Theme generation that actually works. Your brand colors, perfectly harmonized and guaranteed to look good—no tweaking required."
 
 **Target**: Solo developers, startups, open-source projects
 **Pricing**: Completely free, plus sponsorware/donations
 **Why it works**:
+
 - Targets underserved (broke) segment
 - Open source friendly (can integrate into build tools)
 - High volume, low friction
@@ -368,6 +387,7 @@ Don't compete with TweakCN's AI directly. **Combine it with your science.**
 ### Recommended Strategy: **Option B (Designer-Centric)**
 
 **Why**:
+
 1. **Designers have budget** (unlike developers)
 2. **Brand → theme is defensible** (not commoditized)
 3. **Figma integration is sticky** (in their workflow)
@@ -380,6 +400,7 @@ Don't compete with TweakCN's AI directly. **Combine it with your science.**
 ## Part 7: Additional Product Ideas (Beyond Theme Generation)
 
 ### 1. **Color Palette Browser / Marketplace**
+
 - Users browse public palettes generated by others
 - Filter by: feel, color range, industry, etc.
 - "Use as starting point" → customize → export
@@ -391,6 +412,7 @@ Don't compete with TweakCN's AI directly. **Combine it with your science.**
 ---
 
 ### 2. **Design Token Platform**
+
 - Generate tokens (not just colors—spacing, typography, shadows, borders)
 - Version control for tokens
 - API to fetch tokens in your app
@@ -403,6 +425,7 @@ Don't compete with TweakCN's AI directly. **Combine it with your science.**
 ---
 
 ### 3. **Component Storybook Generator**
+
 - Generate a Storybook with all shadcn/ui components themed
 - Show all component states (normal, hover, active, disabled, loading)
 - Let users test theme comprehensively before applying
@@ -414,6 +437,7 @@ Don't compete with TweakCN's AI directly. **Combine it with your science.**
 ---
 
 ### 4. **AI Theme Descriptions (Reverse Engineering)**
+
 - User uploads screenshot of theme they like
 - Your tool: "This theme is Retro, Warm, High-Saturation. Here's why..."
 - Generate similar themes using analysis
@@ -425,6 +449,7 @@ Don't compete with TweakCN's AI directly. **Combine it with your science.**
 ---
 
 ### 5. **Theme Testing & Validation Tool**
+
 - Users upload their shadcn/ui site
 - Tool analyzes theme for:
   - Contrast violations (component-by-component)
@@ -440,6 +465,7 @@ Don't compete with TweakCN's AI directly. **Combine it with your science.**
 ---
 
 ### 6. **Figma to Code Theme Bridge**
+
 - Designers create theme in Figma
 - Your tool extracts colors + typography + spacing
 - Generates shadcn/ui theme automatically
@@ -451,6 +477,7 @@ Don't compete with TweakCN's AI directly. **Combine it with your science.**
 ---
 
 ### 7. **Collaborative Theme Workspace**
+
 - Teams design themes together
 - Comments on colors ("make this less saturated")
 - Version history
@@ -462,6 +489,7 @@ Don't compete with TweakCN's AI directly. **Combine it with your science.**
 ---
 
 ### 8. **Theme Variants Generator**
+
 - Generate theme for different contexts automatically:
   - Light/Dark modes (you do this)
   - High-contrast mode (WCAG AAA)
@@ -475,6 +503,7 @@ Don't compete with TweakCN's AI directly. **Combine it with your science.**
 ---
 
 ### 9. **Industry-Specific Theme Templates**
+
 - Pre-configured feel profiles for industries:
   - FinTech: Trust, modern, high-contrast
   - Healthcare: Calm, accessible, warm
@@ -488,6 +517,7 @@ Don't compete with TweakCN's AI directly. **Combine it with your science.**
 ---
 
 ### 10. **Theme Performance Analyzer**
+
 - Themes optimized for reduced cognitive load
 - Too many colors → harder to focus
 - Saturation level affecting attention
@@ -502,8 +532,10 @@ Don't compete with TweakCN's AI directly. **Combine it with your science.**
 ## Part 8: Honest Weaknesses & How to Fix Them
 
 ### Weakness 1: "Black Box" Algorithm
+
 **Problem**: Users don't understand why colors were generated.
 **Fix**:
+
 - Show color harmony algorithm used
 - Show feel profile applied
 - Show lightness/chroma/hue ranges used
@@ -512,8 +544,10 @@ Don't compete with TweakCN's AI directly. **Combine it with your science.**
 ---
 
 ### Weakness 2: No User Intent Capture
+
 **Problem**: Algorithm generates random results, ignores what user wants.
 **Fix**:
+
 - Add constraint form before generation: "Professional? Bold? Calm? Warm?"
 - Filter generated options through user values
 - Show why each color was chosen
@@ -521,8 +555,10 @@ Don't compete with TweakCN's AI directly. **Combine it with your science.**
 ---
 
 ### Weakness 3: Single Output Path
+
 **Problem**: No manual editing, no AI fallback, no alternatives.
 **Fix**:
+
 - Generate 3-5 theme variations simultaneously
 - Add manual color picker (fine-tune mode)
 - Add AI description input ("generate a modern, purple-based theme")
@@ -531,8 +567,10 @@ Don't compete with TweakCN's AI directly. **Combine it with your science.**
 ---
 
 ### Weakness 4: Unclear Value vs. TweakCN
+
 **Problem**: Users don't know why they should use you instead of TweakCN.
 **Fix**:
+
 - Focus positioning on what you uniquely do: brand → theme, accessibility guarantees, design system export
 - Don't compete on "better themes"—compete on "better workflow"
 - Build features that leverage your OKLCH strength (brand extraction, accessible palettes)
@@ -540,8 +578,10 @@ Don't compete with TweakCN's AI directly. **Combine it with your science.**
 ---
 
 ### Weakness 5: Limited Customization
+
 **Problem**: Users want to tweak everything; feel restricted.
 **Fix**:
+
 - Advanced mode: Expose lightness/chroma/hue/saturation sliders
 - Let users clone feel profiles and create custom ones
 - Allow tweaking all generation parameters before generating
@@ -551,26 +591,32 @@ Don't compete with TweakCN's AI directly. **Combine it with your science.**
 ## Part 9: Quick Wins (Implement This Month)
 
 1. **Add "Generate Again" button** - Users expect to regenerate until happy. Make it 1-click.
+
    - Time: 1 day
    - Impact: High—reduces frustration
 
 2. **Show algorithm explanation** - "This theme uses Triadic harmony with Vibrant feel"
+
    - Time: 2 days
    - Impact: Medium—educational, justifies your approach
 
 3. **Add constraint form** - "Professional or Creative? Energetic or Calm?"
+
    - Time: 3 days
    - Impact: High—users feel agency
 
 4. **Generate 3 variations at once** - Show user 3 theme options, pick favorite
+
    - Time: 2 days
    - Impact: Medium—reduces regenerate friction
 
 5. **Accessibility report** - Show contrast ratios, highlight violations
+
    - Time: 3 days
    - Impact: Medium—differentiates from TweakCN
 
 6. **Add "fine-tune" sliders** - After generation, adjust chroma/lightness per color
+
    - Time: 4 days
    - Impact: High—adds manual control without losing automation
 
@@ -593,20 +639,24 @@ Don't compete with TweakCN's AI directly. **Combine it with your science.**
 ### How to Actually Win
 
 1. **Shift from "better themes" to "better workflow"**
+
    - Current: "One-click theme generation"
    - Better: "Brand to design system in 5 minutes"
    - Even better: "Brand to Figma library → code → deployed in 10 minutes"
 
 2. **Leverage color science for accessibility, not aesthetics**
+
    - Accessibility is measurable, defensible, has compliance demand
    - Aesthetics are subjective and will never beat TweakCN's manual control
 
 3. **Build features that are hard to copy**
+
    - Brand color extraction + OKLCH theme generation is your proprietary moat
    - Design system generation is a premium feature nobody else has
    - Figma integration is sticky
 
 4. **Target a different market than TweakCN**
+
    - TweakCN targets developers ("I want to tweak my theme")
    - You target designers ("I want to build a design system") or enterprises ("We need WCAG compliance")
 
@@ -619,6 +669,7 @@ Don't compete with TweakCN's AI directly. **Combine it with your science.**
 ## Part 11: Recommended 6-Month Roadmap
 
 ### Month 1: Fix Critical UX Issues
+
 - [ ] Add manual color fine-tuning sliders
 - [ ] Add "generate multiple variations" feature
 - [ ] Add algorithm explanation
@@ -627,6 +678,7 @@ Don't compete with TweakCN's AI directly. **Combine it with your science.**
 **Outcome**: Feel less like black box, more like collaborative tool
 
 ### Month 2: Brand-to-Theme Feature
+
 - [ ] Brand color extraction
 - [ ] Feel detection from brand materials
 - [ ] Generate theme from brand colors
@@ -635,6 +687,7 @@ Don't compete with TweakCN's AI directly. **Combine it with your science.**
 **Outcome**: Unique value prop vs. TweakCN
 
 ### Month 3: Accessibility Focus
+
 - [ ] Accessibility report (contrast matrix, violations)
 - [ ] Generate accessible palettes feature
 - [ ] High-contrast mode generation
@@ -643,6 +696,7 @@ Don't compete with TweakCN's AI directly. **Combine it with your science.**
 **Outcome**: Defensible positioning, enterprise appeal
 
 ### Month 4: Design System Export
+
 - [ ] Export spacing scale
 - [ ] Export typography scale
 - [ ] Export CSS custom properties
@@ -652,6 +706,7 @@ Don't compete with TweakCN's AI directly. **Combine it with your science.**
 **Outcome**: Premium feature, sticky product, higher value
 
 ### Month 5: Team & Collaboration
+
 - [ ] Workspace / team feature
 - [ ] Share themes and get feedback
 - [ ] Version history
@@ -660,6 +715,7 @@ Don't compete with TweakCN's AI directly. **Combine it with your science.**
 **Outcome**: Transition from solo tool to team tool
 
 ### Month 6: Polish & Launch
+
 - [ ] Marketing site redesign (focus on brand → system, not algorithms)
 - [ ] Documentation for new features
 - [ ] Case studies (show real usage)
@@ -673,25 +729,27 @@ Don't compete with TweakCN's AI directly. **Combine it with your science.**
 ## Part 12: Pricing Strategy
 
 ### Current State: Free
+
 **Problem**: No revenue, no sustainability signal, hard to justify continued development
 
 ### Recommended: Freemium Model
 
-| Feature | Free | Pro ($15/mo) | Team ($50/mo) |
-|---------|------|--------------|---------------|
-| Theme generation | ✓ | ✓ | ✓ |
-| Manual editing | ✓ | ✓ | ✓ |
-| Accessibility report | ✓ | ✓ | ✓ |
-| Design system export | | ✓ | ✓ |
-| Figma integration | | ✓ | ✓ |
-| Brand-to-theme | Limited (5 themes/mo) | Unlimited | Unlimited |
-| Save themes | 5 | Unlimited | Unlimited |
-| Team collaboration | | | ✓ |
-| Theme sync API | | | ✓ |
-| Priority support | | ✓ | ✓ |
-| Commercial use | Unclear | ✓ | ✓ |
+| Feature              | Free                  | Pro ($15/mo) | Team ($50/mo) |
+| -------------------- | --------------------- | ------------ | ------------- |
+| Theme generation     | ✓                     | ✓            | ✓             |
+| Manual editing       | ✓                     | ✓            | ✓             |
+| Accessibility report | ✓                     | ✓            | ✓             |
+| Design system export |                       | ✓            | ✓             |
+| Figma integration    |                       | ✓            | ✓             |
+| Brand-to-theme       | Limited (5 themes/mo) | Unlimited    | Unlimited     |
+| Save themes          | 5                     | Unlimited    | Unlimited     |
+| Team collaboration   |                       |              | ✓             |
+| Theme sync API       |                       |              | ✓             |
+| Priority support     |                       | ✓            | ✓             |
+| Commercial use       | Unclear               | ✓            | ✓             |
 
 **Why this works**:
+
 - Free tier is functional, hooks users
 - Pro tier targets serious solo users/small teams ($180/year is reasonable)
 - Team tier targets enterprises (easily justifiable vs. design tool subscriptions)
@@ -709,6 +767,7 @@ Don't compete with TweakCN's AI directly. **Combine it with your science.**
 **Subheading**: "Generate accessible, harmonious themes that feel like yours. Not generic."
 
 **Social Proof**:
+
 - "Used by X teams"
 - "X themes generated"
 - "Zero contrast violations with Pro"
@@ -716,12 +775,15 @@ Don't compete with TweakCN's AI directly. **Combine it with your science.**
 **Hero CTA**: "Generate Your Theme"
 
 **Section 1: The Problem**
+
 > "Existing tools generate random themes. AI struggles with consistency. Manual editing takes hours. You need a theme that works—not a toy."
 
 **Section 2: The Solution**
+
 > "Upload your brand colors. We extract the essence. Science generates a complete, accessible design system. Ready to code in minutes."
 
 **Section 3: Key Features**
+
 1. **Brand-to-System**: Upload brand, get complete design system
 2. **Accessibility First**: Zero contrast violations guaranteed
 3. **Designer + Developer**: Figma export for designers, CSS/JSON for developers
@@ -729,15 +791,16 @@ Don't compete with TweakCN's AI directly. **Combine it with your science.**
 5. **Design System Ready**: Tokens, spacing, typography—not just colors
 
 **Section 4: Comparison**
+
 > "Other tools are color pickers. We're design system builders."
 
-| | ShadeCraft | Manual Editing | Figma | Generic Theme Generator |
-|---|-----------|---|---|---|
-| Brand-aware | ✓ | | | |
-| Accessible by default | ✓ | | | ✓ |
-| Complete system (not just colors) | ✓ | | | |
-| Figma integration | ✓ | | ✓ | |
-| Fast (< 5 min) | ✓ | | | ✓ |
+|                                   | ShadeCraft | Manual Editing | Figma | Generic Theme Generator |
+| --------------------------------- | ---------- | -------------- | ----- | ----------------------- |
+| Brand-aware                       | ✓          |                |       |                         |
+| Accessible by default             | ✓          |                |       | ✓                       |
+| Complete system (not just colors) | ✓          |                |       |                         |
+| Figma integration                 | ✓          |                | ✓     |                         |
+| Fast (< 5 min)                    | ✓          |                |       | ✓                       |
 
 **Section 5: Pricing**
 
@@ -746,6 +809,7 @@ Don't compete with TweakCN's AI directly. **Combine it with your science.**
 ## Part 14: Content & Community Strategy
 
 ### Educational Content (Build Authority)
+
 - **"Color Science for Designers" series**: Why OKLCH > HSL, how harmony works, etc.
 - **"From Brand to System" guide**: Step-by-step walkthrough of your workflow
 - **"Accessible Color Palettes" research**: Detailed analysis of what works
@@ -755,6 +819,7 @@ Don't compete with TweakCN's AI directly. **Combine it with your science.**
 **Why**: Attracts designers interested in learning, builds SEO, positions you as expert
 
 ### Community
+
 - **Discord server**: Theme gallery, feature requests, community themes
 - **Open source themes repository**: Users submit public themes, get featured
 - **Theme of the month**: Highlight best user-generated theme
@@ -769,12 +834,14 @@ Don't compete with TweakCN's AI directly. **Combine it with your science.**
 ### Your Strategic Choice
 
 **Option A: Keep Current Approach**
+
 - Build better algorithms
 - Iterate on UX
 - Compete with TweakCN on "better generation"
 - **Likely outcome**: Lose. TweakCN has manual control + funding.
 
 **Option B: Pivot to Designer-Centric (Recommended)**
+
 - Keep your color science strength
 - Build brand → design system as core feature
 - Focus on Figma integration, accessibility, token export
@@ -783,6 +850,7 @@ Don't compete with TweakCN's AI directly. **Combine it with your science.**
 - **Likely outcome**: Win niche market, build sustainable business, differentiate clearly from TweakCN.
 
 **Option C: Hybrid (Very Recommended)**
+
 - Keep Option B features
 - Add manual editing + fine-tuning
 - Add AI description input ("generate me a modern, purple-based theme")
@@ -791,7 +859,7 @@ Don't compete with TweakCN's AI directly. **Combine it with your science.**
 
 ### Bottom Line
 
-Your algorithm is probably *technically superior*. But technology doesn't win products—**workflow and positioning do**.
+Your algorithm is probably _technically superior_. But technology doesn't win products—**workflow and positioning do**.
 
 The question isn't "Can I generate better themes?" (probably yes). The question is: **"What job can I do that TweakCN, Figma, and Storybook can't do together?"**
 
@@ -804,23 +872,27 @@ Do that, and you win. The color science becomes the invisible magic that makes i
 ## Appendix: Quick Implementation Priorities
 
 ### This Week
+
 1. Add manual color fine-tuning
 2. Add constraint form
 3. Generate multiple variations
 4. Show algorithm explanation
 
 ### This Month
+
 1. Accessibility report
 2. High-contrast mode generation
 3. Brand color extraction (basic)
 
 ### Next Quarter
+
 1. Design system export (spacing, typography)
 2. Figma integration
 3. Pricing & team features
 4. Marketing site overhaul
 
 ### By Next Year
+
 1. Figma plugin (full integration)
 2. Team collaboration
 3. Theme sync API
