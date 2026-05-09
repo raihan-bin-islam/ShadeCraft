@@ -2,13 +2,15 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 >
-> **Note:** This project does NOT use automated tests. Verification is done via TypeScript type-checking (`npx tsc --noEmit`), lint (`npm run lint`), and manual smoke testing in the dev server. Do not add `.test.ts` / `.spec.ts` files or test infrastructure.
+> **Note:** This project does NOT use automated tests. Verification is done via TypeScript type-checking (`npx tsc --noEmit`), lint (`yarn lint`), and manual smoke testing in the dev server. Do not add `.test.ts` / `.spec.ts` files or test infrastructure.
+>
+> **Package manager:** This project uses **Yarn** (committed `yarn.lock`, no `package-lock.json`). Use `yarn lint`, `yarn dev`, `yarn build` — do NOT run `npm install` or `npm run *`, as it creates a competing lockfile and inconsistent `node_modules` state.
 
 **Goal:** Prepare the theme generator codebase for Phase 1 (Narratives) by splitting `generators/theme.ts` into focused files, fixing two bugs flagged in the audit (C1 mutation, C2 regex), removing hygiene issues, and adding a `cssVarsBuilder` helper that scales as new tokens are added.
 
 **Architecture:** Pure-refactor phase. No user-visible behavior changes (other than the two bug fixes which restore intended behavior). The 313-line `theme.ts` becomes a slim orchestrator that calls focused per-stage modules (`theme-name.ts`, `chart-tokens.ts`, `sidebar-tokens.ts`), small utilities move to existing folders (`converters/`, `core/`), and CSS var assembly uses a chainable builder so adding axes/narrative tokens later doesn't bloat the orchestrator.
 
-**Tech Stack:** TypeScript 5, Next.js 15.3, React 19, Tailwind v4, `colorjs.io`, Jotai 2.12. Verification commands: `npx tsc --noEmit`, `npm run lint`, `npm run dev`.
+**Tech Stack:** TypeScript 5, Next.js 15.3, React 19, Tailwind v4, `colorjs.io`, Jotai 2.12. Verification commands: `npx tsc --noEmit`, `yarn lint`, `yarn dev`.
 
 ---
 
@@ -29,7 +31,7 @@
 - `src/lib/theme-kit/core/index.ts` — re-export new helpers
 - `src/hooks/theme-module/use-theme-generator.ts` — fix `seCurrentFont` typo
 
-**Acceptance:** `npm run dev` shows themes generating correctly with no console errors. `npx tsc --noEmit` passes. `npm run lint` passes. Generated CSS export looks correct (no missing/duplicate keys). HSL var output uses real numbers, not the literal `oklch(...)` string.
+**Acceptance:** `yarn dev` shows themes generating correctly with no console errors. `npx tsc --noEmit` passes. `yarn lint` passes. Generated CSS export looks correct (no missing/duplicate keys). HSL var output uses real numbers, not the literal `oklch(...)` string.
 
 ---
 
@@ -134,12 +136,12 @@ Expected: completes with no errors.
 
 - [ ] **Step 5: Run lint.**
 
-Run: `npm run lint`
+Run: `yarn lint`
 Expected: no new warnings or errors related to `css.ts`.
 
 - [ ] **Step 6: Manual smoke test.**
 
-Run: `npm run dev`
+Run: `yarn dev`
 Open the app. Generate a theme. Open the theme code/export panel. Verify CSS output looks valid (has both `fontName`/`font-display` keys absent from the live theme atom — they should appear in the *generated CSS string* as `--font-display`, but `currentTheme.cssVars.light.fontName` in the Jotai store should remain intact). Generate a second theme. Verify the app does not throw and the generated CSS still looks correct.
 
 Stop the dev server.
@@ -186,7 +188,7 @@ Expected: passes.
 
 - [ ] **Step 4: Manual smoke test.**
 
-Run: `npm run dev`
+Run: `yarn dev`
 Open the app and generate a theme. In dev tools, evaluate `document.documentElement` and inspect Jotai state via React DevTools, or add a one-off `console.log(currentTheme.hslVars)` to a component that reads the atom. Verify `hslVars` values look like `"217.2 91.2% 59.8%"` (three numeric tokens), NOT `"oklch(0.5 0.15 250)"`. After confirming, remove any debug log you added.
 
 Stop the dev server.
@@ -284,12 +286,12 @@ Expected: passes.
 
 - [ ] **Step 7: Run lint.**
 
-Run: `npm run lint`
+Run: `yarn lint`
 Expected: no warnings/errors.
 
 - [ ] **Step 8: Manual smoke test.**
 
-Run: `npm run dev`. Generate a theme. Verify the RGB preview colors in the theme card / showcase render correctly (no broken color swatches).
+Run: `yarn dev`. Generate a theme. Verify the RGB preview colors in the theme card / showcase render correctly (no broken color swatches).
 
 Stop the dev server.
 
@@ -379,12 +381,12 @@ Expected: passes.
 
 - [ ] **Step 6: Run lint.**
 
-Run: `npm run lint`
+Run: `yarn lint`
 Expected: no warnings/errors.
 
 - [ ] **Step 7: Manual smoke test.**
 
-Run: `npm run dev`. Generate a theme. Toggle dark mode. Verify both light and dark mode tokens apply correctly to the preview. Verify the theme code panel shows separate light and dark blocks.
+Run: `yarn dev`. Generate a theme. Toggle dark mode. Verify both light and dark mode tokens apply correctly to the preview. Verify the theme code panel shows separate light and dark blocks.
 
 Stop the dev server.
 
@@ -459,12 +461,12 @@ import { generateThemeName } from "./theme-name";
 
 - [ ] **Step 4: Run type check + lint.**
 
-Run: `npx tsc --noEmit && npm run lint`
+Run: `npx tsc --noEmit && yarn lint`
 Expected: both pass.
 
 - [ ] **Step 5: Manual smoke test.**
 
-Run: `npm run dev`. Generate several themes. Verify each gets a distinct two-word name (Color + Suffix).
+Run: `yarn dev`. Generate several themes. Verify each gets a distinct two-word name (Color + Suffix).
 
 Stop the dev server.
 
@@ -548,12 +550,12 @@ Inspect the imports at the top of `theme.ts`. If `generateOklchChartColors` is n
 
 - [ ] **Step 5: Run type check + lint.**
 
-Run: `npx tsc --noEmit && npm run lint`
+Run: `npx tsc --noEmit && yarn lint`
 Expected: both pass. Lint may flag the unused import if step 4 was skipped — fix by removing the import.
 
 - [ ] **Step 6: Manual smoke test.**
 
-Run: `npm run dev`. Generate a theme. Open the showcase that includes chart components. Verify the chart renders with theme-tinted colors. Toggle dark mode. Verify chart updates to dark variant.
+Run: `yarn dev`. Generate a theme. Open the showcase that includes chart components. Verify the chart renders with theme-tinted colors. Toggle dark mode. Verify chart updates to dark variant.
 
 Stop the dev server.
 
@@ -700,12 +702,12 @@ For each, check if there are other references in `theme.ts`. If not, remove from
 
 - [ ] **Step 5: Run type check + lint.**
 
-Run: `npx tsc --noEmit && npm run lint`
+Run: `npx tsc --noEmit && yarn lint`
 Expected: both pass.
 
 - [ ] **Step 6: Manual smoke test.**
 
-Run: `npm run dev`. Generate themes repeatedly. Verify the sidebar in the showcase renders with appropriate background, foreground, and accent treatments. Toggle dark mode and confirm the dark sidebar variant looks correct.
+Run: `yarn dev`. Generate themes repeatedly. Verify the sidebar in the showcase renders with appropriate background, foreground, and accent treatments. Toggle dark mode and confirm the dark sidebar variant looks correct.
 
 Stop the dev server.
 
@@ -792,7 +794,7 @@ export * from "./css-vars-builder";
 
 - [ ] **Step 3: Run type check + lint.**
 
-Run: `npx tsc --noEmit && npm run lint`
+Run: `npx tsc --noEmit && yarn lint`
 Expected: both pass.
 
 - [ ] **Step 4: Commit.**
@@ -913,12 +915,12 @@ import { createCssVarsBuilder, ensureOklchContrast, getReadableForeground, group
 
 - [ ] **Step 4: Run type check + lint.**
 
-Run: `npx tsc --noEmit && npm run lint`
+Run: `npx tsc --noEmit && yarn lint`
 Expected: both pass. Address any "unused variable" lint warnings by removing intermediate `chartColors`, `darkChartColors`, `darkChartVars`, `lightSidebarBase`, `darkSidebarBase`, `indicesWithWeight`, `chosenIndex`, `lightSidebarBg`, `sidebarColors`, `darkSidebarBg`, `darkSidebarColors`, `darkSidebarVars` if any of them survived previous tasks.
 
 - [ ] **Step 5: Manual smoke test.**
 
-Run: `npm run dev`. Generate at least 5 themes. Compare with mental model of pre-refactor output:
+Run: `yarn dev`. Generate at least 5 themes. Compare with mental model of pre-refactor output:
 - Each theme has light + dark variants visible.
 - Charts in showcase render with theme tints in both modes.
 - Sidebars render with appropriate variant treatment.
@@ -983,12 +985,12 @@ Use Edit with `replace_all: true` to rename `seCurrentFont` to `setCurrentFont` 
 
 - [ ] **Step 3: Run type check + lint.**
 
-Run: `npx tsc --noEmit && npm run lint`
+Run: `npx tsc --noEmit && yarn lint`
 Expected: both pass.
 
 - [ ] **Step 4: Manual smoke test.**
 
-Run: `npm run dev`. Open browser dev tools console. Generate 3-4 themes. Confirm zero `console.log` output appears from the theme generator. Test the font selector — pick a different font, verify the theme updates with the new font (this exercises the renamed `setCurrentFont` callback).
+Run: `yarn dev`. Open browser dev tools console. Generate 3-4 themes. Confirm zero `console.log` output appears from the theme generator. Test the font selector — pick a different font, verify the theme updates with the new font (this exercises the renamed `setCurrentFont` callback).
 
 Stop the dev server.
 
@@ -1012,17 +1014,17 @@ Expected: passes with no errors.
 
 - [ ] **Step 2: Final lint.**
 
-Run: `npm run lint`
+Run: `yarn lint`
 Expected: no warnings or errors.
 
 - [ ] **Step 3: Final build.**
 
-Run: `npm run build`
+Run: `yarn build`
 Expected: completes successfully (this surfaces issues `tsc --noEmit` may miss, like Next.js-specific routing/config).
 
 - [ ] **Step 4: Final manual smoke test.**
 
-Run: `npm run dev`. Walk through this checklist in the browser:
+Run: `yarn dev`. Walk through this checklist in the browser:
 - Generate at least 10 themes. Each gets a valid name + colors + fonts.
 - Each theme displays in the showcase without console errors or visual artifacts.
 - Toggle dark mode for several themes. Dark variants apply correctly.
