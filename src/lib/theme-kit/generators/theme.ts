@@ -1,7 +1,7 @@
 import { THEME_FEELS_V4 } from "@/config/theme-feels";
 import { TONES } from "@/config/theme-tones";
 import { hexToOklch, hslToRgb, oklchToCss, oklchToHsl } from "@/lib/theme-kit/converters";
-import { ensureOklchContrast, getReadableForeground } from "@/lib/theme-kit/core";
+import { ensureOklchContrast, getReadableForeground, groupThemeTokens } from "@/lib/theme-kit/core";
 
 import { adjustOklch, adjustOklchChroma, createOklchShade, createOklchTint } from "@/lib/theme-kit/core/adjustment";
 import { generateBalancedTheme } from "@/lib/theme-kit/palettes/balanced";
@@ -22,22 +22,6 @@ import { randomChoice, weightedChoice } from "@/lib/utils";
 
 import type { ColorHarmony, OKLCH, TailwindV4Theme } from "@/types/theme-kit";
 import Color from "colorjs.io";
-
-const groupThemeTokens = (theme: Record<string, string>) => {
-  const light: Record<string, string> = {};
-  const dark: Record<string, string> = {};
-
-  for (const [key, value] of Object.entries(theme)) {
-    if (key.startsWith("dark-")) {
-      dark[key.replace(/^dark-/, "")] = value;
-    } else {
-      light[key] = value;
-    }
-  }
-
-  return { light, dark };
-};
-
 type GenerateThemeParams = {
   feel?: (typeof THEME_FEELS_V4)[0];
   tone?: (typeof TONES)[0];
