@@ -6,12 +6,12 @@ import { ensureOklchContrast, getReadableForeground, groupThemeTokens } from "@/
 import { adjustOklch, adjustOklchChroma, createOklchShade, createOklchTint } from "@/lib/theme-kit/core/adjustment";
 import { generateBalancedTheme } from "@/lib/theme-kit/palettes/balanced";
 import { generateThemeName } from "./theme-name";
+import { generateChartTokens } from "./chart-tokens";
 
 import {
   generateBaseOklchColor,
   generateDestructiveColor,
   generateOklchBackgrounds,
-  generateOklchChartColors,
   generateOklchColorPalette,
   generateOklchContrastPair,
   generateOklchDarkBackgrounds,
@@ -138,17 +138,7 @@ export function generateTailwindV4Theme(params?: GenerateThemeParams): TailwindV
     "dark-radius": tone.radius,
   };
 
-  // Add chart colors (light mode)
-  const chartColors = generateOklchChartColors(primary);
-  Object.assign(cssVars, chartColors);
-
-  // Add dark mode chart colors
-  const darkChartColors = generateOklchChartColors(createOklchTint(primary, 10));
-  const darkChartVars: Record<string, string> = {};
-  Object.entries(darkChartColors).forEach(([key, value]) => {
-    darkChartVars[`dark-${key}`] = value;
-  });
-  Object.assign(cssVars, darkChartVars);
+  Object.assign(cssVars, generateChartTokens(primary));
 
   const lightSidebarBase = [lightBgs.background, accentPair.foreground, secondaryPair.foreground, primaryPair.foreground];
   const darkSidebarBase = [darkBgs.background, accentPair.background, secondaryPair.background, primaryPair.background];
