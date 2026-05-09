@@ -1,7 +1,7 @@
 import { THEME_FEELS_V4 } from "@/config/theme-feels";
 import { TONES } from "@/config/theme-tones";
 import { hexToOklch, hslToRgb, oklchToCss, oklchToHsl } from "@/lib/theme-kit/converters";
-import { ensureOklchContrast, getReadableForeground, groupThemeTokens } from "@/lib/theme-kit/core";
+import { createCssVarsBuilder, ensureOklchContrast, getReadableForeground, groupThemeTokens } from "@/lib/theme-kit/core";
 
 import { adjustOklchChroma, createOklchShade, createOklchTint } from "@/lib/theme-kit/core/adjustment";
 import { generateBalancedTheme } from "@/lib/theme-kit/palettes/balanced";
@@ -82,83 +82,80 @@ export function generateTailwindV4Theme(params?: GenerateThemeParams): TailwindV
 
   console.log({ muted: lightBgs.muted, dark: darkBgs.muted });
 
-  const cssVars = {
-    background: oklchToCss(lightBgs.background),
-    foreground: oklchToCss(generateOklchForeground(lightBgs.background)),
-    card: oklchToCss(lightBgs.card),
-    "card-foreground": oklchToCss(generateOklchForeground(lightBgs.card)),
-    popover: oklchToCss(lightBgs.card),
-    "popover-foreground": oklchToCss(generateOklchForeground(lightBgs.card)),
-    primary: oklchToCss(primaryPair.background),
-    "primary-foreground": oklchToCss(primaryPair.foreground),
-    secondary: oklchToCss(secondaryPair.background),
-    "secondary-foreground": oklchToCss(secondaryPair.foreground),
-    muted: oklchToCss(lightBgs.muted),
-    "muted-foreground": oklchToCss(lightBgs.muted.set("oklch.l", 0.6)),
-    accent: oklchToCss(accentPair.background),
-    "accent-foreground": oklchToCss(accentPair.foreground),
-    destructive: oklchToCss(destructive),
-    "destructive-foreground": oklchToCss(generateOklchForeground(destructive)),
-    border: oklchToCss(lightBgs.border),
-    input: oklchToCss(lightBgs.input),
-    ring: oklchToCss(primary),
-    toneId: tone.id,
-    feelId: feel.id,
-    fontFamily: font.className,
-    fontName: `${font.name}, ${font.fallback}`,
-    radius: tone.radius,
-
-    "dark-background": oklchToCss(darkBgs.background),
-    "dark-foreground": oklchToCss(generateOklchForeground(darkBgs.background)),
-    "dark-card": oklchToCss(darkBgs.card),
-    "dark-card-foreground": oklchToCss(generateOklchForeground(darkBgs.card)),
-    "dark-popover": oklchToCss(darkBgs.card),
-    "dark-popover-foreground": oklchToCss(generateOklchForeground(darkBgs.card)),
-    "dark-primary": oklchToCss(createOklchTint(primaryPair.background, 10)),
-    "dark-primary-foreground": oklchToCss(
-      ensureOklchContrast(primaryPair.foreground, createOklchTint(primaryPair.background, 10))
-    ),
-    "dark-secondary": oklchToCss(createOklchTint(secondaryPair.background, 15)),
-    "dark-secondary-foreground": oklchToCss(
-      ensureOklchContrast(secondaryPair.foreground, createOklchTint(secondaryPair.background, 15))
-    ),
-    "dark-muted": oklchToCss(darkBgs.muted),
-    "dark-muted-foreground": oklchToCss(lightBgs.muted.set("oklch.l", 0.5)),
-    "dark-accent": oklchToCss(createOklchTint(accentPair.background, 15)),
-    "dark-accent-foreground": oklchToCss(ensureOklchContrast(accentPair.foreground, createOklchTint(accentPair.background, 15))),
-    "dark-destructive": oklchToCss(destructiveDark),
-    "dark-destructive-foreground": oklchToCss(generateOklchForeground(destructiveDark)),
-    "dark-border": oklchToCss(darkBgs.border),
-    "dark-input": oklchToCss(darkBgs.input),
-    "dark-ring": oklchToCss(createOklchTint(primary, 10)),
-    "dark-toneId": tone.id,
-    "dark-feelId": feel.id,
-    "dark-fontFamily": font.className,
-    "dark-fontName": `${font.name}, ${font.fallback}`,
-    "dark-radius": tone.radius,
-  };
-
-  Object.assign(cssVars, generateChartTokens(primary));
-
-  Object.assign(
-    cssVars,
-    generateSidebarTokens({
-      light: { background: lightBgs.background, border: lightBgs.border },
-      dark: { background: darkBgs.background, border: darkBgs.border },
-      primary,
-      accent,
-      lightForegroundCandidates: {
-        primary: primaryPair.foreground,
-        secondary: secondaryPair.foreground,
-        accent: accentPair.foreground,
-      },
-      darkBackgroundCandidates: {
-        primary: primaryPair.background,
-        secondary: secondaryPair.background,
-        accent: accentPair.background,
-      },
+  const cssVars = createCssVarsBuilder()
+    .light({
+      background: oklchToCss(lightBgs.background),
+      foreground: oklchToCss(generateOklchForeground(lightBgs.background)),
+      card: oklchToCss(lightBgs.card),
+      "card-foreground": oklchToCss(generateOklchForeground(lightBgs.card)),
+      popover: oklchToCss(lightBgs.card),
+      "popover-foreground": oklchToCss(generateOklchForeground(lightBgs.card)),
+      primary: oklchToCss(primaryPair.background),
+      "primary-foreground": oklchToCss(primaryPair.foreground),
+      secondary: oklchToCss(secondaryPair.background),
+      "secondary-foreground": oklchToCss(secondaryPair.foreground),
+      muted: oklchToCss(lightBgs.muted),
+      "muted-foreground": oklchToCss(lightBgs.muted.set("oklch.l", 0.6)),
+      accent: oklchToCss(accentPair.background),
+      "accent-foreground": oklchToCss(accentPair.foreground),
+      destructive: oklchToCss(destructive),
+      "destructive-foreground": oklchToCss(generateOklchForeground(destructive)),
+      border: oklchToCss(lightBgs.border),
+      input: oklchToCss(lightBgs.input),
+      ring: oklchToCss(primary),
     })
-  );
+    .dark({
+      background: oklchToCss(darkBgs.background),
+      foreground: oklchToCss(generateOklchForeground(darkBgs.background)),
+      card: oklchToCss(darkBgs.card),
+      "card-foreground": oklchToCss(generateOklchForeground(darkBgs.card)),
+      popover: oklchToCss(darkBgs.card),
+      "popover-foreground": oklchToCss(generateOklchForeground(darkBgs.card)),
+      primary: oklchToCss(createOklchTint(primaryPair.background, 10)),
+      "primary-foreground": oklchToCss(
+        ensureOklchContrast(primaryPair.foreground, createOklchTint(primaryPair.background, 10))
+      ),
+      secondary: oklchToCss(createOklchTint(secondaryPair.background, 15)),
+      "secondary-foreground": oklchToCss(
+        ensureOklchContrast(secondaryPair.foreground, createOklchTint(secondaryPair.background, 15))
+      ),
+      muted: oklchToCss(darkBgs.muted),
+      "muted-foreground": oklchToCss(lightBgs.muted.set("oklch.l", 0.5)),
+      accent: oklchToCss(createOklchTint(accentPair.background, 15)),
+      "accent-foreground": oklchToCss(ensureOklchContrast(accentPair.foreground, createOklchTint(accentPair.background, 15))),
+      destructive: oklchToCss(destructiveDark),
+      "destructive-foreground": oklchToCss(generateOklchForeground(destructiveDark)),
+      border: oklchToCss(darkBgs.border),
+      input: oklchToCss(darkBgs.input),
+      ring: oklchToCss(createOklchTint(primary, 10)),
+    })
+    .both({
+      toneId: tone.id,
+      feelId: feel.id,
+      fontFamily: font.className,
+      fontName: `${font.name}, ${font.fallback}`,
+      radius: tone.radius,
+    })
+    .merge(generateChartTokens(primary))
+    .merge(
+      generateSidebarTokens({
+        light: { background: lightBgs.background, border: lightBgs.border },
+        dark: { background: darkBgs.background, border: darkBgs.border },
+        primary,
+        accent,
+        lightForegroundCandidates: {
+          primary: primaryPair.foreground,
+          secondary: secondaryPair.foreground,
+          accent: accentPair.foreground,
+        },
+        darkBackgroundCandidates: {
+          primary: primaryPair.background,
+          secondary: secondaryPair.background,
+          accent: accentPair.background,
+        },
+      })
+    )
+    .build();
 
   const hslVars: Record<string, string> = {};
   Object.entries(cssVars).forEach(([key, value]) => {
