@@ -211,7 +211,7 @@ export function generateTailwindV4Theme(params?: GenerateThemeParams): TailwindV
     if (value.includes("oklch")) {
       try {
         // Parse OKLCH and convert to HSL approximation
-        const match = value.match(/oklch$$([^)]+)$$/);
+        const match = value.match(/oklch\(([^)]+)\)/);
         if (match) {
           const parts = match[1].split(/\s+/);
           if (parts.length >= 3) {
