@@ -5,6 +5,7 @@ import { ensureOklchContrast, getReadableForeground, groupThemeTokens } from "@/
 
 import { adjustOklch, adjustOklchChroma, createOklchShade, createOklchTint } from "@/lib/theme-kit/core/adjustment";
 import { generateBalancedTheme } from "@/lib/theme-kit/palettes/balanced";
+import { generateThemeName } from "./theme-name";
 
 import {
   generateBaseOklchColor,
@@ -65,9 +66,7 @@ export function generateTailwindV4Theme(params?: GenerateThemeParams): TailwindV
   const accent = palette[2] || adjustOklchChroma(createOklchShade(primary, 10), 0.02);
   const background = palette[3] || secondary;
 
-  const colorNames = ["Crimson", "Azure", "Emerald", "Amber", "Violet", "Coral", "Teal", "Rose", "Sage", "Indigo"];
-  const suffixes = ["Dream", "Mist", "Glow", "Bloom", "Zen", "Vibe", "Flow", "Spark", "Aura", "Wave"];
-  const themeName = `${randomChoice(colorNames)} ${randomChoice(suffixes)}`;
+  const themeName = generateThemeName();
 
   const lightBgs = generateOklchBackgrounds(background);
   const darkBgs = generateOklchDarkBackgrounds(background);
