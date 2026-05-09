@@ -3,10 +3,11 @@ import { TONES } from "@/config/theme-tones";
 import { hexToOklch, hslToRgb, oklchToCss, oklchToHsl } from "@/lib/theme-kit/converters";
 import { ensureOklchContrast, getReadableForeground, groupThemeTokens } from "@/lib/theme-kit/core";
 
-import { adjustOklch, adjustOklchChroma, createOklchShade, createOklchTint } from "@/lib/theme-kit/core/adjustment";
+import { adjustOklchChroma, createOklchShade, createOklchTint } from "@/lib/theme-kit/core/adjustment";
 import { generateBalancedTheme } from "@/lib/theme-kit/palettes/balanced";
 import { generateThemeName } from "./theme-name";
 import { generateChartTokens } from "./chart-tokens";
+import { generateSidebarTokens } from "./sidebar-tokens";
 
 import {
   generateBaseOklchColor,
@@ -16,10 +17,9 @@ import {
   generateOklchContrastPair,
   generateOklchDarkBackgrounds,
   generateOklchForeground,
-  generateOklchSidebarColors,
 } from "@/lib/theme-kit/palettes/default";
 
-import { randomChoice, weightedChoice } from "@/lib/utils";
+import { randomChoice } from "@/lib/utils";
 
 import type { ColorHarmony, OKLCH, TailwindV4Theme } from "@/types/theme-kit";
 import Color from "colorjs.io";
@@ -140,43 +140,25 @@ export function generateTailwindV4Theme(params?: GenerateThemeParams): TailwindV
 
   Object.assign(cssVars, generateChartTokens(primary));
 
-  const lightSidebarBase = [lightBgs.background, accentPair.foreground, secondaryPair.foreground, primaryPair.foreground];
-  const darkSidebarBase = [darkBgs.background, accentPair.background, secondaryPair.background, primaryPair.background];
-
-  const totalWeight = 100;
-  const mostDesiredBgWeight = 80;
-  const indicesWithWeight = lightSidebarBase.map((_, item, arr) => ({
-    item,
-    weight: item === 0 ? mostDesiredBgWeight : (totalWeight - mostDesiredBgWeight) / arr.length,
-  }));
-
-  const chosenIndex = weightedChoice(indicesWithWeight);
-
-  // Add sidebar colors (light mode) - create subtle lightness difference for better contrast
-  const lightSidebarBg = adjustOklch(lightSidebarBase[chosenIndex], { lightness: -0.02 }); // Slightly darker than main background
-  const sidebarColors = generateOklchSidebarColors(
-    lightSidebarBg,
-    generateOklchForeground(lightSidebarBg),
-    primary,
-    accent,
-    adjustOklch(lightBgs.border, { lightness: -0.01 }) // Slightly darker border
+  Object.assign(
+    cssVars,
+    generateSidebarTokens({
+      light: { background: lightBgs.background, border: lightBgs.border },
+      dark: { background: darkBgs.background, border: darkBgs.border },
+      primary,
+      accent,
+      lightForegroundCandidates: {
+        primary: primaryPair.foreground,
+        secondary: secondaryPair.foreground,
+        accent: accentPair.foreground,
+      },
+      darkBackgroundCandidates: {
+        primary: primaryPair.background,
+        secondary: secondaryPair.background,
+        accent: accentPair.background,
+      },
+    })
   );
-  Object.assign(cssVars, sidebarColors);
-
-  // Add dark mode sidebar colors - create subtle lightness difference for better contrast
-  const darkSidebarBg = adjustOklch(darkSidebarBase[chosenIndex], { lightness: 0.1 }); // Slightly lighter than main background
-  const darkSidebarColors = generateOklchSidebarColors(
-    darkSidebarBg,
-    generateOklchForeground(darkSidebarBg),
-    createOklchTint(primary, 10),
-    createOklchTint(accent, 15),
-    adjustOklch(darkBgs.border, { lightness: 0.02 }) // Slightly lighter border
-  );
-  const darkSidebarVars: Record<string, string> = {};
-  Object.entries(darkSidebarColors).forEach(([key, value]) => {
-    darkSidebarVars[`dark-${key}`] = value;
-  });
-  Object.assign(cssVars, darkSidebarVars);
 
   const hslVars: Record<string, string> = {};
   Object.entries(cssVars).forEach(([key, value]) => {
