@@ -27,7 +27,7 @@ export function useThemeGenerator(options: UseThemeGeneratorOptions = {}) {
   const { maxStoredThemes = 10, onThemeGenerated, onThemeSelected } = options;
   const [generatedThemes, setGeneratedThemes] = useState<TailwindV4Theme[]>([]);
   const [currentTheme, setCurrentTheme] = useAtom<TailwindV4Theme | undefined>(currentThemeAtom);
-  const [currentFont, seCurrentFont] = useAtom(updateFontAtom);
+  const [currentFont, setCurrentFont] = useAtom(updateFontAtom);
   const updateThemeToken = useSetAtom(updateThemeTokenAtom);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isDark, setIsDark] = useAtom(isDarkModeAtom);
@@ -128,7 +128,7 @@ export function useThemeGenerator(options: UseThemeGeneratorOptions = {}) {
     clearThemes,
     removeTheme,
 
-    updateFont: seCurrentFont,
+    updateFont: setCurrentFont,
     selectedFont: currentFont,
 
     updateThemeToken: debouncedUpdateThemeToken,

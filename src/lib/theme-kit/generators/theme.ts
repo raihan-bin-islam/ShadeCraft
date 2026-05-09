@@ -30,8 +30,6 @@ type GenerateThemeParams = {
 };
 
 export function generateTailwindV4Theme(params?: GenerateThemeParams): TailwindV4Theme {
-  console.log({ defaultFont: params?.font });
-
   const feel = params?.feel ?? randomChoice(THEME_FEELS_V4);
   const tone = params?.tone ?? randomChoice(TONES);
   const font = params?.font ?? randomChoice(tone.fonts);
@@ -72,15 +70,12 @@ export function generateTailwindV4Theme(params?: GenerateThemeParams): TailwindV
   const darkBgs = generateOklchDarkBackgrounds(background);
 
   const primaryPair = getReadableForeground(primary);
-  console.log({ primaryPair });
 
   const secondaryPair = getReadableForeground(secondary);
   const accentPair = getReadableForeground(accent);
 
   const destructive = generateDestructiveColor(); // Red in OKLCH
   const destructiveDark = new Color("oklch", [Math.min(1, destructive.l + 0.05), destructive.c, destructive.h]);
-
-  console.log({ muted: lightBgs.muted, dark: darkBgs.muted });
 
   const cssVars = createCssVarsBuilder()
     .light({
