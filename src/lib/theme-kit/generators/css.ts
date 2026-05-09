@@ -29,27 +29,28 @@ const renameKey = (obj: Record<string, string>, oldKey: string, newKey: string) 
  * Converts a flat key-value theme object into CSS custom properties.
  */
 export function generateCssVars(vars: TailwindV4Theme["cssVars"]["light"]): string {
-  renameKey(vars, "fontName", "font-display");
+  const workingCopy: Record<string, string> = { ...vars };
+  renameKey(workingCopy, "fontName", "font-display");
 
-  const normalKeys = Object.keys(vars).filter((k) => !filterKeys.includes(k) && k !== "radius" && !k.startsWith("font-"));
-  const fontKeys = Object.keys(vars).filter((k) => !filterKeys.includes(k) && k.startsWith("font-"));
-  const radiusKeys = Object.keys(vars).filter((k) => !filterKeys.includes(k) && k === "radius");
+  const normalKeys = Object.keys(workingCopy).filter((k) => !filterKeys.includes(k) && k !== "radius" && !k.startsWith("font-"));
+  const fontKeys = Object.keys(workingCopy).filter((k) => !filterKeys.includes(k) && k.startsWith("font-"));
+  const radiusKeys = Object.keys(workingCopy).filter((k) => !filterKeys.includes(k) && k === "radius");
 
   const lines: string[] = [];
 
   // Normal keys first
   normalKeys.forEach((key) => {
-    lines.push(`  --${key}: ${vars[key]};`);
+    lines.push(`  --${key}: ${workingCopy[key]};`);
   });
 
   // Font keys second last
   fontKeys.forEach((key) => {
-    lines.push(`\n  --${key}: ${vars[key]};`);
+    lines.push(`\n  --${key}: ${workingCopy[key]};`);
   });
 
   // Radius keys at the bottom
   radiusKeys.forEach((key) => {
-    lines.push(` --${key}: ${vars[key]};`);
+    lines.push(` --${key}: ${workingCopy[key]};`);
   });
 
   return lines.join("\n");
@@ -59,13 +60,14 @@ export function generateCssVars(vars: TailwindV4Theme["cssVars"]["light"]): stri
  * Converts color and utility keys into `@theme inline` format.
  */
 function generateInlineTheme(vars: TailwindV4Theme["cssVars"]["light"]): string {
+  const workingCopy: Record<string, string> = { ...vars };
   const lines: string[] = [];
 
-  renameKey(vars, "fontName", "font-display");
+  renameKey(workingCopy, "fontName", "font-display");
 
-  const normalKeys = Object.keys(vars).filter((k) => !filterKeys.includes(k) && k !== "radius" && !k.startsWith("font-"));
-  const fontKeys = Object.keys(vars).filter((k) => !filterKeys.includes(k) && k.startsWith("font-"));
-  const radiusKeys = Object.keys(vars).filter((k) => !filterKeys.includes(k) && k === "radius");
+  const normalKeys = Object.keys(workingCopy).filter((k) => !filterKeys.includes(k) && k !== "radius" && !k.startsWith("font-"));
+  const fontKeys = Object.keys(workingCopy).filter((k) => !filterKeys.includes(k) && k.startsWith("font-"));
+  const radiusKeys = Object.keys(workingCopy).filter((k) => !filterKeys.includes(k) && k === "radius");
 
   // Normal keys first
   for (const key of normalKeys) {
