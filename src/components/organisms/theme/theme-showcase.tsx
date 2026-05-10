@@ -21,6 +21,7 @@ import { FONT_OBJECTS } from "@/config/fonts";
 import { THEME_FEELS_V4 } from "@/config/theme-feels";
 import { TONES } from "@/config/theme-tones";
 import { useThemeGenerator } from "@/hooks/theme-module/use-theme-generator";
+import { LayoutModeToggle } from "@/components/molecules/layout-mode-toggle";
 import { cn } from "@/lib/utils";
 import { Edit, Moon, Sparkles, Sun } from "lucide-react";
 import { useState } from "react";
@@ -149,6 +150,7 @@ export function ThemeShowcase({
             onChange={onSelectFeel}
             placeholder="Feel"
           />
+          <LayoutModeToggle className="hidden md:block" />
           <div className="hidden md:flex items-center gap-3">
             <ShinyButton onClick={() => generateSingle({ feelId: selectedFeel, fontClass: selectedFont, toneId: selectedTone })}>
               <Sparkles /> Randomize
