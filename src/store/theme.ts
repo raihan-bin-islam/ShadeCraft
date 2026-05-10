@@ -1,5 +1,6 @@
 import { atom } from "jotai";
 import type { TailwindV4Theme, Theme } from "@/types/theme-kit";
+import type { LayoutMode } from "@/lib/theme-kit/generators/layout";
 import { FONT_OBJECTS } from "@/config/fonts";
 
 export const currentThemeAtom = atom<TailwindV4Theme>();
@@ -57,3 +58,5 @@ export const updateFontAtom = atom(
 );
 
 export const isDarkModeAtom = atom(false);
+
+export const layoutModeAtom = atom<LayoutMode>("auto");
