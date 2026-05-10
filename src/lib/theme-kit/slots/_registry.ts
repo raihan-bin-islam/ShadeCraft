@@ -23,3 +23,4 @@ import "./hero";
 import "./logo-cloud";
 import "./features";
 import "./testimonials";
+import "./pricing";
