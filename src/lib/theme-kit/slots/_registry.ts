@@ -21,3 +21,4 @@ export function registerSlot(id: string, component: SlotComponent) {
 import "./header";
 import "./hero";
 import "./logo-cloud";
+import "./features";
