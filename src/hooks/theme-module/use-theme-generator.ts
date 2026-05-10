@@ -5,8 +5,8 @@ import { TailwindV4Theme } from "@/types/theme-kit/theme";
 import { THEME_FEELS_V4 } from "@/config/theme-feels";
 import { TONES } from "@/config/theme-tones";
 import { FONT_OBJECTS } from "@/config/fonts";
-import { useAtom, useSetAtom } from "jotai";
-import { currentThemeAtom, isDarkModeAtom, updateFontAtom, updateThemeTokenAtom } from "@/store/theme";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { currentThemeAtom, isDarkModeAtom, layoutModeAtom, updateFontAtom, updateThemeTokenAtom } from "@/store/theme";
 import { debounce } from "lodash";
 import { exportThemeToCss, generateCssVars } from "@/lib/theme-kit/generators/css";
 
@@ -31,6 +31,7 @@ export function useThemeGenerator(options: UseThemeGeneratorOptions = {}) {
   const updateThemeToken = useSetAtom(updateThemeTokenAtom);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isDark, setIsDark] = useAtom(isDarkModeAtom);
+  const layoutMode = useAtomValue(layoutModeAtom);
 
   const toggleDarkMode = useCallback(() => {
     setIsDark((prev) => !prev);
@@ -50,7 +51,7 @@ export function useThemeGenerator(options: UseThemeGeneratorOptions = {}) {
       const tone = TONES.find((item) => item.id === toneId);
       const font = Object.values(FONT_OBJECTS).find((item) => item.className === fontClass);
 
-      const theme = generateTailwindV4Theme({ feel, tone, font });
+      const theme = generateTailwindV4Theme({ feel, tone, font, mode: layoutMode });
 
       setGeneratedThemes((prev) => [theme, ...prev.slice(0, maxStoredThemes - 1)]);
       setCurrentTheme(theme);
@@ -61,19 +62,19 @@ export function useThemeGenerator(options: UseThemeGeneratorOptions = {}) {
       setIsGenerating(false);
       return theme;
     },
-    [maxStoredThemes, onThemeGenerated, onThemeSelected, setCurrentTheme]
+    [maxStoredThemes, onThemeGenerated, onThemeSelected, setCurrentTheme, layoutMode]
   );
 
   const generateMultiple = useCallback(async (count = 5, delay = 500) => {
     setIsGenerating(true);
     await new Promise((resolve) => setTimeout(resolve, delay));
 
-    const themes = generateTailwindV4ThemeCollection(count);
+    const themes = generateTailwindV4ThemeCollection(count, layoutMode);
     setGeneratedThemes(themes);
 
     setIsGenerating(false);
     return themes;
-  }, []);
+  }, [layoutMode]);
 
   // Memoize the debounced version
   const debouncedUpdateThemeToken = useMemo(() => {

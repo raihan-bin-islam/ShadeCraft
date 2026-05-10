@@ -10,6 +10,7 @@ import { generateSidebarTokens } from "./sidebar-tokens";
 import { generateNarrativePalette, pickNarrative } from "./narrative";
 import { getAxisCssVars, sampleAxes } from "./axes";
 import { generateLayout } from "./layout";
+import type { LayoutMode } from "./layout";
 
 import {
   generateDestructiveColor,
@@ -26,6 +27,7 @@ type GenerateThemeParams = {
   feel?: (typeof THEME_FEELS_V4)[0];
   tone?: (typeof TONES)[0];
   font?: (typeof TONES)[0]["fonts"][0];
+  mode?: LayoutMode;
 };
 
 export function generateTailwindV4Theme(params?: GenerateThemeParams): TailwindV4Theme {
@@ -37,7 +39,7 @@ export function generateTailwindV4Theme(params?: GenerateThemeParams): TailwindV
     feelPreferences: feel.axisPreferences,
     tonePreferences: tone.axisPreferences,
   });
-  const layout = generateLayout({ feel, tone, narrative, axes });
+  const layout = generateLayout({ feel, tone, narrative, axes, mode: params?.mode });
   const palette = generateNarrativePalette(narrative, feel);
 
   // Selected Palette
@@ -198,17 +200,17 @@ export function generateTailwindV4Theme(params?: GenerateThemeParams): TailwindV
   };
 }
 
-export function generateTailwindV4ThemeCollection(count = 5): TailwindV4Theme[] {
+export function generateTailwindV4ThemeCollection(count = 5, mode?: LayoutMode): TailwindV4Theme[] {
   const themes: TailwindV4Theme[] = [];
   const usedFeels = new Set<string>();
 
   for (let i = 0; i < count; i++) {
-    let theme = generateTailwindV4Theme();
+    let theme = generateTailwindV4Theme({ mode });
 
     // Try to avoid duplicate feels in the same collection
     let attempts = 0;
     while (usedFeels.has(theme.feel) && attempts < 10) {
-      theme = generateTailwindV4Theme();
+      theme = generateTailwindV4Theme({ mode });
       attempts++;
     }
 
