@@ -2,6 +2,12 @@
 import React from "react";
 import type { LayoutSpec, SlotPlacement } from "@/types/theme-kit/layout";
 import { SLOT_REGISTRY } from "@/lib/theme-kit/slots/_registry";
+import { useAtomValue } from "jotai";
+import { previewArchetypeAtom, currentThemeAtom } from "@/store/theme";
+import { LAYOUT_ARCHETYPES } from "@/config/layout-archetypes";
+import { DESIGN_SYSTEM_DNAS } from "@/config/design-system-dnas";
+import { generateLayoutTemplate } from "@/lib/theme-kit/generators/layout/template";
+import { generateProceduralLayout } from "@/lib/theme-kit/generators/layout/procedural";
 
 interface LayoutPreviewProps {
   spec: LayoutSpec | undefined;
@@ -18,7 +24,40 @@ interface LayoutPreviewProps {
  * a simple stacked layout that respects top/bottom/left/right hints.
  */
 export function LayoutPreview({ spec }: LayoutPreviewProps) {
-  if (!spec || spec.slots.length === 0) {
+  const previewArchetype = useAtomValue(previewArchetypeAtom);
+  const theme = useAtomValue(currentThemeAtom);
+
+  // If an archetype override is set and differs from the spec's archetype,
+  // regenerate a spec for the override using the current theme's axes + narrative.
+  // The `as never` cast on narrative is intentional — we only have the narrative
+  // ID on the current theme, not the full Narrative object, but the override path
+  // only consumes id-derived properties.
+  const effectiveSpec: LayoutSpec | undefined = (() => {
+    if (!previewArchetype || !theme?.layout || previewArchetype === spec?.archetype) {
+      return spec;
+    }
+    if (!theme.axes || !theme.narrative) return spec;
+
+    const archetype = LAYOUT_ARCHETYPES.find((a) => a.id === previewArchetype);
+    if (archetype) {
+      return generateLayoutTemplate({
+        archetype,
+        axes: theme.axes,
+        narrative: { id: theme.narrative } as never,
+      });
+    }
+    const dna = DESIGN_SYSTEM_DNAS.find((d) => d.id === previewArchetype);
+    if (dna) {
+      return generateProceduralLayout({
+        dna,
+        axes: theme.axes,
+        narrative: { id: theme.narrative } as never,
+      });
+    }
+    return spec;
+  })();
+
+  if (!effectiveSpec || effectiveSpec.slots.length === 0) {
     return (
       <div className="flex h-96 w-full items-center justify-center text-muted-foreground">
         Generate a theme to see the preview.
@@ -26,11 +65,11 @@ export function LayoutPreview({ spec }: LayoutPreviewProps) {
     );
   }
 
-  const topSlots = spec.slots.filter((s) => s.position === "top");
-  const bottomSlots = spec.slots.filter((s) => s.position === "bottom");
-  const leftSlots = spec.slots.filter((s) => s.position === "left");
-  const rightSlots = spec.slots.filter((s) => s.position === "right");
-  const flowSlots = spec.slots.filter((s) => !s.position || s.position === "flow");
+  const topSlots = effectiveSpec.slots.filter((s) => s.position === "top");
+  const bottomSlots = effectiveSpec.slots.filter((s) => s.position === "bottom");
+  const leftSlots = effectiveSpec.slots.filter((s) => s.position === "left");
+  const rightSlots = effectiveSpec.slots.filter((s) => s.position === "right");
+  const flowSlots = effectiveSpec.slots.filter((s) => !s.position || s.position === "flow");
 
   const hasSides = leftSlots.length > 0 || rightSlots.length > 0;
 

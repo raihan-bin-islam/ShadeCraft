@@ -71,3 +71,11 @@ export const lockedDimensionsAtom = atom<Record<LockableDimension, boolean>>({
   axes: false,
   layout: false,
 });
+
+/**
+ * Optional override for the layout archetype shown in the preview area.
+ * When set, LayoutPreview renders the current theme on the chosen archetype
+ * instead of the one the generator picked. Doesn't mutate the underlying
+ * theme — purely cosmetic for the preview surface.
+ */
+export const previewArchetypeAtom = atom<string | null>(null);

@@ -24,6 +24,7 @@ import { useThemeGenerator } from "@/hooks/theme-module/use-theme-generator";
 import { LayoutModeToggle } from "@/components/molecules/layout-mode-toggle";
 import { LockIcon } from "@/components/molecules/lock-icon";
 import { ThemeIdentityCard } from "@/components/molecules/theme-identity-card";
+import { ArchetypeSwitcher } from "@/components/molecules/archetype-switcher";
 import { cn } from "@/lib/utils";
 import { Edit, Moon, Sparkles, Sun } from "lucide-react";
 import { useState } from "react";
@@ -179,6 +180,7 @@ export function ThemeShowcase({
 
       {/* Preview */}
       <ThemePreviewer theme={theme} isDark={isDark} className="grow overflow-y-auto flex flex-col">
+        <ArchetypeSwitcher className="mb-2" />
         <div className="relative rounded-xl border grow flex flex-col overflow-y-auto">
           <LayoutPreview spec={currentTheme?.layout} />
         </div>
