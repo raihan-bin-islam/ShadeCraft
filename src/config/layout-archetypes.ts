@@ -120,4 +120,22 @@ export const LAYOUT_ARCHETYPES: LayoutArchetype[] = [
     preferredFeels: ["playful", "vibrant", "aurora", "jewel"],
     preferredNarratives: ["vibrant-clash", "dual-accent", "colored-canvas"],
   },
+  {
+    id: "app-workspace-classic",
+    name: "App Workspace (Classic Mail)",
+    slots: [
+      { id: "workspace-page", required: true, variants: ["workspace-mail-classic"], position: "flow" },
+    ],
+    preferredFeels: ["cool", "serene", "monochrome", "industrial"],
+    preferredNarratives: ["monochrome-accent", "muted-harmony"],
+  },
+  {
+    id: "app-dashboard-classic",
+    name: "App Dashboard (Classic Stats)",
+    slots: [
+      { id: "dashboard-page", required: true, variants: ["dashboard-stats-classic"], position: "flow" },
+    ],
+    preferredFeels: ["cool", "industrial", "cyber", "monochrome"],
+    preferredNarratives: ["monochrome-accent", "dark-signature", "muted-harmony"],
+  },
 ];
