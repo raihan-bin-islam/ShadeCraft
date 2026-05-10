@@ -19,9 +19,10 @@ When adding or refactoring algorithmic logic in `src/lib/theme-kit/`, write a ti
 
 When adding UI components, hooks, store atoms, integration paths, or visual quality changes, do NOT add tests. Verification path is:
 
-1. `npx tsc --noEmit` — type check
-2. `yarn lint` — lint
-3. Manual smoke testing in `yarn dev`
+1. `yarn test` — run the pure-utility test suite (only files in `src/lib/theme-kit/**/*.test.ts`)
+2. `npx tsc --noEmit` — type check
+3. `yarn lint` — lint
+4. Manual smoke testing in `yarn dev`
 
 If you find yourself proposing a `*.test.tsx` for a React component or a `.spec.ts` for an end-to-end flow, stop — that crosses the line.
 
