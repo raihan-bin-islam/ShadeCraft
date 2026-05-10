@@ -5,6 +5,7 @@ import { ThemeShowcase } from "@/components/organisms/theme/theme-showcase";
 import { TaskbarItemId, taskbarOptions } from "@/data/tabs";
 import { useThemeGenerator } from "@/hooks/theme-module/use-theme-generator";
 import { useEffect, useState } from "react";
+import { ShareableDNAEffect } from "@/components/atoms/shareable-dna-effect";
 
 export const LandingPage = () => {
   const [selectedFont, setSelectedFont] = useState<string>();
@@ -15,6 +16,7 @@ export const LandingPage = () => {
 
   return (
     <>
+      <ShareableDNAEffect />
       <div className="md:max-h-[calc(100dvh-129px)] grow bg-background flex flex-col overflow-y-auto">
         <div className="container mx-auto md:p-4 p-3 grow flex flex-col overflow-y-auto">
           <ThemeShowcase

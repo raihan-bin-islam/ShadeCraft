@@ -10,6 +10,7 @@ import { currentThemeAtom, isDarkModeAtom, layoutModeAtom, lockedDimensionsAtom,
 import { NARRATIVES } from "@/config/theme-narratives";
 import { debounce } from "lodash";
 import { exportThemeToCss, generateCssVars } from "@/lib/theme-kit/generators/css";
+import { type ThemeDNA } from "@/lib/theme-kit/dna";
 
 export interface UseThemeGeneratorOptions {
   maxStoredThemes?: number;
@@ -120,6 +121,26 @@ export function useThemeGenerator(options: UseThemeGeneratorOptions = {}) {
     [onThemeSelected, setCurrentTheme]
   );
 
+  const applyDNA = useCallback(
+    (dna: ThemeDNA) => {
+      const feel = THEME_FEELS_V4.find((f) => f.id === dna.feel);
+      const tone = TONES.find((t) => t.id === dna.tone);
+      const font = Object.values(FONT_OBJECTS).find((f) => f.className === dna.font);
+      const narrative = dna.narrative ? NARRATIVES.find((n) => n.id === dna.narrative) : undefined;
+      const theme = generateTailwindV4Theme({
+        feel,
+        tone,
+        font,
+        narrative,
+        axes: dna.axes,
+        seed: dna.seed,
+        mode: dna.layoutEngine,
+      });
+      setCurrentTheme(theme);
+    },
+    [setCurrentTheme]
+  );
+
   const clearThemes = useCallback(() => {
     setGeneratedThemes([]);
   }, []);
@@ -154,6 +175,7 @@ export function useThemeGenerator(options: UseThemeGeneratorOptions = {}) {
     selectTheme,
     clearThemes,
     removeTheme,
+    applyDNA,
 
     updateFont: setCurrentFont,
     selectedFont: currentFont,

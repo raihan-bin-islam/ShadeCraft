@@ -25,6 +25,7 @@ import { LayoutModeToggle } from "@/components/molecules/layout-mode-toggle";
 import { LockIcon } from "@/components/molecules/lock-icon";
 import { ThemeIdentityCard } from "@/components/molecules/theme-identity-card";
 import { ArchetypeSwitcher } from "@/components/molecules/archetype-switcher";
+import { PermalinkButton } from "@/components/molecules/permalink-button";
 import { cn } from "@/lib/utils";
 import { Edit, Moon, Sparkles, Sun } from "lucide-react";
 import { useState } from "react";
@@ -160,6 +161,7 @@ export function ThemeShowcase({
             <LockIcon dimension="feel" />
           </div>
           <LayoutModeToggle className="hidden md:block" />
+          <PermalinkButton className="hidden md:flex" />
           <div className="hidden md:flex items-center gap-3">
             <ShinyButton onClick={() => generateSingle({ feelId: selectedFeel, fontClass: selectedFont, toneId: selectedTone })}>
               <Sparkles /> Randomize
