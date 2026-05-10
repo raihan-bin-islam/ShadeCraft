@@ -1,0 +1,118 @@
+/* =============================================================================
+ * Theme Axes - variant-specific styles driven by data-* attributes on <html>.
+ *
+ * The four axis selections (shadow / border / surface / component) are mirrored
+ * onto <html> as data-shadow / data-border / data-surface / data-personality
+ * by an effect in providers.tsx. This stylesheet uses those attributes to
+ * apply variants that can't be expressed purely through CSS variables (border
+ * width changes, surface background images, embossed gradients, etc.).
+ *
+ * Base CSS vars (--shadow-md, --axis-border-width, etc.) are emitted per-theme
+ * by theme.ts and consumed here via var().
+ * ========================================================================== */
+
+/* ---------- Border treatment ----------------------------------------------- */
+/*
+ * Tailwind's `border` class compiles to `border-width: 1px; border-style: solid;
+ * border-color: <color>`. We override width and color via attribute selectors.
+ */
+
+[data-border="heavy"] *:where(.border, .border-t, .border-r, .border-b, .border-l) {
+  border-width: var(--axis-border-width, 2px);
+}
+
+[data-border="accented"] *:where(.border, .border-t, .border-r, .border-b, .border-l) {
+  border-width: var(--axis-border-width, 2px);
+  border-color: var(--axis-border-color, var(--primary));
+}
+
+/* ---------- Surface treatment ---------------------------------------------- */
+/*
+ * Apply the surface image to the body. Layered above the existing background
+ * color so themes that pick `flat` surface (image: none) are unaffected.
+ */
+
+body {
+  background-image: var(--axis-surface-image, none);
+  background-attachment: fixed;
+  background-size: cover;
+}
+
+[data-surface="noise"] body,
+[data-surface="pattern"] body {
+  background-size: auto;
+  background-repeat: repeat;
+}
+
+[data-surface="mesh"] body {
+  background-size: cover;
+  background-attachment: fixed;
+}
+
+/* Glassy shadow language adds a backdrop blur to cards and popovers. */
+[data-shadow="glassy"] *:where(.bg-card, .bg-popover) {
+  backdrop-filter: blur(var(--surface-blur, 12px));
+  background-color: color-mix(
+    in oklch,
+    var(--card) calc(var(--surface-alpha, 0.7) * 100%),
+    transparent
+  );
+}
+
+/* ---------- Component personality ----------------------------------------- */
+/*
+ * `pill` and `sharp` are pure radius overrides (already handled via CSS vars
+ * --radius-button / --radius-input emitted by theme.ts; we just re-apply them
+ * to shadcn's button/input class patterns since shadcn uses literal `rounded-md`
+ * etc. utilities).
+ */
+
+[data-personality="pill"] button,
+[data-personality="pill"] input,
+[data-personality="pill"] *[role="button"]:where(.rounded-md, .rounded-lg, .rounded) {
+  border-radius: var(--radius-button, 9999px);
+}
+
+[data-personality="sharp"] button,
+[data-personality="sharp"] input,
+[data-personality="sharp"] *:where(.rounded-md, .rounded-lg, .rounded, .rounded-sm, .rounded-xl) {
+  border-radius: var(--radius-button, 0);
+}
+
+/*
+ * `outline` flips primary buttons to outline style and primary backgrounds to
+ * neutral with a primary border. Targets shadcn's bg-primary class on
+ * interactive elements only (excludes ::before, ::after, and bg layers on
+ * non-interactive surfaces).
+ */
+[data-personality="outline"] button.bg-primary,
+[data-personality="outline"] *[role="button"].bg-primary {
+  background-color: transparent;
+  color: var(--primary);
+  border: 2px solid var(--primary);
+}
+
+/*
+ * `embossed` adds a subtle highlight gradient + inner shadow to primary
+ * surfaces. The gradient uses oklch lightening for the highlight via
+ * color-mix.
+ */
+[data-personality="embossed"] button.bg-primary,
+[data-personality="embossed"] *[role="button"].bg-primary,
+[data-personality="embossed"] .bg-primary {
+  background-image: linear-gradient(
+    180deg,
+    color-mix(in oklch, var(--primary) 88%, white 12%) 0%,
+    var(--primary) 100%
+  );
+  box-shadow: inset 0 1px 0 color-mix(in oklch, var(--primary) 75%, white 25%),
+    var(--shadow-md);
+}
+
+[data-personality="embossed"] .bg-card {
+  background-image: linear-gradient(
+    180deg,
+    color-mix(in oklch, var(--card) 95%, white 5%) 0%,
+    var(--card) 100%
+  );
+}
