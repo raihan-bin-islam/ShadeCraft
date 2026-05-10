@@ -1,8 +1,9 @@
 import { ThemeTokens } from "@/types/theme-kit/palette";
 import Color from "colorjs.io";
+import { rng } from "@/lib/theme-kit/rng";
 
 function rand(min: number, max: number): number {
-  return Math.random() * (max - min) + min;
+  return rng() * (max - min) + min;
 }
 
 function clampHue(h: number): number {
@@ -12,7 +13,7 @@ function clampHue(h: number): number {
 export function generateBalancedTheme(seedHue: number): ThemeTokens {
   const baseHue = clampHue(seedHue);
   const bgLightness = 0.1 + rand(0, 0.05);
-  const accentDelta = rand(100, 140) * (Math.random() > 0.5 ? 1 : -1);
+  const accentDelta = rand(100, 140) * (rng() > 0.5 ? 1 : -1);
 
   const primary = new Color("oklch", [0.65 + rand(-0.45, 0.45), 0.52 + rand(-0.12, 0.23), baseHue]);
 

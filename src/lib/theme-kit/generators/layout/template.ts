@@ -3,6 +3,7 @@ import type { LayoutSpec, SlotPlacement } from "@/types/theme-kit/layout";
 import type { AxisSelection } from "@/config/theme-axes";
 import type { Narrative } from "@/config/theme-narratives";
 import { randomChoice } from "@/lib/utils";
+import { rng } from "@/lib/theme-kit/rng";
 
 interface GenerateTemplateParams {
   archetype: LayoutArchetype;
@@ -22,7 +23,7 @@ export function generateLayoutTemplate(params: GenerateTemplateParams): LayoutSp
   const { archetype } = params;
 
   const slots: SlotPlacement[] = archetype.slots
-    .filter((slotDef) => slotDef.required || Math.random() < 0.7)
+    .filter((slotDef) => slotDef.required || rng() < 0.7)
     .map((slotDef) => ({
       slotId: slotDef.id,
       variant: randomChoice(slotDef.variants),

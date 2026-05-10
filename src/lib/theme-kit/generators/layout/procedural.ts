@@ -3,6 +3,7 @@ import type { LayoutSpec, SlotPlacement, SlotPosition } from "@/types/theme-kit/
 import type { AxisSelection } from "@/config/theme-axes";
 import type { Narrative } from "@/config/theme-narratives";
 import { randomChoice, randomInRange } from "@/lib/utils";
+import { rng } from "@/lib/theme-kit/rng";
 
 interface GenerateProceduralParams {
   dna: DesignSystemDNA;
@@ -48,7 +49,7 @@ function sampleSlotTypes(dna: DesignSystemDNA, targetCount: number): string[] {
   const selected = new Set<string>(required);
 
   const remainingCapacity = Math.max(0, targetCount - selected.size);
-  const shuffledOptional = [...optional].sort(() => Math.random() - 0.5);
+  const shuffledOptional = [...optional].sort(() => rng() - 0.5);
   for (let i = 0; i < remainingCapacity && i < shuffledOptional.length; i++) {
     selected.add(shuffledOptional[i]);
   }

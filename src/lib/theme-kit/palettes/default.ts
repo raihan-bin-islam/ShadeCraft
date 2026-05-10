@@ -10,6 +10,7 @@ import {
   getOklchTriadic,
 } from "@/lib/theme-kit/core/harmony";
 import { randomChoice, randomHueFromRanges, randomInRange } from "@/lib/utils";
+import { rng } from "@/lib/theme-kit/rng";
 import { OKLCH } from "@/types/theme-kit/color-space";
 import { ColorHarmony } from "@/types/theme-kit/harmony";
 import { Adjustment, Adjustments, BackgroundKey } from "@/types/theme-kit/palette";
@@ -65,7 +66,7 @@ export function generateOklchBackgrounds(
   const safeBase = base.toGamut({ method: "clip", space: "srgb" });
   const [, baseChroma, baseHue] = safeBase.oklch;
 
-  const shouldUseComplementaryHue = Math.random() < 0.4;
+  const shouldUseComplementaryHue = rng() < 0.4;
   const baseHueForBg = shouldUseComplementaryHue ? (baseHue + 180) % 360 : baseHue;
 
   const clamp = (val: number, min: number, max: number) => Math.min(max, Math.max(min, val));
@@ -76,7 +77,7 @@ export function generateOklchBackgrounds(
     const { lightness, chromaRatio, maxChroma = 0.04, lightnessVariance = 0 } = usedAdjustments[key];
 
     const hue = key === "background" ? baseHueForBg : baseHue;
-    const adjustedLightness = clamp(lightness + (lightnessVariance ? Math.random() * lightnessVariance : 0), 0, 1);
+    const adjustedLightness = clamp(lightness + (lightnessVariance ? rng() * lightnessVariance : 0), 0, 1);
     const adjustedChroma = clamp(chromaRatio * baseChroma, 0, maxChroma);
 
     const color = new Color("oklch", [adjustedLightness, adjustedChroma, hue]).toGamut({ method: "clip", space: "srgb" });
@@ -183,13 +184,13 @@ export function generateOklchColorPalette(baseColor: Color, harmony: ColorHarmon
 export function generateDestructiveColor(): Color {
   // Red hue range in OKLCH — roughly 20° to 40°, but you can adjust as needed
   const redHueRange = [20, 40];
-  const h = Math.random() * (redHueRange[1] - redHueRange[0]) + redHueRange[0];
+  const h = rng() * (redHueRange[1] - redHueRange[0]) + redHueRange[0];
 
   // Chroma: fairly saturated but not extreme
-  const c = 0.18 + Math.random() * 0.1; // 0.18 to 0.28 approx.
+  const c = 0.18 + rng() * 0.1; // 0.18 to 0.28 approx.
 
   // Lightness: moderate for good visibility (adjust as needed)
-  const l = 0.5 + Math.random() * 0.2; // 0.5 to 0.7 approx.
+  const l = 0.5 + rng() * 0.2; // 0.5 to 0.7 approx.
 
   return new Color("oklch", [l, c, h]);
 }

@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { rng } from "@/lib/theme-kit/rng";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -8,22 +9,22 @@ export function cn(...inputs: ClassValue[]) {
 export function randomHueFromRanges(ranges: [number, number][]): number {
   if (!ranges.length) throw new Error("No hue ranges provided");
 
-  const [start, end] = ranges[Math.floor(Math.random() * ranges.length)];
-  return start + Math.random() * (end - start);
+  const [start, end] = ranges[Math.floor(rng() * ranges.length)];
+  return start + rng() * (end - start);
 }
 
 export function randomInRange(min: number, max: number): number {
-  return Math.random() * (max - min) + min;
+  return rng() * (max - min) + min;
 }
 
 export function randomChoice<T>(array: T[]): T {
-  return array[Math.floor(Math.random() * array.length)];
+  return array[Math.floor(rng() * array.length)];
 }
 
 type WeightedItem<T> = { item: T; weight: number };
 export function weightedChoice<T>(items: WeightedItem<T>[]): T {
   const total = items.reduce((acc, item) => acc + item.weight, 0);
-  const roll = Math.random() * total;
+  const roll = rng() * total;
 
   let sum = 0;
   for (const { item, weight } of items) {
