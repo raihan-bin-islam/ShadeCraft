@@ -1,4 +1,4 @@
-import { registerSlot } from "../_registry";
+import { registerSlot } from "../_registry-base";
 import { HeaderMinimal } from "./header-minimal";
 import { HeaderGlass } from "./header-glass";
 import { HeaderBold } from "./header-bold";

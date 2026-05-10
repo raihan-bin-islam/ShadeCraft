@@ -5,9 +5,7 @@ import { ShinyButton } from "@/components/magicui/shiny-button";
 import { ThemeCode } from "@/components/organisms/theme/theme-code";
 import { ThemeEditor } from "@/components/organisms/theme/theme-editor";
 import { ThemePreviewer } from "@/components/organisms/theme/theme-previewer";
-import ClickSpark from "@/components/react-bits/ClickSpark";
-import MailPage from "@/components/templates/mail/page";
-import { CardsStats } from "@/components/templates/stats";
+import { LayoutPreview } from "@/components/organisms/theme/layout-preview";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -24,8 +22,7 @@ import { THEME_FEELS_V4 } from "@/config/theme-feels";
 import { TONES } from "@/config/theme-tones";
 import { useThemeGenerator } from "@/hooks/theme-module/use-theme-generator";
 import { cn } from "@/lib/utils";
-import { Theme } from "@/types/theme-kit";
-import { Code2, Edit, Moon, Sparkles, Sun } from "lucide-react";
+import { Edit, Moon, Sparkles, Sun } from "lucide-react";
 import { useState } from "react";
 
 export type ThemeShowcaseProps = {
@@ -53,7 +50,7 @@ export function ThemeShowcase({
   onSelectFeel = () => {},
 }: ThemeShowcaseProps) {
   const [isEditOpen, setIsEditOpen] = useState(false);
-  const { isDark, setIsDark, toggleDarkMode, generateSingle, updateFont } = useThemeGenerator();
+  const { isDark, toggleDarkMode, generateSingle, updateFont, currentTheme } = useThemeGenerator();
 
   const fontClass = theme?.light?.fontFamily ?? "";
   const toneId = theme?.light?.toneId ?? "";
@@ -169,11 +166,8 @@ export function ThemeShowcase({
 
       {/* Preview */}
       <ThemePreviewer theme={theme} isDark={isDark} className="grow overflow-y-auto flex flex-col">
-        <div className="relative rounded-xl border grow hidden md:flex flex-col overflow-y-auto">
-          <MailPage />
-        </div>
-        <div className="grow md:hidden">
-          <CardsStats />
+        <div className="relative rounded-xl border grow flex flex-col overflow-y-auto">
+          <LayoutPreview spec={currentTheme?.layout} />
         </div>
       </ThemePreviewer>
       <div className="md:hidden flex items-center gap-3">

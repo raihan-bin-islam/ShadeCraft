@@ -1,4 +1,4 @@
-import { registerSlot } from "../_registry";
+import { registerSlot } from "../_registry-base";
 import { HeroCentered } from "./hero-centered";
 import { HeroSplit } from "./hero-split";
 import { HeroBento } from "./hero-bento";

@@ -9,6 +9,7 @@ import { generateChartTokens } from "./chart-tokens";
 import { generateSidebarTokens } from "./sidebar-tokens";
 import { generateNarrativePalette, pickNarrative } from "./narrative";
 import { getAxisCssVars, sampleAxes } from "./axes";
+import { generateLayout } from "./layout";
 
 import {
   generateDestructiveColor,
@@ -36,6 +37,7 @@ export function generateTailwindV4Theme(params?: GenerateThemeParams): TailwindV
     feelPreferences: feel.axisPreferences,
     tonePreferences: tone.axisPreferences,
   });
+  const layout = generateLayout({ feel, tone, narrative, axes });
   const palette = generateNarrativePalette(narrative, feel);
 
   // Selected Palette
@@ -181,6 +183,7 @@ export function generateTailwindV4Theme(params?: GenerateThemeParams): TailwindV
     feel: feel.name,
     narrative: narrative.id,
     axes,
+    layout,
     tone,
     theme: groupThemeTokens(cssVars),
     cssVars: groupThemeTokens(cssVars),

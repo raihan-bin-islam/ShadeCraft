@@ -1,4 +1,4 @@
-import { registerSlot } from "../_registry";
+import { registerSlot } from "../_registry-base";
 import { ListPane } from "./list-pane";
 import { DetailPane } from "./detail-pane";
 import { MetaPane } from "./meta-pane";

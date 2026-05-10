@@ -1,4 +1,4 @@
-import { registerSlot } from "../_registry";
+import { registerSlot } from "../_registry-base";
 import { TestimonialsGrid } from "./testimonials-grid";
 import { TestimonialsQuote } from "./testimonials-quote";
 

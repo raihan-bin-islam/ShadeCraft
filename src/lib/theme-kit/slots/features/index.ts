@@ -1,4 +1,4 @@
-import { registerSlot } from "../_registry";
+import { registerSlot } from "../_registry-base";
 import { Features3col } from "./features-3col";
 import { FeaturesBento } from "./features-bento";
 import { FeaturesAlternating } from "./features-alternating";

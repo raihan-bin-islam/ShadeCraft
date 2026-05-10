@@ -1,4 +1,4 @@
-import { registerSlot } from "../_registry";
+import { registerSlot } from "../_registry-base";
 import { CtaBanner } from "./cta-banner";
 import { CtaCard } from "./cta-card";
 

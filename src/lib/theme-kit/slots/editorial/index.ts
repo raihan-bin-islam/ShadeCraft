@@ -1,4 +1,4 @@
-import { registerSlot } from "../_registry";
+import { registerSlot } from "../_registry-base";
 import { ContentBlock } from "./content-block";
 import { MetaSidebar } from "./meta-sidebar";
 

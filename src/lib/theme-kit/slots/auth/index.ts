@@ -1,4 +1,4 @@
-import { registerSlot } from "../_registry";
+import { registerSlot } from "../_registry-base";
 import { ImagePanel } from "./image-panel";
 import { FormPanel } from "./form-panel";
 import { CenteredForm } from "./centered-form";

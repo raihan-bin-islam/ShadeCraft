@@ -1,4 +1,4 @@
-import { registerSlot } from "../_registry";
+import { registerSlot } from "../_registry-base";
 import { SettingsSidebar } from "./settings-sidebar";
 import { FormSection } from "./form-section";
 

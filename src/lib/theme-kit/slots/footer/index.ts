@@ -1,4 +1,4 @@
-import { registerSlot } from "../_registry";
+import { registerSlot } from "../_registry-base";
 import { FooterMinimal } from "./footer-minimal";
 import { FooterRich } from "./footer-rich";
 

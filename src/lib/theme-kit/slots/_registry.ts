@@ -1,22 +1,10 @@
-import type { SlotComponent } from "./_types";
-
 /**
- * Central map from slot variant id to component. Populated by importing each
- * variant module and assigning into this object. The renderer (LayoutPreview)
- * looks up components by id from this registry.
- *
- * Keys follow the kebab-case convention used everywhere else (variant ids in
- * archetype slot definitions, data attributes, etc.).
+ * Aggregates all slot variant registrations. Import this module (not
+ * _registry-base) anywhere you need the fully-populated SLOT_REGISTRY.
+ * Each slot index.ts registers itself into _registry-base via registerSlot;
+ * the side-effect imports below trigger that registration.
  */
-export const SLOT_REGISTRY: Record<string, SlotComponent> = {};
-
-/**
- * Helper used by each variant module's index/registration block to register
- * itself. Keeps registration co-located with the component file.
- */
-export function registerSlot(id: string, component: SlotComponent) {
-  SLOT_REGISTRY[id] = component;
-}
+export { SLOT_REGISTRY, registerSlot } from "./_registry-base";
 
 import "./header";
 import "./hero";

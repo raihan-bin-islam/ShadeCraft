@@ -1,4 +1,4 @@
-import { registerSlot } from "../_registry";
+import { registerSlot } from "../_registry-base";
 import { LogoCloudGrid } from "./logo-cloud-grid";
 import { LogoCloudMarquee } from "./logo-cloud-marquee";
 

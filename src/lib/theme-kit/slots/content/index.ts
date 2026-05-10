@@ -1,4 +1,4 @@
-import { registerSlot } from "../_registry";
+import { registerSlot } from "../_registry-base";
 import { StatCards } from "./stat-cards";
 import { ChartArea } from "./chart-area";
 import { DataTable } from "./data-table";

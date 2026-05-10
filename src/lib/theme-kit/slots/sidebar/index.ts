@@ -1,4 +1,4 @@
-import { registerSlot } from "../_registry";
+import { registerSlot } from "../_registry-base";
 import { SidebarIcon } from "./sidebar-icon";
 import { SidebarRich } from "./sidebar-rich";
 import { SidebarFloating } from "./sidebar-floating";

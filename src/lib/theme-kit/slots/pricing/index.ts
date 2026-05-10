@@ -1,4 +1,4 @@
-import { registerSlot } from "../_registry";
+import { registerSlot } from "../_registry-base";
 import { Pricing3col } from "./pricing-3col";
 import { PricingComparison } from "./pricing-comparison";
 
