@@ -26,3 +26,4 @@ import "./testimonials";
 import "./pricing";
 import "./cta";
 import "./footer";
+import "./sidebar";
