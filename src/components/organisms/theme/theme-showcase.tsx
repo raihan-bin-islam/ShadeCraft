@@ -26,6 +26,7 @@ import { LockIcon } from "@/components/molecules/lock-icon";
 import { ThemeIdentityCard } from "@/components/molecules/theme-identity-card";
 import { ArchetypeSwitcher } from "@/components/molecules/archetype-switcher";
 import { PermalinkButton } from "@/components/molecules/permalink-button";
+import { VariationsPanel } from "@/components/molecules/variations-panel";
 import { cn } from "@/lib/utils";
 import { Edit, Moon, Sparkles, Sun } from "lucide-react";
 import { useState } from "react";
@@ -187,6 +188,7 @@ export function ThemeShowcase({
           <LayoutPreview spec={currentTheme?.layout} />
         </div>
       </ThemePreviewer>
+      <VariationsPanel className="mt-6" />
       <div className="md:hidden flex items-center gap-3">
         <ShinyButton
           className="grow"
