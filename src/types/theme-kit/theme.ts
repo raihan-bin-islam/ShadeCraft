@@ -1,5 +1,6 @@
 import { TONES } from "@/config/theme-tones";
 import { HSL, OKLCH, RGB } from "@/types/theme-kit/color-space";
+import type { AxisSelection } from "@/config/theme-axes";
 
 export type Theme = Record<string, string>;
 export interface ThemeConfig {
@@ -16,6 +17,7 @@ export interface TailwindV4Theme {
   description: string;
   feel: string;
   narrative?: string;
+  axes?: AxisSelection;
   tone?: (typeof TONES)[0];
   cssVars: { light: Theme; dark: Theme };
   theme: { light: Theme; dark: Theme };
