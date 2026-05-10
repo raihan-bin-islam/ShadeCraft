@@ -29,3 +29,4 @@ import "./footer";
 import "./sidebar";
 import "./content";
 import "./workspace";
+import "./settings";
