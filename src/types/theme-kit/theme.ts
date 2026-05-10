@@ -15,6 +15,7 @@ export interface TailwindV4Theme {
   name: string;
   description: string;
   feel: string;
+  narrative?: string;
   tone?: (typeof TONES)[0];
   cssVars: { light: Theme; dark: Theme };
   theme: { light: Theme; dark: Theme };
