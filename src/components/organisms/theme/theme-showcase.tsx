@@ -22,6 +22,7 @@ import { THEME_FEELS_V4 } from "@/config/theme-feels";
 import { TONES } from "@/config/theme-tones";
 import { useThemeGenerator } from "@/hooks/theme-module/use-theme-generator";
 import { LayoutModeToggle } from "@/components/molecules/layout-mode-toggle";
+import { ThemeIdentityCard } from "@/components/molecules/theme-identity-card";
 import { cn } from "@/lib/utils";
 import { Edit, Moon, Sparkles, Sun } from "lucide-react";
 import { useState } from "react";
@@ -165,6 +166,9 @@ export function ThemeShowcase({
           </div>
         </div>
       </div>
+
+      {/* Identity */}
+      <ThemeIdentityCard className="mb-4" />
 
       {/* Preview */}
       <ThemePreviewer theme={theme} isDark={isDark} className="grow overflow-y-auto flex flex-col">
