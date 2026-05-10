@@ -1,3 +1,5 @@
+import type { AxisPreferences } from "./theme-axes";
+
 type ThemFeelType = {
   id: string;
   name: string;
@@ -6,6 +8,7 @@ type ThemFeelType = {
   chromaRange: number[];
   preferredHues: number[];
   preferredHueRanges: [number, number][];
+  axisPreferences?: AxisPreferences;
 };
 export const THEME_FEELS_V4: ThemFeelType[] = [
   {
@@ -20,6 +23,11 @@ export const THEME_FEELS_V4: ThemFeelType[] = [
       [240, 260],
       [280, 320],
     ],
+    axisPreferences: {
+      shadow: { glassy: 4, soft: 2 },
+      border: { hairline: 3, standard: 2 },
+      surface: { mesh: 4, gradient: 3, flat: 1 },
+    },
   },
   {
     id: "vibrant",
@@ -33,6 +41,12 @@ export const THEME_FEELS_V4: ThemFeelType[] = [
       [120, 140],
       [240, 260],
     ],
+    axisPreferences: {
+      shadow: { elevated: 3, glow: 3, soft: 1 },
+      border: { accented: 3, standard: 2 },
+      surface: { gradient: 3, mesh: 3, flat: 2 },
+      component: { solid: 3, pill: 2 },
+    },
   },
   {
     id: "serene",
@@ -112,6 +126,11 @@ export const THEME_FEELS_V4: ThemFeelType[] = [
       [20, 40],
       [260, 280],
     ],
+    axisPreferences: {
+      shadow: { glow: 4, soft: 2, flat: 1 },
+      border: { accented: 3, hairline: 2 },
+      surface: { flat: 3, gradient: 3, mesh: 2 },
+    },
   },
   {
     id: "sunset",
@@ -152,6 +171,12 @@ export const THEME_FEELS_V4: ThemFeelType[] = [
       [200, 220],
       [300, 320],
     ],
+    axisPreferences: {
+      shadow: { glow: 4, elevated: 2 },
+      border: { accented: 3, hairline: 2 },
+      surface: { mesh: 3, gradient: 2, flat: 2 },
+      component: { sharp: 3, solid: 2 },
+    },
   },
   {
     id: "monochrome",
@@ -190,6 +215,12 @@ export const THEME_FEELS_V4: ThemFeelType[] = [
       [220, 240],
       [240, 260],
     ],
+    axisPreferences: {
+      shadow: { glassy: 5, soft: 2 },
+      border: { hairline: 4, standard: 2 },
+      surface: { gradient: 3, mesh: 3, flat: 1 },
+      component: { solid: 3, pill: 2 },
+    },
   },
   {
     id: "pastel",
@@ -204,6 +235,12 @@ export const THEME_FEELS_V4: ThemFeelType[] = [
       [120, 140],
       [280, 300],
     ],
+    axisPreferences: {
+      shadow: { soft: 4, flat: 3, glow: 1 },
+      border: { hairline: 4, standard: 2 },
+      surface: { gradient: 4, mesh: 2, flat: 2 },
+      component: { pill: 4, solid: 2 },
+    },
   },
   {
     id: "industrial",
@@ -270,6 +307,11 @@ export const THEME_FEELS_V4: ThemFeelType[] = [
       [280, 300],
       [300, 320],
     ],
+    axisPreferences: {
+      shadow: { glow: 4, glassy: 2 },
+      border: { accented: 3, hairline: 2 },
+      surface: { mesh: 5, gradient: 2 },
+    },
   },
   {
     id: "terracotta",
@@ -296,5 +338,10 @@ export const THEME_FEELS_V4: ThemFeelType[] = [
       [240, 260],
       [260, 280],
     ],
+    axisPreferences: {
+      shadow: { glow: 4, soft: 2 },
+      border: { accented: 3, standard: 2 },
+      surface: { flat: 3, gradient: 3, mesh: 2 },
+    },
   },
 ];
