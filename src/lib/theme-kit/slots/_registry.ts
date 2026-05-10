@@ -28,3 +28,4 @@ import "./cta";
 import "./footer";
 import "./sidebar";
 import "./content";
+import "./workspace";
