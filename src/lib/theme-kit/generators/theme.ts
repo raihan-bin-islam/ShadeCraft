@@ -11,6 +11,11 @@ import { generateNarrativePalette, pickNarrative } from "./narrative";
 import { getAxisCssVars, sampleAxes } from "./axes";
 import { generateLayout } from "./layout";
 import type { LayoutMode } from "./layout";
+import { withSeed } from "@/lib/theme-kit/rng";
+import { buildIdentity } from "@/lib/theme-kit/identity";
+import type { Narrative } from "@/config/theme-narratives";
+import type { AxisSelection } from "@/config/theme-axes";
+import type { LayoutSpec } from "@/types/theme-kit/layout";
 
 import {
   generateDestructiveColor,
@@ -28,18 +33,28 @@ type GenerateThemeParams = {
   tone?: (typeof TONES)[0];
   font?: (typeof TONES)[0]["fonts"][0];
   mode?: LayoutMode;
+  /** Lock the chosen narrative (skips pickNarrative). */
+  narrative?: Narrative;
+  /** Lock the chosen axes (skips sampleAxes). */
+  axes?: AxisSelection;
+  /** Lock the chosen layout spec (skips generateLayout). */
+  layout?: LayoutSpec;
+  /** Seed for deterministic generation. If omitted, a fresh seed is sampled. */
+  seed?: number;
 };
 
 export function generateTailwindV4Theme(params?: GenerateThemeParams): TailwindV4Theme {
+  const seed = params?.seed ?? Math.floor(Math.random() * 0xffffffff);
+  return withSeed(seed, () => {
   const feel = params?.feel ?? randomChoice(THEME_FEELS_V4);
   const tone = params?.tone ?? randomChoice(TONES);
   const font = params?.font ?? randomChoice(tone.fonts);
-  const narrative = pickNarrative(feel);
-  const axes = sampleAxes({
+  const narrative = params?.narrative ?? pickNarrative(feel);
+  const axes = params?.axes ?? sampleAxes({
     feelPreferences: feel.axisPreferences,
     tonePreferences: tone.axisPreferences,
   });
-  const layout = generateLayout({ feel, tone, narrative, axes, mode: params?.mode });
+  const layout = params?.layout ?? generateLayout({ feel, tone, narrative, axes, mode: params?.mode });
   const palette = generateNarrativePalette(narrative, feel);
 
   // Selected Palette
@@ -49,6 +64,7 @@ export function generateTailwindV4Theme(params?: GenerateThemeParams): TailwindV
   const background = palette[3] || secondary;
 
   const themeName = generateThemeName();
+  const identity = buildIdentity({ name: themeName, feel, tone, narrative, layout });
 
   const lightBgs = generateOklchBackgrounds(background, undefined, {
     lightness: narrative.background.lightness[1], // upper bound — gives layered tokens room to shift down
@@ -186,6 +202,8 @@ export function generateTailwindV4Theme(params?: GenerateThemeParams): TailwindV
     narrative: narrative.id,
     axes,
     layout,
+    identity,
+    seed,
     tone,
     theme: groupThemeTokens(cssVars),
     cssVars: groupThemeTokens(cssVars),
@@ -198,6 +216,7 @@ export function generateTailwindV4Theme(params?: GenerateThemeParams): TailwindV
       darkBg: `rgb(${darkBgRgb.r}, ${darkBgRgb.g}, ${darkBgRgb.b})`,
     },
   };
+  }); // end withSeed
 }
 
 export function generateTailwindV4ThemeCollection(count = 5, mode?: LayoutMode): TailwindV4Theme[] {

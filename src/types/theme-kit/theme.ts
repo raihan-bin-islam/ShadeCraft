@@ -22,6 +22,7 @@ export interface TailwindV4Theme {
   axes?: AxisSelection;
   layout?: LayoutSpec;
   identity?: ThemeIdentity;
+  seed?: number;
   tone?: (typeof TONES)[0];
   cssVars: { light: Theme; dark: Theme };
   theme: { light: Theme; dark: Theme };
