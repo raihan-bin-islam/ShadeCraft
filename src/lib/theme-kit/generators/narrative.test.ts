@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import type { Narrative } from "@/config/theme-narratives";
-import { pickNarrative } from "./narrative";
+import { pickNarrative, generateNarrativePalette } from "./narrative";
 
 const fakeFeel = (id: string) => ({
   id,
@@ -69,5 +69,71 @@ describe("pickNarrative", () => {
     expect(typeof result.id).toBe("string");
     expect(typeof result.name).toBe("string");
     expect(result.primary).toBeDefined();
+  });
+});
+
+describe("generateNarrativePalette", () => {
+  it("returns exactly four colors", () => {
+    const narrative = fakeNarrative({});
+    const palette = generateNarrativePalette(narrative, fakeFeel("noir"));
+    expect(palette).toHaveLength(4);
+  });
+
+  it("primary chroma falls inside the narrative's primary chroma range", () => {
+    const narrative = fakeNarrative({
+      primary: { chroma: [0.18, 0.22], lightness: [0.5, 0.5] },
+    });
+    for (let i = 0; i < 50; i++) {
+      const [primary] = generateNarrativePalette(narrative, fakeFeel("noir"));
+      const [, c] = primary.oklch;
+      expect(c).toBeGreaterThanOrEqual(0.18);
+      expect(c).toBeLessThanOrEqual(0.22);
+    }
+  });
+
+  it("primary lightness falls inside the narrative's primary lightness range", () => {
+    const narrative = fakeNarrative({
+      primary: { chroma: [0.1, 0.1], lightness: [0.55, 0.6] },
+    });
+    for (let i = 0; i < 50; i++) {
+      const [primary] = generateNarrativePalette(narrative, fakeFeel("noir"));
+      const [l] = primary.oklch;
+      expect(l).toBeGreaterThanOrEqual(0.55);
+      expect(l).toBeLessThanOrEqual(0.6);
+    }
+  });
+
+  it("secondary mode='complement' places secondary hue at primary + 180", () => {
+    const narrative = fakeNarrative({
+      secondary: { chroma: [0.05, 0.05], lightness: [0.5, 0.5], mode: "complement" },
+    });
+    const feel = { ...fakeFeel("noir"), preferredHueRanges: [[100, 100]] as [number, number][] };
+    const [, secondary] = generateNarrativePalette(narrative, feel);
+    const [, , h] = secondary.oklch;
+    // primary hue = 100, complement = 280
+    expect(Math.round(h)).toBe(280);
+  });
+
+  it("accent mode='echo-primary' uses primary hue", () => {
+    const narrative = fakeNarrative({
+      accent: { chroma: [0.05, 0.05], lightness: [0.5, 0.5], mode: "echo-primary" },
+    });
+    const feel = { ...fakeFeel("noir"), preferredHueRanges: [[200, 200]] as [number, number][] };
+    const [primary, , accent] = generateNarrativePalette(narrative, feel);
+    const [, , primaryH] = primary.oklch;
+    const [, , accentH] = accent.oklch;
+    expect(accentH).toBe(primaryH);
+  });
+
+  it("background lightness respects the narrative's range (dark bg narrative produces dark bg seed)", () => {
+    const narrative = fakeNarrative({
+      background: { chroma: [0.0, 0.01], lightness: [0.1, 0.15], saturated: false },
+    });
+    for (let i = 0; i < 20; i++) {
+      const [, , , background] = generateNarrativePalette(narrative, fakeFeel("noir"));
+      const [l] = background.oklch;
+      expect(l).toBeGreaterThanOrEqual(0.1);
+      expect(l).toBeLessThanOrEqual(0.15);
+    }
   });
 });
