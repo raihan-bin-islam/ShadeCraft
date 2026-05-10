@@ -20,6 +20,9 @@ import {
 import { FONT_OBJECTS } from "@/config/fonts";
 import { THEME_FEELS_V4 } from "@/config/theme-feels";
 import { TONES } from "@/config/theme-tones";
+import { NARRATIVES } from "@/config/theme-narratives";
+import { LAYOUT_ARCHETYPES } from "@/config/layout-archetypes";
+import { DESIGN_SYSTEM_DNAS } from "@/config/design-system-dnas";
 import { useThemeGenerator } from "@/hooks/theme-module/use-theme-generator";
 import { LayoutModeToggle } from "@/components/molecules/layout-mode-toggle";
 import { LockIcon } from "@/components/molecules/lock-icon";
@@ -30,6 +33,8 @@ import { VariationsPanel } from "@/components/molecules/variations-panel";
 import { cn } from "@/lib/utils";
 import { Edit, Moon, Sparkles, Sun } from "lucide-react";
 import { useState } from "react";
+import { useAtom } from "jotai";
+import { selectedNarrativeAtom, selectedLayoutAtom } from "@/store/theme";
 
 export type ThemeShowcaseProps = {
   theme?: {
@@ -101,6 +106,25 @@ export function ThemeShowcase({
     label: f.name,
   }));
 
+  const narrativeItems: ComboboxItem[] = NARRATIVES.map((n) => ({
+    value: n.id,
+    label: n.name,
+  }));
+
+  const layoutGroups: GroupedComboboxItem[] = [
+    {
+      heading: "Templates",
+      items: LAYOUT_ARCHETYPES.map((a) => ({ value: a.id, label: a.name })),
+    },
+    {
+      heading: "DNAs",
+      items: DESIGN_SYSTEM_DNAS.map((d) => ({ value: d.id, label: d.name })),
+    },
+  ];
+
+  const [selectedNarrative, setSelectedNarrative] = useAtom(selectedNarrativeAtom);
+  const [selectedLayout, setSelectedLayout] = useAtom(selectedLayoutAtom);
+
   console.log("font:", { selectedFont });
 
   return (
@@ -160,6 +184,24 @@ export function ThemeShowcase({
               placeholder="Feel"
             />
             <LockIcon dimension="feel" />
+          </div>
+          <div className="hidden md:flex items-center gap-1">
+            <ComboboxInput
+              items={narrativeItems}
+              value={selectedNarrative ?? ""}
+              onChange={(val) => setSelectedNarrative(val ?? null)}
+              placeholder="Narrative"
+            />
+            <LockIcon dimension="narrative" />
+          </div>
+          <div className="hidden md:flex items-center gap-1">
+            <ComboboxInput
+              groupedItems={layoutGroups}
+              value={selectedLayout ?? ""}
+              onChange={(val) => setSelectedLayout(val ?? null)}
+              placeholder="Layout"
+            />
+            <LockIcon dimension="layout" />
           </div>
           <LayoutModeToggle className="hidden md:block" />
           <PermalinkButton className="hidden md:flex" />

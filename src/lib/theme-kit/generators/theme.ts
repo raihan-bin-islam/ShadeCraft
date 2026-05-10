@@ -39,6 +39,12 @@ type GenerateThemeParams = {
   axes?: AxisSelection;
   /** Lock the chosen layout spec (skips generateLayout). */
   layout?: LayoutSpec;
+  /**
+   * Force a specific archetype OR DNA id for layout generation. Bypasses
+   * weighted picking inside generateLayout. Ignored if `layout` is also
+   * provided (full layout override wins).
+   */
+  archetypeId?: string;
   /** Seed for deterministic generation. If omitted, a fresh seed is sampled. */
   seed?: number;
 };
@@ -54,7 +60,7 @@ export function generateTailwindV4Theme(params?: GenerateThemeParams): TailwindV
     feelPreferences: feel.axisPreferences,
     tonePreferences: tone.axisPreferences,
   });
-  const layout = params?.layout ?? generateLayout({ feel, tone, narrative, axes, mode: params?.mode });
+  const layout = params?.layout ?? generateLayout({ feel, tone, narrative, axes, mode: params?.mode, forceArchetypeId: params?.archetypeId });
   const palette = generateNarrativePalette(narrative, feel);
 
   // Selected Palette

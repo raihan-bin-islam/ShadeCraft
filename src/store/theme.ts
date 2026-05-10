@@ -79,3 +79,18 @@ export const lockedDimensionsAtom = atom<Record<LockableDimension, boolean>>({
  * theme — purely cosmetic for the preview surface.
  */
 export const previewArchetypeAtom = atom<string | null>(null);
+
+/**
+ * User's currently selected narrative ID. When set, generateSingle uses it as
+ * a one-shot pin (the next regeneration uses this narrative). LockIcon makes
+ * the pin persistent across shuffles. null means "let the generator pick".
+ */
+export const selectedNarrativeAtom = atom<string | null>(null);
+
+/**
+ * User's currently selected layout id (archetype OR DNA). When set,
+ * generateSingle pre-resolves it and forces generateLayout to use that
+ * specific archetype/DNA. LockIcon makes the pin persistent across shuffles.
+ * null means "let the generator pick based on mode".
+ */
+export const selectedLayoutAtom = atom<string | null>(null);

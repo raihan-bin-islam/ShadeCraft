@@ -6,7 +6,7 @@ import { THEME_FEELS_V4 } from "@/config/theme-feels";
 import { TONES } from "@/config/theme-tones";
 import { FONT_OBJECTS } from "@/config/fonts";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { currentThemeAtom, isDarkModeAtom, layoutModeAtom, lockedDimensionsAtom, updateFontAtom, updateThemeTokenAtom } from "@/store/theme";
+import { currentThemeAtom, isDarkModeAtom, layoutModeAtom, lockedDimensionsAtom, selectedLayoutAtom, selectedNarrativeAtom, updateFontAtom, updateThemeTokenAtom } from "@/store/theme";
 import { NARRATIVES } from "@/config/theme-narratives";
 import { debounce } from "lodash";
 import { exportThemeToCss, generateCssVars } from "@/lib/theme-kit/generators/css";
@@ -22,6 +22,9 @@ interface GenerateSingleParams {
   feelId?: string;
   toneId?: string;
   fontClass?: string;
+  narrativeId?: string;
+  /** Archetype id (Engine A) or DNA id (Engine B). */
+  archetypeId?: string;
   delay?: number;
 }
 
@@ -35,6 +38,8 @@ export function useThemeGenerator(options: UseThemeGeneratorOptions = {}) {
   const [isDark, setIsDark] = useAtom(isDarkModeAtom);
   const layoutMode = useAtomValue(layoutModeAtom);
   const locks = useAtomValue(lockedDimensionsAtom);
+  const selectedNarrative = useAtomValue(selectedNarrativeAtom);
+  const selectedLayout = useAtomValue(selectedLayoutAtom);
 
   const toggleDarkMode = useCallback(() => {
     setIsDark((prev) => !prev);
@@ -45,6 +50,8 @@ export function useThemeGenerator(options: UseThemeGeneratorOptions = {}) {
       const feelId = params?.feelId;
       const toneId = params?.toneId;
       const fontClass = params?.fontClass;
+      const narrativeId = params?.narrativeId ?? selectedNarrative ?? undefined;
+      const archetypeId = params?.archetypeId ?? selectedLayout ?? undefined;
       const delay = params?.delay ?? 200;
 
       setIsGenerating(true);
@@ -53,8 +60,15 @@ export function useThemeGenerator(options: UseThemeGeneratorOptions = {}) {
       const feel = THEME_FEELS_V4.find((item) => item.id === feelId);
       const tone = TONES.find((item) => item.id === toneId);
       const font = Object.values(FONT_OBJECTS).find((item) => item.className === fontClass);
+      const narrative = narrativeId ? NARRATIVES.find((n) => n.id === narrativeId) : undefined;
 
-      const baseParams = { feel, tone, font };
+      const baseParams: Partial<Parameters<typeof generateTailwindV4Theme>[0]> = {
+        feel,
+        tone,
+        font,
+        narrative,
+        archetypeId,
+      };
 
       const lockedParams: Partial<Parameters<typeof generateTailwindV4Theme>[0]> = {};
       if (currentTheme) {
@@ -89,7 +103,7 @@ export function useThemeGenerator(options: UseThemeGeneratorOptions = {}) {
       setIsGenerating(false);
       return theme;
     },
-    [maxStoredThemes, onThemeGenerated, onThemeSelected, setCurrentTheme, layoutMode, locks, currentTheme, currentFont]
+    [maxStoredThemes, onThemeGenerated, onThemeSelected, setCurrentTheme, layoutMode, locks, currentTheme, currentFont, selectedNarrative, selectedLayout]
   );
 
   const generateMultiple = useCallback(async (count = 5, delay = 500) => {

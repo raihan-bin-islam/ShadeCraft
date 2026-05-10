@@ -20,6 +20,13 @@ interface GenerateLayoutParams {
   narrative: Narrative;
   axes: AxisSelection;
   mode?: LayoutMode;
+  /**
+   * Force a specific archetype OR DNA id. When set, bypasses the weighted
+   * pickArchetype / pickDNA logic. The id is matched against LAYOUT_ARCHETYPES
+   * first; if not found, falls back to DESIGN_SYSTEM_DNAS. Mode is inferred
+   * from which catalog matched (template vs procedural).
+   */
+  forceArchetypeId?: string;
 }
 
 /**
@@ -27,8 +34,23 @@ interface GenerateLayoutParams {
  * the chosen engine to produce a LayoutSpec. `auto` mode does a 70/30 weighted
  * choice between template and procedural — leans on the polished template path
  * with procedural surfacing as a creative wildcard.
+ *
+ * If `forceArchetypeId` is supplied, mode and weighted picks are bypassed —
+ * the matching archetype or DNA is used directly.
  */
 export function generateLayout(params: GenerateLayoutParams): LayoutSpec {
+  if (params.forceArchetypeId) {
+    const archetype = LAYOUT_ARCHETYPES.find((a) => a.id === params.forceArchetypeId);
+    if (archetype) {
+      return generateLayoutTemplate({ archetype, axes: params.axes, narrative: params.narrative });
+    }
+    const dna = DESIGN_SYSTEM_DNAS.find((d) => d.id === params.forceArchetypeId);
+    if (dna) {
+      return generateProceduralLayout({ dna, axes: params.axes, narrative: params.narrative });
+    }
+    // Forced id not found — fall through to normal mode-based picking
+  }
+
   const mode: LayoutMode = params.mode ?? "auto";
 
   const engine =
