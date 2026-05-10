@@ -17,3 +17,5 @@ export const SLOT_REGISTRY: Record<string, SlotComponent> = {};
 export function registerSlot(id: string, component: SlotComponent) {
   SLOT_REGISTRY[id] = component;
 }
+
+import "./header";
