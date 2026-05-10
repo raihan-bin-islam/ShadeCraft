@@ -30,13 +30,31 @@ export function generateBaseOklchColor(feel: (typeof THEME_FEELS_V4)[0]): Color 
   return new Color("oklch", [lightness, chroma, hue]);
 }
 
-export function generateOklchBackgrounds(base: Color, adjustments?: Adjustments): Record<BackgroundKey, Color> {
+export interface NarrativeBackgroundOverride {
+  /** Target lightness for the main background token. Other tokens (card, muted, etc.) shift relative to this. */
+  lightness?: number;
+  /** Cap on background chroma. Higher values let the background be visibly tinted/saturated. */
+  maxChroma?: number;
+}
+
+export function generateOklchBackgrounds(
+  base: Color,
+  adjustments?: Adjustments,
+  override?: NarrativeBackgroundOverride
+): Record<BackgroundKey, Color> {
+  const bgLightness = override?.lightness ?? 0.98;
+  const bgMaxChroma = override?.maxChroma ?? 0.005;
+
+  // Other tokens shift relative to the bg lightness so the layered hierarchy is preserved
+  // when the narrative pushes the bg darker (e.g. dark-signature wants bg ~ 0.15).
+  const lightnessShift = bgLightness - 0.98; // negative when bg is darker than default
+
   const defaultAdjustments: Record<BackgroundKey, Adjustment> = {
-    background: { lightness: 0.98, chromaRatio: 0.1, maxChroma: 0.005, lightnessVariance: 0.02 },
-    card: { lightness: 0.96, chromaRatio: 0.08, maxChroma: 0.003 },
-    muted: { lightness: 0.88, chromaRatio: 0.05, maxChroma: 0.01 },
-    border: { lightness: 0.9, chromaRatio: 0.03, maxChroma: 0.015 },
-    input: { lightness: 0.89, chromaRatio: 0.06, maxChroma: 0.012 },
+    background: { lightness: bgLightness, chromaRatio: 0.1, maxChroma: bgMaxChroma, lightnessVariance: 0.02 },
+    card: { lightness: 0.96 + lightnessShift, chromaRatio: 0.08, maxChroma: 0.003 },
+    muted: { lightness: 0.88 + lightnessShift, chromaRatio: 0.05, maxChroma: 0.01 },
+    border: { lightness: 0.9 + lightnessShift, chromaRatio: 0.03, maxChroma: 0.015 },
+    input: { lightness: 0.89 + lightnessShift, chromaRatio: 0.06, maxChroma: 0.012 },
   };
 
   const usedAdjustments: Record<BackgroundKey, Adjustment> = {
