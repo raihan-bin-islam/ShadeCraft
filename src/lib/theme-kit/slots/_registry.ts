@@ -32,3 +32,4 @@ import "./workspace";
 import "./settings";
 import "./auth";
 import "./editorial";
+import "./bento";
