@@ -24,3 +24,4 @@ import "./logo-cloud";
 import "./features";
 import "./testimonials";
 import "./pricing";
+import "./cta";
