@@ -31,3 +31,4 @@ import "./content";
 import "./workspace";
 import "./settings";
 import "./auth";
+import "./editorial";
