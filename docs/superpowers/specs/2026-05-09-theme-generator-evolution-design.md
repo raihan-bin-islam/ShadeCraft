@@ -272,32 +272,43 @@ Two engines that share output shape, gated by a mode toggle.
 
 ### 7.1 Layout archetype catalog (Engine A)
 
+Each archetype's slot composition references slots in the slot library (section 7.2). Slot names below match folder names in the library exactly.
+
 | ID | Name | Slot composition |
 |----|------|------------------|
 | `marketing-landing` | Marketing Landing | header → hero → logo-cloud → features → testimonials → pricing → cta → footer |
-| `app-dashboard` | App Dashboard | sidebar + header + (stat-cards · chart · table) |
-| `app-workspace` | App Workspace (3-pane) | sidebar + (list · detail · meta) |
-| `app-settings` | App Settings | top-nav + (settings-sidebar · form-section) |
+| `app-dashboard` | App Dashboard | sidebar + header + (stat-cards · chart-area · data-table) |
+| `app-workspace` | App Workspace (3-pane) | sidebar + (list-pane · detail-pane · meta-pane) |
+| `app-settings` | App Settings | header + (settings-sidebar · form-section) |
 | `auth-split` | Auth Split | image-panel + form-panel |
 | `auth-centered` | Auth Centered | centered-form |
-| `editorial` | Editorial / Content | header + hero + (content · meta-sidebar) + footer |
+| `editorial` | Editorial / Content | header + hero + (content-block · meta-sidebar) + footer |
 | `bento-showcase` | Bento Showcase | header + bento-grid + footer |
 
 ### 7.2 Slot library structure
 
 ```
 src/lib/theme-kit/slots/
-├── header/        (header-minimal, header-glass, header-bold)
-├── hero/          (hero-centered, hero-split, hero-bento, hero-fullbleed)
-├── features/      (features-3col, features-bento, features-alternating)
-├── sidebar/       (sidebar-icon, sidebar-rich, sidebar-floating)
-├── content/       (stat-cards, chart-area, data-table, kanban)
-├── pricing/       (pricing-3col, pricing-comparison)
-├── cta/           (cta-banner, cta-card)
-└── footer/        (footer-minimal, footer-rich)
+├── header/         (header-minimal, header-glass, header-bold)
+├── hero/           (hero-centered, hero-split, hero-bento, hero-fullbleed)
+├── logo-cloud/     (logo-cloud-grid, logo-cloud-marquee)
+├── features/       (features-3col, features-bento, features-alternating)
+├── testimonials/   (testimonials-grid, testimonials-quote)
+├── pricing/        (pricing-3col, pricing-comparison)
+├── cta/            (cta-banner, cta-card)
+├── footer/         (footer-minimal, footer-rich)
+├── sidebar/        (sidebar-icon, sidebar-rich, sidebar-floating)
+├── content/        (stat-cards, chart-area, data-table, kanban)
+├── workspace/      (list-pane, detail-pane, meta-pane)
+├── settings/       (settings-sidebar, form-section)
+├── auth/           (image-panel, form-panel, centered-form)
+├── editorial/      (content-block, meta-sidebar)
+└── bento/          (bento-grid)
 ```
 
-v1: ~25 components. Each consumes design tokens only (no hardcoded colors/spacing/shadows).
+15 slot folders, **38 total variant components**. Each consumes design tokens only (no hardcoded colors/spacing/shadows). Theme regeneration changes how every variant looks "for free."
+
+**Coverage rationale:** earlier drafts of this spec listed 8 slot folders that did not cover slots referenced by all 8 archetypes (auth-split's `image-panel`, app-workspace's `list-pane`, etc.). The expanded library above resolves that gap so every archetype is fully renderable with library slots only — no archetype-specific bespoke components.
 
 ### 7.3 Engine A — parameterized templates
 
