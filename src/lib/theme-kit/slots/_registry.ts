@@ -25,3 +25,4 @@ import "./features";
 import "./testimonials";
 import "./pricing";
 import "./cta";
+import "./footer";
