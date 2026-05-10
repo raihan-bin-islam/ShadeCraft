@@ -1,27 +1,24 @@
 import { THEME_FEELS_V4 } from "@/config/theme-feels";
 import { TONES } from "@/config/theme-tones";
-import { hexToOklch, hslToRgb, oklchToCss, oklchToHsl } from "@/lib/theme-kit/converters";
+import { hslToRgb, oklchToCss, oklchToHsl } from "@/lib/theme-kit/converters";
 import { createCssVarsBuilder, ensureOklchContrast, getReadableForeground, groupThemeTokens } from "@/lib/theme-kit/core";
 
 import { adjustOklchChroma, createOklchShade, createOklchTint } from "@/lib/theme-kit/core/adjustment";
-import { generateBalancedTheme } from "@/lib/theme-kit/palettes/balanced";
 import { generateThemeName } from "./theme-name";
 import { generateChartTokens } from "./chart-tokens";
 import { generateSidebarTokens } from "./sidebar-tokens";
+import { generateNarrativePalette, pickNarrative } from "./narrative";
 
 import {
-  generateBaseOklchColor,
   generateDestructiveColor,
   generateOklchBackgrounds,
-  generateOklchColorPalette,
-  generateOklchContrastPair,
   generateOklchDarkBackgrounds,
   generateOklchForeground,
 } from "@/lib/theme-kit/palettes/default";
 
 import { randomChoice } from "@/lib/utils";
 
-import type { ColorHarmony, OKLCH, TailwindV4Theme } from "@/types/theme-kit";
+import type { OKLCH, TailwindV4Theme } from "@/types/theme-kit";
 import Color from "colorjs.io";
 type GenerateThemeParams = {
   feel?: (typeof THEME_FEELS_V4)[0];
@@ -33,30 +30,8 @@ export function generateTailwindV4Theme(params?: GenerateThemeParams): TailwindV
   const feel = params?.feel ?? randomChoice(THEME_FEELS_V4);
   const tone = params?.tone ?? randomChoice(TONES);
   const font = params?.font ?? randomChoice(tone.fonts);
-  const harmony = randomChoice<ColorHarmony>([
-    "complementary",
-    "triadic",
-    "analogous",
-    "splitComplementary",
-    "tetradic",
-    "monochromatic",
-  ]);
-
-  const baseColor = generateBaseOklchColor(feel);
-  const randomHue = randomChoice(feel.preferredHues);
-
-  const paletteDefault = generateOklchColorPalette(baseColor, harmony); // This was the main theme before
-  const paletteBalanced = generateBalancedTheme(randomHue); // We have now added a balanced theme palette too
-
-  const paletteBalancedOklch: Color[] = [
-    paletteBalanced.primary,
-    paletteBalanced.secondary,
-    paletteBalanced.accent,
-    paletteBalanced.background,
-  ];
-
-  const palettes = [paletteDefault, paletteBalancedOklch];
-  const palette = randomChoice(palettes); // Finally here we choose between the balanced and default palette randomly
+  const narrative = pickNarrative(feel);
+  const palette = generateNarrativePalette(narrative, feel);
 
   // Selected Palette
   const primary = palette[0];
@@ -66,7 +41,10 @@ export function generateTailwindV4Theme(params?: GenerateThemeParams): TailwindV
 
   const themeName = generateThemeName();
 
-  const lightBgs = generateOklchBackgrounds(background);
+  const lightBgs = generateOklchBackgrounds(background, undefined, {
+    lightness: narrative.background.lightness[1], // upper bound — gives layered tokens room to shift down
+    maxChroma: narrative.background.saturated ? narrative.background.chroma[1] : undefined,
+  });
   const darkBgs = generateOklchDarkBackgrounds(background);
 
   const primaryPair = getReadableForeground(primary);
@@ -195,6 +173,7 @@ export function generateTailwindV4Theme(params?: GenerateThemeParams): TailwindV
     name: themeName,
     description: feel.description,
     feel: feel.name,
+    narrative: narrative.id,
     tone,
     theme: groupThemeTokens(cssVars),
     cssVars: groupThemeTokens(cssVars),
