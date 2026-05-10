@@ -60,3 +60,14 @@ export const updateFontAtom = atom(
 export const isDarkModeAtom = atom(false);
 
 export const layoutModeAtom = atom<LayoutMode>("auto");
+
+export type LockableDimension = "feel" | "tone" | "font" | "narrative" | "axes" | "layout";
+
+export const lockedDimensionsAtom = atom<Record<LockableDimension, boolean>>({
+  feel: false,
+  tone: false,
+  font: false,
+  narrative: false,
+  axes: false,
+  layout: false,
+});

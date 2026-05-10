@@ -22,6 +22,7 @@ import { THEME_FEELS_V4 } from "@/config/theme-feels";
 import { TONES } from "@/config/theme-tones";
 import { useThemeGenerator } from "@/hooks/theme-module/use-theme-generator";
 import { LayoutModeToggle } from "@/components/molecules/layout-mode-toggle";
+import { LockIcon } from "@/components/molecules/lock-icon";
 import { ThemeIdentityCard } from "@/components/molecules/theme-identity-card";
 import { cn } from "@/lib/utils";
 import { Edit, Moon, Sparkles, Sun } from "lucide-react";
@@ -127,30 +128,36 @@ export function ThemeShowcase({
 
         {/* Controls */}
         <div className="flex items-center gap-3">
-          <ComboboxInput
-            className="hidden md:inline-flex"
-            groupedItems={fontGroups}
-            value={selectedFont ?? ""}
-            onChange={(val) => {
-              onSelectFont(val);
-              if (val) updateFont(val);
-            }}
-            placeholder="Font"
-          />
-          <ComboboxInput
-            className="hidden md:inline-flex"
-            items={toneItems}
-            value={selectedTone ?? ""}
-            onChange={onSelectTone}
-            placeholder="Tone"
-          />
-          <ComboboxInput
-            className="hidden md:inline-flex"
-            items={feelItems}
-            value={selectedFeel ?? ""}
-            onChange={onSelectFeel}
-            placeholder="Feel"
-          />
+          <div className="hidden md:flex items-center gap-1">
+            <ComboboxInput
+              groupedItems={fontGroups}
+              value={selectedFont ?? ""}
+              onChange={(val) => {
+                onSelectFont(val);
+                if (val) updateFont(val);
+              }}
+              placeholder="Font"
+            />
+            <LockIcon dimension="font" />
+          </div>
+          <div className="hidden md:flex items-center gap-1">
+            <ComboboxInput
+              items={toneItems}
+              value={selectedTone ?? ""}
+              onChange={onSelectTone}
+              placeholder="Tone"
+            />
+            <LockIcon dimension="tone" />
+          </div>
+          <div className="hidden md:flex items-center gap-1">
+            <ComboboxInput
+              items={feelItems}
+              value={selectedFeel ?? ""}
+              onChange={onSelectFeel}
+              placeholder="Feel"
+            />
+            <LockIcon dimension="feel" />
+          </div>
           <LayoutModeToggle className="hidden md:block" />
           <div className="hidden md:flex items-center gap-3">
             <ShinyButton onClick={() => generateSingle({ feelId: selectedFeel, fontClass: selectedFont, toneId: selectedTone })}>
