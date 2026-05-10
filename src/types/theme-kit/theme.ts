@@ -2,6 +2,7 @@ import { TONES } from "@/config/theme-tones";
 import { HSL, OKLCH, RGB } from "@/types/theme-kit/color-space";
 import type { AxisSelection } from "@/config/theme-axes";
 import type { LayoutSpec } from "./layout";
+import type { ThemeIdentity } from "@/lib/theme-kit/identity";
 
 export type Theme = Record<string, string>;
 export interface ThemeConfig {
@@ -20,6 +21,7 @@ export interface TailwindV4Theme {
   narrative?: string;
   axes?: AxisSelection;
   layout?: LayoutSpec;
+  identity?: ThemeIdentity;
   tone?: (typeof TONES)[0];
   cssVars: { light: Theme; dark: Theme };
   theme: { light: Theme; dark: Theme };
