@@ -73,20 +73,22 @@ export function LayoutPreview({ spec }: LayoutPreviewProps) {
 
   const hasSides = leftSlots.length > 0 || rightSlots.length > 0;
 
+  const isAppSurface = hasSides && flowSlots.some((s) => s.variant === "stat-cards" || s.variant === "chart-area" || s.variant === "data-table" || s.variant === "kanban" || s.variant === "form-section");
+
   return (
     <div className="flex min-h-screen w-full flex-col bg-background text-foreground">
       {topSlots.map((slot) => renderSlot(slot))}
 
       {hasSides ? (
-        <div className="flex flex-1">
+        <div className="flex flex-1 min-h-0">
           {leftSlots.map((slot) => renderSlot(slot))}
-          <main className="flex flex-1 flex-col gap-8 p-8">
+          <main className={isAppSurface ? "flex flex-1 flex-col gap-6 p-6 overflow-auto" : "flex flex-1 flex-col"}>
             {flowSlots.map((slot) => renderSlot(slot))}
           </main>
           {rightSlots.map((slot) => renderSlot(slot))}
         </div>
       ) : (
-        <main className="flex flex-1 flex-col gap-12">
+        <main className="flex flex-1 flex-col">
           {flowSlots.map((slot) => renderSlot(slot))}
         </main>
       )}

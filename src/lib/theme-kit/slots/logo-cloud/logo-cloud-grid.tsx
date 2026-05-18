@@ -1,13 +1,6 @@
 import type { SlotComponentProps } from "../_types";
 
-const logos = [
-  { name: "Stark", style: "font-bold" },
-  { name: "Atlas", style: "font-light italic" },
-  { name: "Helix", style: "font-mono" },
-  { name: "Nova", style: "font-semibold" },
-  { name: "Quanta", style: "font-bold" },
-  { name: "Forge", style: "font-light italic" },
-];
+const logos = ["Stark", "Atlas", "Helix", "Nova", "Quanta", "Forge"];
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function LogoCloudGrid(_props: SlotComponentProps): React.JSX.Element {
@@ -18,13 +11,13 @@ export function LogoCloudGrid(_props: SlotComponentProps): React.JSX.Element {
           Trusted by leading teams
         </h2>
       </div>
-      <div className="grid grid-cols-3 md:grid-cols-6 gap-8 items-center max-w-6xl mx-auto">
-        {logos.map((logo) => (
+      <div className="grid grid-cols-3 md:grid-cols-6 gap-x-12 gap-y-6 items-center max-w-5xl mx-auto opacity-70">
+        {logos.map((name) => (
           <div
-            key={logo.name}
-            className={`h-8 flex items-center justify-center ${logo.style} text-muted-foreground text-lg font-semibold`}
+            key={name}
+            className="flex items-center justify-center text-xl font-bold tracking-tight text-muted-foreground"
           >
-            {logo.name}
+            {name}
           </div>
         ))}
       </div>

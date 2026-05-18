@@ -8,7 +8,7 @@ import type { SlotComponentProps } from "../_types";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function FormSection(_props: SlotComponentProps): React.JSX.Element {
   return (
-    <div className="mx-auto max-w-2xl space-y-8 p-8">
+    <div className="mx-auto max-w-2xl space-y-8">
       {/* Section 1 — Header */}
       <div>
         <h2 className="text-2xl font-semibold tracking-tight">

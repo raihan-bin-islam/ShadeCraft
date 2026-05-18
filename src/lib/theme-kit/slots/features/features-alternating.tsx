@@ -1,3 +1,4 @@
+import { ArrowRight } from "lucide-react";
 import type { SlotComponentProps } from "../_types";
 
 const rows = [
@@ -33,22 +34,17 @@ export function FeaturesAlternating(
             key={row.heading}
             className={`grid md:grid-cols-2 gap-12 items-center${row.reverse ? " [&>*:first-child]:md:order-2 [&>*:last-child]:md:order-1" : ""}`}
           >
-            {/* Image side */}
-            <div className="aspect-video bg-gradient-to-br from-muted to-card rounded-lg border shadow-md" />
+            <div className="aspect-video rounded-lg border bg-primary/5" />
 
-            {/* Text side */}
             <div className="flex flex-col gap-4">
-              <h3 className="text-2xl font-bold tracking-tight">
-                {row.heading}
-              </h3>
-              <p className="text-muted-foreground leading-relaxed">
-                {row.description}
-              </p>
+              <h3 className="text-2xl font-bold tracking-tight">{row.heading}</h3>
+              <p className="text-muted-foreground leading-relaxed">{row.description}</p>
               <a
                 href="#"
-                className="text-primary font-medium hover:underline w-fit"
+                className="inline-flex items-center gap-1.5 text-primary font-medium hover:underline w-fit"
               >
-                Learn more →
+                Learn more
+                <ArrowRight className="h-4 w-4" />
               </a>
             </div>
           </div>

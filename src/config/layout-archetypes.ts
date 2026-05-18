@@ -59,7 +59,7 @@ export const LAYOUT_ARCHETYPES: LayoutArchetype[] = [
     name: "App Workspace (3-pane)",
     slots: [
       { id: "sidebar", required: true, variants: ["sidebar-icon", "sidebar-rich"], position: "left" },
-      { id: "list-pane", required: true, variants: ["list-pane"], position: "flow" },
+      { id: "list-pane", required: true, variants: ["list-pane"], position: "left" },
       { id: "detail-pane", required: true, variants: ["detail-pane"], position: "flow" },
       { id: "meta-pane", required: false, variants: ["meta-pane"], position: "right" },
     ],
@@ -137,5 +137,14 @@ export const LAYOUT_ARCHETYPES: LayoutArchetype[] = [
     ],
     preferredFeels: ["cool", "industrial", "cyber", "monochrome"],
     preferredNarratives: ["monochrome-accent", "dark-signature", "muted-harmony"],
+  },
+  {
+    id: "cards-showcase",
+    name: "Cards Showcase",
+    slots: [
+      { id: "cards", required: true, variants: ["cards-showcase"], position: "flow" },
+    ],
+    preferredFeels: ["cool", "serene", "elegant", "monochrome"],
+    preferredNarratives: ["monochrome-accent", "muted-harmony", "tone-on-tone"],
   },
 ];

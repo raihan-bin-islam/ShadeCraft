@@ -174,7 +174,6 @@ export function FooterRich(_props: SlotComponentProps): React.JSX.Element {
           <div className="text-sm text-muted-foreground">
             © 2026 Acme. All rights reserved.
           </div>
-          <div className="text-sm text-muted-foreground">Made with care</div>
         </div>
       </div>
     </footer>

@@ -1,6 +1,7 @@
 import { Check } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import type { SlotComponentProps } from "../_types";
 
 interface Tier {
@@ -63,54 +64,50 @@ export function Pricing3col(_props: SlotComponentProps): React.JSX.Element {
           Start for free, scale when you need it. No hidden fees.
         </p>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch max-w-5xl mx-auto md:items-center">
         {tiers.map((tier) => (
-          <div
+          <Card
             key={tier.name}
-            className={`bg-card rounded-lg p-8 space-y-6 flex flex-col ${
+            className={
               tier.recommended
-                ? "border-2 border-primary shadow-md"
-                : "border border-border"
-            }`}
+                ? "relative ring-2 ring-primary shadow-lg md:scale-[1.03]"
+                : "shadow-none"
+            }
           >
-            <div className="flex items-start justify-between gap-2">
-              <h3 className="text-lg font-semibold">{tier.name}</h3>
-              {tier.recommended && (
-                <Badge className="bg-primary text-primary-foreground shrink-0">
-                  Recommended
-                </Badge>
-              )}
-            </div>
-            <div>
-              <div className="flex items-baseline gap-1">
-                <span className="text-4xl font-bold">{tier.price}</span>
-                {tier.numeric && (
-                  <span className="text-sm text-muted-foreground font-normal">
-                    / mo
-                  </span>
-                )}
+            <CardHeader>
+              <div className="flex items-start justify-between gap-2">
+                <h3 className="text-lg font-semibold">{tier.name}</h3>
+                {tier.recommended && <Badge>Recommended</Badge>}
               </div>
-              <p className="mt-1 text-sm text-muted-foreground">
-                {tier.description}
-              </p>
-            </div>
-            <ul className="space-y-3 flex-1">
-              {tier.features.map((feature) => (
-                <li key={feature} className="flex items-start gap-2">
-                  <Check className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-                  <span className="text-sm">{feature}</span>
-                </li>
-              ))}
-            </ul>
-            <div className="mt-auto">
+              <div className="mt-4">
+                <div className="flex items-baseline gap-1">
+                  <span className="text-4xl font-bold tracking-tight">{tier.price}</span>
+                  {tier.numeric && (
+                    <span className="text-sm text-muted-foreground font-normal">/ mo</span>
+                  )}
+                </div>
+                <p className="mt-1 text-sm text-muted-foreground">{tier.description}</p>
+              </div>
+            </CardHeader>
+            <CardContent className="flex-1">
+              <ul className="space-y-3">
+                {tier.features.map((feature) => (
+                  <li key={feature} className="flex items-start gap-2">
+                    <Check className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+                    <span className="text-sm">{feature}</span>
+                  </li>
+                ))}
+              </ul>
+            </CardContent>
+            <CardFooter>
               <Button
                 className="w-full"
                 variant={tier.recommended ? "default" : "outline"}
               >
                 {tier.cta}
               </Button>
-            </div>
-          </div>
+            </CardFooter>
+          </Card>
         ))}
       </div>
     </section>

@@ -1,4 +1,3 @@
-import { Quote } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import type { SlotComponentProps } from "../_types";
 
@@ -14,16 +13,15 @@ export function TestimonialsQuote(_props: SlotComponentProps): React.JSX.Element
   return (
     <section className="py-24 px-6">
       <div className="max-w-3xl mx-auto text-center space-y-8">
-        <Quote className="h-10 w-10 text-primary mx-auto" />
-        <blockquote className="text-2xl md:text-3xl text-foreground leading-relaxed">
+        <blockquote className="text-3xl md:text-4xl font-semibold text-foreground leading-tight tracking-tight">
           &ldquo;{testimonial.quote}&rdquo;
         </blockquote>
-        <div className="flex flex-col items-center gap-3">
-          <Avatar className="h-12 w-12">
+        <div className="flex items-center justify-center gap-3">
+          <Avatar className="h-10 w-10">
             <AvatarFallback>{testimonial.initials}</AvatarFallback>
           </Avatar>
-          <div>
-            <p className="font-semibold">{testimonial.name}</p>
+          <div className="text-left">
+            <p className="font-semibold leading-tight">{testimonial.name}</p>
             <p className="text-sm text-muted-foreground">{testimonial.role}</p>
           </div>
         </div>

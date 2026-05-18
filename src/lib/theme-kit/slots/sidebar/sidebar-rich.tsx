@@ -99,7 +99,7 @@ export function SidebarRichInner(): React.JSX.Element {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function SidebarRich(_props: SlotComponentProps): React.JSX.Element {
   return (
-    <aside className="flex h-screen w-64 flex-col border-r bg-card">
+    <aside className="flex h-auto w-64 flex-col border-r bg-card">
       <SidebarRichInner />
     </aside>
   );

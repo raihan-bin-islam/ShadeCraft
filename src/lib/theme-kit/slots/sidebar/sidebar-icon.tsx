@@ -21,7 +21,7 @@ export function SidebarIcon(_props: SlotComponentProps): React.JSX.Element {
   ];
 
   return (
-    <aside className="flex h-screen w-16 flex-col items-center gap-2 border-r bg-card py-4">
+    <aside className="flex h-auto w-16 flex-col items-center gap-2 border-r bg-card py-4">
       <nav className="flex flex-col items-center gap-2">
         {navItems.map(({ icon: Icon, label, active }) => (
           <button

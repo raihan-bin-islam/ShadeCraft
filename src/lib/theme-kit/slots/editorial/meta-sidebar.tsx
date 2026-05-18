@@ -5,7 +5,7 @@ import { Twitter, Linkedin, Link2 } from "lucide-react";
 
 export const MetaSidebar: SlotComponent = () => {
   return (
-    <aside className="sticky top-8 w-64 space-y-8 p-6 text-sm">
+    <aside className="w-64 space-y-8 p-6 text-sm self-start sticky top-8">
       <div className="flex items-center gap-3 pb-4 border-b">
         <Avatar className="h-12 w-12">
           <AvatarFallback>JL</AvatarFallback>

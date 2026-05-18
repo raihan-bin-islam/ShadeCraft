@@ -1,5 +1,6 @@
 import { Layers, Shield, Sparkles, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import type { SlotComponentProps } from "../_types";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -9,42 +10,44 @@ export function HeroBento(_props: SlotComponentProps): React.JSX.Element {
       <div className="grid md:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
         <div>
           <h1 className="text-5xl md:text-6xl font-bold tracking-tight text-foreground mb-4">
-            Build your design system in minutes
+            Compose, refine, ship
           </h1>
-          <p className="text-muted-foreground text-lg mb-8">
-            From a single brief to a polished interface, ship faster with confidence.
+          <p className="text-muted-foreground text-lg mb-8 leading-relaxed">
+            Every primitive you need to build distinctive interfaces, designed to work together out of the box.
           </p>
           <div className="flex flex-wrap gap-3">
-            <Button size="lg">Get started</Button>
-            <Button size="lg" variant="outline">View docs</Button>
+            <Button size="lg">Browse components</Button>
+            <Button size="lg" variant="outline">View on GitHub</Button>
           </div>
         </div>
-        {/* Asymmetric bento: 2 cols × 2 rows, card A spans row-span-2, card D spans col-span-2 */}
-        <div className="grid grid-cols-2 grid-rows-2 gap-4 h-72">
-          {/* Card A: row-span-2 — tall left card */}
-          <div className="bg-card border rounded-lg p-4 row-span-2 flex flex-col gap-2 justify-center">
-            <Zap className="h-5 w-5 text-muted-foreground" />
-            <span className="text-sm font-semibold text-foreground">Speed</span>
-            <p className="text-xs text-muted-foreground">Blazing fast builds every time.</p>
-          </div>
-          {/* Card B: top-right */}
-          <div className="bg-card border rounded-lg p-4 flex flex-col gap-2 justify-center">
-            <Shield className="h-5 w-5 text-muted-foreground" />
-            <span className="text-sm font-semibold text-foreground">Reliability</span>
-          </div>
-          {/* Cards C + D share the bottom-right cell via nested grid — D spans col-span-2 instead */}
-          {/* Card C: col-span-2 wide bottom card */}
-          <div className="bg-card border rounded-lg p-4 col-span-2 flex items-center gap-4">
-            <div className="flex flex-col gap-1">
-              <Layers className="h-5 w-5 text-muted-foreground" />
-              <span className="text-sm font-semibold text-foreground">Scale</span>
+
+        <div className="grid grid-cols-2 grid-rows-2 gap-3 min-h-[20rem] md:min-h-[24rem]">
+          <Card className="row-span-2 gap-2 p-5 justify-center">
+            <Zap className="h-5 w-5 text-primary" />
+            <span className="text-base font-semibold">Speed</span>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Blazing fast builds every time.
+            </p>
+          </Card>
+          <Card className="gap-2 p-5 justify-center">
+            <Shield className="h-5 w-5 text-primary" />
+            <span className="text-base font-semibold">Reliability</span>
+            <p className="text-sm text-muted-foreground">99.99% uptime SLA.</p>
+          </Card>
+          <Card className="col-span-1 gap-2 p-5 justify-center">
+            <Layers className="h-5 w-5 text-primary" />
+            <span className="text-base font-semibold">Scale</span>
+            <p className="text-sm text-muted-foreground">From zero to ten million.</p>
+          </Card>
+          <Card className="col-span-2 gap-2 p-5">
+            <div className="flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-primary" />
+              <span className="text-base font-semibold">Insights</span>
             </div>
-            <div className="h-full w-px bg-border" />
-            <div className="flex flex-col gap-1">
-              <Sparkles className="h-5 w-5 text-muted-foreground" />
-              <span className="text-sm font-semibold text-foreground">Insights</span>
-            </div>
-          </div>
+            <p className="text-sm text-muted-foreground">
+              Built-in analytics surface what matters, automatically.
+            </p>
+          </Card>
         </div>
       </div>
     </section>
