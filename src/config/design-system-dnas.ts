@@ -105,7 +105,7 @@ export const DESIGN_SYSTEM_DNAS: DesignSystemDNA[] = [
     preferredNarratives: ["dark-signature", "monochrome-accent"],
   },
   {
-    id: "editorial",
+    id: "editorial-dna",
     name: "Editorial",
     description: "Wide reading column with meta sidebar, typography-led hierarchy, image-text rhythm.",
     slotVariants: {
