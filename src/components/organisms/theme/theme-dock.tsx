@@ -27,7 +27,7 @@ export function ThemeDock({ className }: Props) {
   return (
     <div
       className={cn(
-        "fixed bottom-5 left-1/2 -translate-x-1/2 z-40",
+        "fixed bottom-16 left-1/2 -translate-x-1/2 z-50",
         "flex items-center gap-1 rounded-full border bg-card/95 backdrop-blur",
         "px-2 py-1.5 shadow-[0_12px_36px_rgba(0,0,0,0.12),0_2px_6px_rgba(0,0,0,0.06)]",
         "max-md:left-3 max-md:right-3 max-md:translate-x-0 max-md:justify-between",
