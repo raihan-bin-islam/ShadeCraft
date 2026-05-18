@@ -94,3 +94,15 @@ export const selectedNarrativeAtom = atom<string | null>(null);
  * null means "let the generator pick based on mode".
  */
 export const selectedLayoutAtom = atom<string | null>(null);
+
+/** User's currently chosen font className. null = "let randomizer pick". */
+export const selectedFontAtom = atom<string | null>(null);
+
+/** User's currently chosen tone id. null = "let randomizer pick". */
+export const selectedToneAtom = atom<string | null>(null);
+
+/** User's currently chosen feel id. null = "let randomizer pick". */
+export const selectedFeelAtom = atom<string | null>(null);
+
+/** Whether the ⌘K command palette is open. */
+export const commandPaletteOpenAtom = atom<boolean>(false);
