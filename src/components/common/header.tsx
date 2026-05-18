@@ -1,55 +1,36 @@
 "use client";
 import { Github } from "@/components/icons/Github";
 import { Logo } from "@/components/icons/Logo";
-import { SparklesText } from "@/components/magicui/sparkles-text";
-import RotatingText from "@/components/react-bits/RotatingText";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { spaceGrotesk } from "@/config/fonts";
 import { roadmapData } from "@/data/roadmap";
 import { useThemeGenerator } from "@/hooks/theme-module/use-theme-generator";
 import { cn } from "@/lib/utils";
-import { ArrowDown, Expand, Moon, Sun } from "lucide-react";
+import { useAtomValue } from "jotai";
+import { focusModeAtom } from "@/store/theme";
+import { Expand, Moon, Sun } from "lucide-react";
 
 export const Header = () => {
   const { isDark, toggleDarkMode } = useThemeGenerator();
+  const focus = useAtomValue(focusModeAtom);
+
+  if (focus) return null;
 
   return (
-    <header className="z-50 sticky top-0 backdrop-blur-2xl flex flex-col w-full bg-foreground/3 border-b">
-      <div className="flex items-center justify-between container mx-auto md:p-4 p-3">
-        <div className="flex items-center gap-1.5 lg:gap-3 lg:min-w-48">
-          <SparklesText
-            className="text-sm"
-            sparklesCount={3}
-            colors={{ first: "var(--color-primary)", second: "var(--color-secondary)" }}
-          >
-            <Logo className="size-6 lg:size-8 fill-primary" />
-          </SparklesText>
-          <h2 className={cn("lg:text-2xl text-lg text-primary font-bold overflow-visible", spaceGrotesk.className)}>
+    <header className="z-50 sticky top-0 backdrop-blur-2xl flex w-full bg-foreground/3 border-b">
+      <div className="flex items-center justify-between container mx-auto px-4 py-2">
+        <div className="flex items-center gap-2">
+          <Logo className="size-6 fill-primary" />
+          <h2 className={cn("text-lg text-primary font-bold", spaceGrotesk.className)}>
             Shade<span className="text-secondary">Craft</span>
           </h2>
         </div>
-        <div className="hidden md:flex flex-col">
-          <RotatingText
-            texts={["Stunning shadcn Themes", "Tailwind v4 Ready", "Real-time Preview", "OKLCH Colors!"]}
-            mainClassName="px-2 sm:px-2 md:px-3 text-2xl font-bold text-foreground overflow-hidden justify-center rounded-lg"
-            staggerFrom={"last"}
-            initial={{ y: "100%" }}
-            animate={{ y: 0 }}
-            exit={{ y: "-100%" }}
-            staggerDuration={0.01}
-            transition={{ type: "spring", damping: 30, stiffness: 400 }}
-            rotationInterval={3000}
-          />
-          <p className="text-sm font-medium text-muted-foreground">
-            Create beautiful, accessible themes for your shadcn/ui projects with OKLCH color space
-          </p>
-        </div>
-        <div className="flex items-center gap-3 h-fit">
+        <div className="flex items-center gap-2">
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="outline">
-                Roadmap <Expand />
+              <Button variant="ghost" size="sm" className="gap-1.5">
+                Roadmap <Expand className="size-3.5" />
               </Button>
             </DialogTrigger>
             <DialogContent className="gap-0 p-0 overflow-hidden">
@@ -61,7 +42,6 @@ export const Header = () => {
                   <div key={item.title}>
                     <div className="flex items-center gap-3">
                       <div className="size-2 rounded-full bg-primary" />
-
                       <h3 className="text-lg font-bold">{item.title}</h3>
                     </div>
                     <p className="pl-5 text-muted-foreground">{item.description}</p>
@@ -70,12 +50,12 @@ export const Header = () => {
               </div>
             </DialogContent>
           </Dialog>
-          <Button variant="outline" size="icon" onClick={toggleDarkMode}>
-            {isDark ? <Moon /> : <Sun />}
+          <Button variant="ghost" size="icon" className="size-8" onClick={toggleDarkMode}>
+            {isDark ? <Moon className="size-4" /> : <Sun className="size-4" />}
           </Button>
-          <Button asChild variant="outline" size="icon" className="hover:bg-border">
+          <Button asChild variant="ghost" size="icon" className="size-8">
             <a target="_blank" href="https://github.com/raihan-bin-islam/ShadeCraft.git">
-              <Github className="size-5" />
+              <Github className="size-4" />
             </a>
           </Button>
         </div>

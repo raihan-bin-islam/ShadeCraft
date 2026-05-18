@@ -12,8 +12,8 @@ export const LandingPage = () => {
   return (
     <>
       <ShareableDNAEffect />
-      <div className="md:max-h-[calc(100dvh-129px)] grow bg-background flex flex-col overflow-y-auto">
-        <div className="container mx-auto md:p-4 p-3 grow flex flex-col overflow-y-auto">
+      <div className="grow bg-background flex flex-col overflow-y-auto min-h-0">
+        <div className="container mx-auto px-3 py-2 md:px-4 md:py-3 grow flex flex-col overflow-y-auto min-h-0">
           <ThemeShowcase
             theme={{ light: currentTheme?.cssVars?.light, dark: currentTheme?.cssVars?.dark }}
             themeName={currentTheme?.name}

@@ -9,8 +9,8 @@ interface ThemeIdentityCardProps {
 }
 
 /**
- * Displays the current theme's identity: name, tagline, designedFor use case,
- * and DNA badge. If no theme is loaded or identity is missing, renders nothing.
+ * Compact one-line pill: name · tagline · "for X" · DNA badge.
+ * If no theme is loaded or identity is missing, renders nothing.
  */
 export function ThemeIdentityCard({ className }: ThemeIdentityCardProps) {
   const theme = useAtomValue(currentThemeAtom);
@@ -20,16 +20,18 @@ export function ThemeIdentityCard({ className }: ThemeIdentityCardProps) {
 
   return (
     <div
-      className={`flex flex-col gap-2 rounded-lg border bg-card p-4 text-card-foreground ${className ?? ""}`}
+      className={`flex items-center gap-3 rounded-md border bg-card px-3 py-1.5 text-card-foreground ${className ?? ""}`}
     >
-      <div className="flex items-center justify-between gap-3">
-        <h3 className="text-base font-semibold tracking-tight">{name}</h3>
+      <h3 className="text-sm font-semibold tracking-tight shrink-0">{name}</h3>
+      <span className="text-muted-foreground/40 shrink-0">·</span>
+      <p className="text-xs text-muted-foreground truncate min-w-0">{tagline}</p>
+      <span className="text-muted-foreground/40 shrink-0 hidden md:inline">·</span>
+      <p className="text-xs text-muted-foreground shrink-0 hidden md:inline">
+        for <span className="text-foreground">{designedFor}</span>
+      </p>
+      <div className="ml-auto shrink-0">
         <DnaBadge theme={theme} />
       </div>
-      <p className="text-sm text-muted-foreground">{tagline}</p>
-      <p className="text-xs text-muted-foreground">
-        Designed for <span className="text-foreground">{designedFor}</span>
-      </p>
     </div>
   );
 }

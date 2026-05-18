@@ -106,3 +106,10 @@ export const selectedFeelAtom = atom<string | null>(null);
 
 /** Whether the ⌘K command palette is open. */
 export const commandPaletteOpenAtom = atom<boolean>(false);
+
+/**
+ * Focus mode: hides the global header, footer, identity card, and archetype
+ * strip so the preview canvas takes nearly the full viewport. Toggled from
+ * the dock.
+ */
+export const focusModeAtom = atom<boolean>(false);

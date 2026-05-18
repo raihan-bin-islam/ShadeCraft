@@ -1,9 +1,9 @@
 "use client";
 import React from "react";
-import { Sparkles } from "lucide-react";
+import { Sparkles, Maximize2, Minimize2 } from "lucide-react";
 import { ShinyButton } from "@/components/magicui/shiny-button";
-import { useAtomValue } from "jotai";
-import { selectedFontAtom, selectedToneAtom, selectedFeelAtom } from "@/store/theme";
+import { useAtom, useAtomValue } from "jotai";
+import { selectedFontAtom, selectedToneAtom, selectedFeelAtom, focusModeAtom } from "@/store/theme";
 import { useThemeGenerator } from "@/hooks/theme-module/use-theme-generator";
 import { ThemeControlsPopover } from "@/components/molecules/theme-controls-popover";
 import { VariationsPopover } from "@/components/molecules/variations-popover";
@@ -20,6 +20,7 @@ export function ThemeDock({ className }: Props) {
   const font = useAtomValue(selectedFontAtom);
   const tone = useAtomValue(selectedToneAtom);
   const feel = useAtomValue(selectedFeelAtom);
+  const [focus, setFocus] = useAtom(focusModeAtom);
 
   const handleRandomize = () =>
     generateSingle({ feelId: feel ?? undefined, toneId: tone ?? undefined, fontClass: font ?? undefined });
@@ -27,7 +28,7 @@ export function ThemeDock({ className }: Props) {
   return (
     <div
       className={cn(
-        "fixed bottom-16 left-1/2 -translate-x-1/2 z-50",
+        focus ? "fixed bottom-5 left-1/2 -translate-x-1/2 z-50" : "fixed bottom-12 left-1/2 -translate-x-1/2 z-50",
         "flex items-center gap-1 rounded-full border bg-card/95 backdrop-blur",
         "px-2 py-1.5 shadow-[0_12px_36px_rgba(0,0,0,0.12),0_2px_6px_rgba(0,0,0,0.06)]",
         "max-md:left-3 max-md:right-3 max-md:translate-x-0 max-md:justify-between",
@@ -46,6 +47,15 @@ export function ThemeDock({ className }: Props) {
       <div className="hidden md:block">
         <PermalinkButton className="border-none bg-transparent hover:bg-muted px-3" />
       </div>
+      <button
+        type="button"
+        onClick={() => setFocus((v) => !v)}
+        aria-label={focus ? "Exit focus mode" : "Enter focus mode"}
+        title={focus ? "Exit focus mode" : "Focus mode (hide chrome)"}
+        className="inline-flex h-10 w-10 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
+      >
+        {focus ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+      </button>
       <DockMoreMenu />
     </div>
   );
