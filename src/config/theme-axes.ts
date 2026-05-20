@@ -34,6 +34,12 @@ export type AxisPreferences = {
   component?: Partial<Record<ComponentId, number>>;
 };
 
+/**
+ * Only the `shadow` axis emits real CSS variables; the others remain as
+ * sampling/biasing dimensions and as labels on the DNA badge. They previously
+ * applied via a global theme-axes.css stylesheet that didn't ship with exports
+ * and bled onto chrome, so the visual layer was dropped.
+ */
 export const AXES: AxisCatalog = {
   shadow: [
     {
@@ -74,8 +80,6 @@ export const AXES: AxisCatalog = {
         "shadow-md": "0 8px 24px rgb(0 0 0 / 0.08)",
         "shadow-lg": "0 16px 40px rgb(0 0 0 / 0.10)",
         "shadow-xl": "0 24px 60px rgb(0 0 0 / 0.12)",
-        "surface-blur": "12px",
-        "surface-alpha": "0.7",
       },
     },
     {
@@ -90,66 +94,23 @@ export const AXES: AxisCatalog = {
     },
   ],
   border: [
-    { id: "hairline", cssVars: { "axis-border-width": "1px", "axis-border-color": "var(--border)" } },
-    { id: "standard", cssVars: { "axis-border-width": "1px", "axis-border-color": "var(--border)" } },
-    { id: "heavy", cssVars: { "axis-border-width": "2px", "axis-border-color": "var(--border)" } },
-    { id: "accented", cssVars: { "axis-border-width": "2px", "axis-border-color": "var(--primary)" } },
+    { id: "hairline", cssVars: {} },
+    { id: "standard", cssVars: {} },
+    { id: "heavy", cssVars: {} },
+    { id: "accented", cssVars: {} },
   ],
   surface: [
-    { id: "flat", cssVars: { "axis-surface-image": "none" } },
-    {
-      id: "gradient",
-      cssVars: {
-        "axis-surface-image":
-          "linear-gradient(180deg, var(--background) 0%, color-mix(in oklch, var(--background) 92%, var(--primary) 8%) 100%)",
-      },
-    },
-    {
-      id: "noise",
-      cssVars: {
-        "axis-surface-image":
-          "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.05'/></svg>\")",
-      },
-    },
-    {
-      id: "pattern",
-      cssVars: {
-        "axis-surface-image":
-          "radial-gradient(circle, color-mix(in oklch, var(--foreground) 6%, transparent) 1px, transparent 1.5px)",
-      },
-    },
-    {
-      id: "mesh",
-      cssVars: {
-        "axis-surface-image":
-          "radial-gradient(at 0% 0%, color-mix(in oklch, var(--primary) 25%, transparent) 0%, transparent 50%), radial-gradient(at 100% 0%, color-mix(in oklch, var(--accent) 20%, transparent) 0%, transparent 50%), radial-gradient(at 50% 100%, color-mix(in oklch, var(--secondary) 18%, transparent) 0%, transparent 50%)",
-      },
-    },
+    { id: "flat", cssVars: {} },
+    { id: "gradient", cssVars: {} },
+    { id: "noise", cssVars: {} },
+    { id: "pattern", cssVars: {} },
+    { id: "mesh", cssVars: {} },
   ],
   component: [
-    {
-      id: "solid",
-      cssVars: { "radius-button": "var(--radius)", "radius-card": "var(--radius)", "radius-input": "var(--radius)" },
-    },
-    {
-      id: "outline",
-      cssVars: { "radius-button": "var(--radius)", "radius-card": "var(--radius)", "radius-input": "var(--radius)" },
-    },
-    {
-      id: "pill",
-      cssVars: { "radius-button": "9999px", "radius-card": "var(--radius)", "radius-input": "9999px" },
-    },
-    {
-      id: "sharp",
-      cssVars: { "radius-button": "0", "radius-card": "0", "radius-input": "0" },
-    },
-    {
-      id: "embossed",
-      cssVars: {
-        "radius-button": "var(--radius)",
-        "radius-card": "var(--radius)",
-        "radius-input": "var(--radius)",
-      },
-    },
+    { id: "solid", cssVars: {} },
+    { id: "outline", cssVars: {} },
+    { id: "pill", cssVars: {} },
+    { id: "sharp", cssVars: {} },
+    { id: "embossed", cssVars: {} },
   ],
 };

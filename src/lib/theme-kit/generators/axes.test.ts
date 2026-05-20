@@ -47,7 +47,7 @@ describe("sampleAxes", () => {
 });
 
 describe("getAxisCssVars", () => {
-  it("returns merged CSS vars from all four chosen variants", () => {
+  it("emits the shadow scale for the chosen shadow variant", () => {
     const selection: AxisSelection = {
       shadow: "soft",
       border: "standard",
@@ -55,10 +55,11 @@ describe("getAxisCssVars", () => {
       component: "solid",
     };
     const vars = getAxisCssVars(selection);
+    expect(vars["shadow-xs"]).toBeDefined();
+    expect(vars["shadow-sm"]).toBeDefined();
     expect(vars["shadow-md"]).toBeDefined();
-    expect(vars["axis-border-width"]).toBeDefined();
-    expect(vars["axis-surface-image"]).toBeDefined();
-    expect(vars["radius-button"]).toBeDefined();
+    expect(vars["shadow-lg"]).toBeDefined();
+    expect(vars["shadow-xl"]).toBeDefined();
   });
 
   it("'glow' shadow emits primary-color box-shadow values", () => {
@@ -72,27 +73,16 @@ describe("getAxisCssVars", () => {
     expect(vars["shadow-md"]).toContain("var(--primary)");
   });
 
-  it("'pill' personality emits 9999px button radius", () => {
+  it("border / surface / component axes emit no CSS vars (sampling-only dimensions)", () => {
     const selection: AxisSelection = {
       shadow: "soft",
-      border: "standard",
-      surface: "flat",
+      border: "heavy",
+      surface: "mesh",
       component: "pill",
     };
     const vars = getAxisCssVars(selection);
-    expect(vars["radius-button"]).toBe("9999px");
-  });
-
-  it("'sharp' personality emits zero radius for buttons, cards, and inputs", () => {
-    const selection: AxisSelection = {
-      shadow: "soft",
-      border: "standard",
-      surface: "flat",
-      component: "sharp",
-    };
-    const vars = getAxisCssVars(selection);
-    expect(vars["radius-button"]).toBe("0");
-    expect(vars["radius-card"]).toBe("0");
-    expect(vars["radius-input"]).toBe("0");
+    expect(vars["axis-border-width"]).toBeUndefined();
+    expect(vars["axis-surface-image"]).toBeUndefined();
+    expect(vars["radius-button"]).toBeUndefined();
   });
 });
