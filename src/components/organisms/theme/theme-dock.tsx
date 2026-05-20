@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { Sparkles, Maximize2, Minimize2 } from "lucide-react";
+import { Sparkles, Maximize2, Minimize2, Moon, Sun } from "lucide-react";
 import { ShinyButton } from "@/components/magicui/shiny-button";
 import { useAtom, useAtomValue } from "jotai";
 import { selectedFontAtom, selectedToneAtom, selectedFeelAtom, focusModeAtom } from "@/store/theme";
@@ -16,7 +16,7 @@ interface Props {
 }
 
 export function ThemeDock({ className }: Props) {
-  const { generateSingle } = useThemeGenerator();
+  const { generateSingle, isDark, toggleDarkMode } = useThemeGenerator();
   const font = useAtomValue(selectedFontAtom);
   const tone = useAtomValue(selectedToneAtom);
   const feel = useAtomValue(selectedFeelAtom);
@@ -47,6 +47,17 @@ export function ThemeDock({ className }: Props) {
       <div className="hidden md:block">
         <PermalinkButton className="border-none bg-transparent hover:bg-muted px-3" />
       </div>
+      {focus && (
+        <button
+          type="button"
+          onClick={toggleDarkMode}
+          aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+          title={isDark ? "Switch to light mode" : "Switch to dark mode"}
+          className="inline-flex h-10 w-10 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
+        >
+          {isDark ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+        </button>
+      )}
       <button
         type="button"
         onClick={() => setFocus((v) => !v)}
