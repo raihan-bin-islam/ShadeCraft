@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="aurora">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ShadeCraft · Preview Template Mockups</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+/* ============================================================================
+   ShadeCraft preview-template mockup
+   Design-review artifact. Demonstrates the *intended* token strategy:
+   every generated token (primary / secondary / accent / chart-1..5 /
+   sidebar-* / destructive) gets a deliberate, visible role, and the
+   structural "axis" tokens (--radius, --shadow-*, --surface-gradient,
+   --border-width) actually drive the look. Three representative generated
+   themes + a light/dark toggle. Pure CSS, no app dependencies.
+   ============================================================================ */
+
+/* ---- THEME TOKEN SETS ---------------------------------------------------- */
+/* aurora = warm pastel dual/triadic (real generated output from globals.css) */
+[data-theme="aurora"] {
+  --background: oklch(99.385% 0.005 125.46);
+  --foreground: oklch(20% 0.0025 125.46);
+  --card: oklch(99% 0.004 305.46);
+  --card-foreground: oklch(18% 0.0015 305.46);
+  --popover: oklch(99% 0.004 305.46);
+  --popover-foreground: oklch(18% 0.0015 305.46);
+  --primary: oklch(82.292% 0.10108 35.744);
+  --primary-foreground: oklch(24% 0.03 35.744);
+  --secondary: oklch(83.234% 0.11068 124.38);
+  --secondary-foreground: oklch(24% 0.04 124.38);
+  --muted: oklch(94% 0.0053 305.46);
+  --muted-foreground: oklch(48% 0.0053 305.46);
+  --accent: oklch(83.234% 0.11068 214.38);
+  --accent-foreground: oklch(22% 0.04 214.38);
+  --destructive: oklch(60.006% 0.24623 29.234);
+  --destructive-foreground: oklch(99% 0.01 29.234);
+  --success: oklch(72% 0.16 150);
+  --border: oklch(90% 0.00318 305.46);
+  --input: oklch(94% 0.00636 305.46);
+  --ring: oklch(82.292% 0.10108 35.744);
+  --chart-1: oklch(73.234% 0.09961 34.379);
+  --chart-2: oklch(78% 0.11068 106.38);
+  --chart-3: oklch(73.234% 0.12174 178.38);
+  --chart-4: oklch(76% 0.11357 244.05);
+  --chart-5: oklch(70% 0.14388 322.38);
+  --sidebar: oklch(97.385% 0.005 125.46);
+  --sidebar-foreground: oklch(24% 0.0025 125.46);
+  --sidebar-primary: oklch(82.292% 0.10108 35.744);
+  --sidebar-primary-foreground: oklch(22% 0.03 34.379);
+  --sidebar-accent: oklch(91% 0.04 214.38);
+  --sidebar-accent-foreground: oklch(24% 0.04 214.38);
+  --sidebar-border: oklch(89% 0.00318 305.46);
+  --sidebar-ring: oklch(83.234% 0.06068 34.379);
+  --font: "Rubik", system-ui, sans-serif;
+  --radius: 0.55rem;
+  --border-width: 1px;
+  --shadow-sm: 0 1px 2px oklch(0 0 0 / 0.05);
+  --shadow-md: 0 6px 18px -4px oklch(0 0 0 / 0.10);
+  --shadow-lg: 0 16px 40px -8px oklch(0 0 0 / 0.12);
+  --surface-gradient: linear-gradient(135deg,
+      color-mix(in oklab, var(--primary) 24%, var(--card)) 0%,
+      color-mix(in oklab, var(--accent) 20%, var(--card)) 100%);
+}
+[data-theme="aurora"].dark {
+  --background: oklch(16% 0.02 305.46);
+  --foreground: oklch(95% 0.006 305.46);
+  --card: oklch(22% 0.025 305.46);
+  --card-foreground: oklch(95% 0.0075 305.46);
+  --popover: oklch(22% 0.025 305.46);
+  --popover-foreground: oklch(95% 0.0075 305.46);
+  --primary: oklch(89.456% 0.05949 45.586);
+  --primary-foreground: oklch(20% 0.03 45.586);
+  --secondary: oklch(86% 0.09 121.77);
+  --secondary-foreground: oklch(20% 0.03 121.77);
+  --muted: oklch(26% 0.03 305.46);
+  --muted-foreground: oklch(70% 0.01 305.46);
+  --accent: oklch(90% 0.08 195.86);
+  --accent-foreground: oklch(20% 0.03 195.86);
+  --destructive: oklch(65% 0.22 29.234);
+  --destructive-foreground: oklch(99% 0.01 29.234);
+  --success: oklch(76% 0.15 150);
+  --border: oklch(30% 0.035 305.46);
+  --input: oklch(34% 0.032 305.46);
+  --ring: oklch(89.456% 0.05949 45.586);
+  --chart-1: oklch(80% 0.09 45.586);
+  --chart-2: oklch(82% 0.10 117.59);
+  --chart-3: oklch(80% 0.10 189.59);
+  --chart-4: oklch(80% 0.11 261.59);
+  --chart-5: oklch(80% 0.12 333.59);
+  --sidebar: oklch(20% 0.02 305.46);
+  --sidebar-foreground: oklch(95% 0.006 305.46);
+  --sidebar-primary: oklch(89.456% 0.05949 45.586);
+  --sidebar-primary-foreground: oklch(18% 0.03 45.586);
+  --sidebar-accent: oklch(30% 0.04 195.86);
+  --sidebar-accent-foreground: oklch(92% 0.05 195.86);
+  --sidebar-border: oklch(30% 0.035 305.46);
+  --shadow-sm: 0 1px 2px oklch(0 0 0 / 0.4);
+  --shadow-md: 0 6px 18px -4px oklch(0 0 0 / 0.5);
+  --shadow-lg: 0 16px 40px -8px oklch(0 0 0 / 0.55);
+}
+
+/* slate = monochrome + one deep indigo accent (Linear / Notion family) */
+[data-theme="slate"] {
+  --background: oklch(99% 0.003 264);
+  --foreground: oklch(21% 0.012 264);
+  --card: oklch(100% 0 0);
+  --card-foreground: oklch(21% 0.012 264);
+  --popover: oklch(100% 0 0);
+  --popover-foreground: oklch(21% 0.012 264);
+  --primary: oklch(52% 0.21 264);
+  --primary-foreground: oklch(99% 0.01 264);
+  --secondary: oklch(96.5% 0.006 264);
+  --secondary-foreground: oklch(30% 0.02 264);
+  --muted: oklch(96.5% 0.006 264);
+  --muted-foreground: oklch(52% 0.018 264);
+  --accent: oklch(93% 0.045 264);
+  --accent-foreground: oklch(38% 0.13 264);
+  --destructive: oklch(58% 0.22 27);
+  --destructive-foreground: oklch(99% 0.01 27);
+  --success: oklch(60% 0.15 150);
+  --border: oklch(91% 0.006 264);
+  --input: oklch(91% 0.006 264);
+  --ring: oklch(52% 0.21 264);
+  --chart-1: oklch(54% 0.20 264);
+  --chart-2: oklch(62% 0.15 230);
+  --chart-3: oklch(68% 0.12 195);
+  --chart-4: oklch(60% 0.18 300);
+  --chart-5: oklch(66% 0.14 160);
+  --sidebar: oklch(98.5% 0.004 264);
+  --sidebar-foreground: oklch(30% 0.012 264);
+  --sidebar-primary: oklch(52% 0.21 264);
+  --sidebar-primary-foreground: oklch(99% 0.01 264);
+  --sidebar-accent: oklch(94% 0.03 264);
+  --sidebar-accent-foreground: oklch(38% 0.13 264);
+  --sidebar-border: oklch(91% 0.006 264);
+  --sidebar-ring: oklch(52% 0.21 264);
+  --font: "Inter", system-ui, sans-serif;
+  --radius: 0.4rem;
+  --border-width: 1px;
+  --shadow-sm: 0 1px 1px oklch(0 0 0 / 0.04);
+  --shadow-md: 0 1px 3px oklch(0 0 0 / 0.06);
+  --shadow-lg: 0 4px 10px oklch(0 0 0 / 0.07);
+  --surface-gradient: linear-gradient(135deg,
+      color-mix(in oklab, var(--primary) 12%, var(--card)) 0%,
+      var(--card) 72%);
+}
+[data-theme="slate"].dark {
+  --background: oklch(17% 0.018 264);
+  --foreground: oklch(96% 0.005 264);
+  --card: oklch(21% 0.02 264);
+  --card-foreground: oklch(96% 0.005 264);
+  --popover: oklch(21% 0.02 264);
+  --popover-foreground: oklch(96% 0.005 264);
+  --primary: oklch(70% 0.17 264);
+  --primary-foreground: oklch(16% 0.03 264);
+  --secondary: oklch(27% 0.02 264);
+  --secondary-foreground: oklch(95% 0.01 264);
+  --muted: oklch(27% 0.02 264);
+  --muted-foreground: oklch(70% 0.02 264);
+  --accent: oklch(31% 0.06 264);
+  --accent-foreground: oklch(88% 0.06 264);
+  --destructive: oklch(64% 0.21 27);
+  --destructive-foreground: oklch(98% 0.01 27);
+  --success: oklch(70% 0.15 150);
+  --border: oklch(28% 0.02 264);
+  --input: oklch(31% 0.02 264);
+  --ring: oklch(70% 0.17 264);
+  --chart-1: oklch(70% 0.17 264);
+  --chart-2: oklch(72% 0.14 230);
+  --chart-3: oklch(76% 0.11 195);
+  --chart-4: oklch(70% 0.16 300);
+  --chart-5: oklch(74% 0.13 160);
+  --sidebar: oklch(20% 0.02 264);
+  --sidebar-foreground: oklch(92% 0.005 264);
+  --sidebar-primary: oklch(70% 0.17 264);
+  --sidebar-primary-foreground: oklch(16% 0.03 264);
+  --sidebar-accent: oklch(30% 0.04 264);
+  --sidebar-accent-foreground: oklch(90% 0.05 264);
+  --sidebar-border: oklch(28% 0.02 264);
+  --shadow-sm: 0 1px 1px oklch(0 0 0 / 0.3);
+  --shadow-md: 0 1px 3px oklch(0 0 0 / 0.4);
+  --shadow-lg: 0 4px 10px oklch(0 0 0 / 0.45);
+}
+
+/* vibrant = dual-accent, colored chrome, glow shadows (playful/marketing) */
+[data-theme="vibrant"] {
+  --background: oklch(99% 0.008 320);
+  --foreground: oklch(18% 0.02 320);
+  --card: oklch(100% 0 0);
+  --card-foreground: oklch(18% 0.02 320);
+  --popover: oklch(100% 0 0);
+  --popover-foreground: oklch(18% 0.02 320);
+  --primary: oklch(62% 0.25 350);
+  --primary-foreground: oklch(99% 0.01 350);
+  --secondary: oklch(95% 0.03 320);
+  --secondary-foreground: oklch(32% 0.10 350);
+  --muted: oklch(96% 0.015 320);
+  --muted-foreground: oklch(50% 0.03 320);
+  --accent: oklch(72% 0.16 200);
+  --accent-foreground: oklch(16% 0.04 200);
+  --destructive: oklch(60% 0.24 27);
+  --destructive-foreground: oklch(99% 0.01 27);
+  --success: oklch(72% 0.17 150);
+  --border: oklch(90% 0.02 320);
+  --input: oklch(93% 0.015 320);
+  --ring: oklch(62% 0.25 350);
+  --chart-1: oklch(65% 0.24 350);
+  --chart-2: oklch(72% 0.16 200);
+  --chart-3: oklch(80% 0.16 95);
+  --chart-4: oklch(63% 0.21 290);
+  --chart-5: oklch(70% 0.19 35);
+  --sidebar: oklch(32% 0.10 330);
+  --sidebar-foreground: oklch(95% 0.02 330);
+  --sidebar-primary: oklch(72% 0.16 200);
+  --sidebar-primary-foreground: oklch(15% 0.04 200);
+  --sidebar-accent: oklch(40% 0.10 330);
+  --sidebar-accent-foreground: oklch(96% 0.03 330);
+  --sidebar-border: oklch(42% 0.10 330);
+  --sidebar-ring: oklch(72% 0.16 200);
+  --font: "Rubik", system-ui, sans-serif;
+  --radius: 0.95rem;
+  --border-width: 1.5px;
+  --shadow-sm: 0 2px 6px -2px color-mix(in oklab, var(--primary) 24%, transparent);
+  --shadow-md: 0 10px 26px -6px color-mix(in oklab, var(--primary) 30%, transparent);
+  --shadow-lg: 0 22px 48px -10px color-mix(in oklab, var(--primary) 38%, transparent);
+  --surface-gradient: linear-gradient(135deg,
+      color-mix(in oklab, var(--primary) 30%, var(--card)) 0%,
+      color-mix(in oklab, var(--accent) 28%, var(--card)) 100%);
+}
+[data-theme="vibrant"].dark {
+  --background: oklch(16% 0.03 320);
+  --foreground: oklch(96% 0.02 320);
+  --card: oklch(21% 0.035 320);
+  --card-foreground: oklch(96% 0.02 320);
+  --popover: oklch(21% 0.035 320);
+  --popover-foreground: oklch(96% 0.02 320);
+  --primary: oklch(70% 0.24 350);
+  --primary-foreground: oklch(15% 0.03 350);
+  --secondary: oklch(27% 0.05 320);
+  --secondary-foreground: oklch(94% 0.03 320);
+  --muted: oklch(25% 0.04 320);
+  --muted-foreground: oklch(68% 0.03 320);
+  --accent: oklch(76% 0.16 200);
+  --accent-foreground: oklch(15% 0.04 200);
+  --destructive: oklch(66% 0.24 27);
+  --destructive-foreground: oklch(99% 0.01 27);
+  --success: oklch(75% 0.17 150);
+  --border: oklch(30% 0.04 320);
+  --input: oklch(33% 0.04 320);
+  --ring: oklch(70% 0.24 350);
+  --chart-1: oklch(72% 0.23 350);
+  --chart-2: oklch(78% 0.15 200);
+  --chart-3: oklch(84% 0.15 95);
+  --chart-4: oklch(70% 0.20 290);
+  --chart-5: oklch(76% 0.18 35);
+  --sidebar: oklch(22% 0.06 330);
+  --sidebar-foreground: oklch(95% 0.02 330);
+  --sidebar-primary: oklch(76% 0.16 200);
+  --sidebar-primary-foreground: oklch(15% 0.04 200);
+  --sidebar-accent: oklch(30% 0.07 330);
+  --sidebar-accent-foreground: oklch(96% 0.03 330);
+  --sidebar-border: oklch(34% 0.07 330);
+  --shadow-sm: 0 2px 6px -2px color-mix(in oklab, var(--primary) 30%, transparent);
+  --shadow-md: 0 10px 26px -6px color-mix(in oklab, var(--primary) 40%, transparent);
+  --shadow-lg: 0 22px 48px -10px color-mix(in oklab, var(--primary) 48%, transparent);
+}
+
+/* ---- DERIVED RADII ------------------------------------------------------- */
+:root {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 6px);
+}
+
+/* ---- RESET / BASE -------------------------------------------------------- */
+* { box-sizing: border-box; margin: 0; padding: 0; border-color: var(--border); }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font);
+  background: var(--background);
+  color: var(--foreground);
+  -webkit-font-smoothing: antialiased;
+  transition: background .25s ease, color .25s ease;
+  line-height: 1.5;
+}
+a { color: inherit; text-decoration: none; }
+svg { display: block; }
+.muted { color: var(--muted-foreground); }
+.mono { font-variant-numeric: tabular-nums; }
+
+/* ---- TOOLBAR ------------------------------------------------------------- */
+.toolbar {
+  position: sticky; top: 0; z-index: 50;
+  display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+  padding: .7rem 1.25rem;
+  background: color-mix(in oklab, var(--background) 88%, transparent);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.toolbar .brand { font-weight: 700; font-size: 1rem; letter-spacing: -.01em; display:flex; align-items:center; gap:.5rem; }
+.toolbar .brand .dot { width: 18px; height: 18px; border-radius: 6px; background: var(--surface-gradient); box-shadow: var(--shadow-sm); }
+.toolbar .spacer { flex: 1; }
+.swatches { display: flex; gap: 5px; align-items: center; }
+.swatches i { width: 16px; height: 16px; border-radius: 5px; display: inline-block; border: 1px solid color-mix(in oklab, var(--foreground) 12%, transparent); }
+.pills { display: flex; gap: 4px; background: var(--muted); padding: 4px; border-radius: 999px; }
+.pills button {
+  font: inherit; font-size: .8rem; font-weight: 600; cursor: pointer;
+  border: none; background: transparent; color: var(--muted-foreground);
+  padding: .35rem .8rem; border-radius: 999px; transition: all .15s ease;
+}
+.pills button[aria-pressed="true"] { background: var(--card); color: var(--foreground); box-shadow: var(--shadow-sm); }
+.icon-btn {
+  cursor: pointer; border: 1px solid var(--border); background: var(--card); color: var(--foreground);
+  width: 36px; height: 36px; border-radius: var(--radius-md); display: grid; place-items: center;
+  transition: all .15s ease;
+}
+.icon-btn:hover { background: var(--muted); }
+
+/* ---- PAGE SCAFFOLD ------------------------------------------------------- */
+.page { max-width: 1240px; margin: 0 auto; padding: 2.5rem 1.25rem 5rem; }
+.section-label {
+  display: inline-flex; align-items: center; gap: .5rem;
+  font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--muted-foreground); margin: 3.5rem 0 1rem;
+}
+.section-label::before { content: ""; width: 22px; height: 2px; background: var(--primary); border-radius: 2px; }
+.section-label:first-of-type { margin-top: .5rem; }
+h2.section-title { font-size: 1.6rem; font-weight: 700; letter-spacing: -.02em; margin-bottom: .35rem; }
+.section-sub { color: var(--muted-foreground); margin-bottom: 1.5rem; max-width: 60ch; }
+
+/* ---- PRIMITIVES ---------------------------------------------------------- */
+.card {
+  background: var(--card); color: var(--card-foreground);
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+.card.pad { padding: 1.25rem; }
+.card-head { padding: 1.25rem 1.25rem .5rem; }
+.card-title { font-weight: 600; font-size: 1rem; letter-spacing: -.01em; }
+.card-desc { color: var(--muted-foreground); font-size: .85rem; margin-top: .15rem; }
+.card-body { padding: 1rem 1.25rem 1.25rem; }
+
+.btn {
+  font: inherit; font-weight: 600; font-size: .85rem; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center; gap: .45rem;
+  height: 38px; padding: 0 1rem; border-radius: var(--radius-md);
+  border: var(--border-width) solid transparent; transition: all .15s ease; white-space: nowrap;
+}
+.btn:active { transform: translateY(1px); }
+.btn-primary { background: var(--primary); color: var(--primary-foreground); box-shadow: var(--shadow-sm); }
+.btn-primary:hover { filter: brightness(.96); box-shadow: var(--shadow-md); }
+.btn-secondary { background: var(--secondary); color: var(--secondary-foreground); }
+.btn-secondary:hover { filter: brightness(.97); }
+.btn-accent { background: var(--accent); color: var(--accent-foreground); }
+.btn-accent:hover { filter: brightness(.97); }
+.btn-outline { background: var(--card); color: var(--foreground); border-color: var(--border); }
+.btn-outline:hover { background: var(--muted); }
+.btn-ghost { background: transparent; color: var(--foreground); }
+.btn-ghost:hover { background: var(--muted); }
+.btn-destructive { background: var(--destructive); color: var(--destructive-foreground); box-shadow: var(--shadow-sm); }
+.btn-destructive:hover { filter: brightness(.96); }
+.btn-sm { height: 32px; padding: 0 .7rem; font-size: .8rem; }
+.btn-icon { width: 38px; padding: 0; }
+
+.badge {
+  display: inline-flex; align-items: center; gap: .3rem;
+  font-size: .72rem; font-weight: 600; padding: .2rem .55rem; border-radius: 999px;
+  border: 1px solid transparent; line-height: 1;
+}
+.badge-primary { background: color-mix(in oklab, var(--primary) 16%, var(--card)); color: var(--primary); border-color: color-mix(in oklab, var(--primary) 28%, transparent); }
+.badge-secondary { background: var(--secondary); color: var(--secondary-foreground); }
+.badge-accent { background: color-mix(in oklab, var(--accent) 18%, var(--card)); color: color-mix(in oklab, var(--accent-foreground) 75%, var(--accent)); border-color: color-mix(in oklab, var(--accent) 30%, transparent); }
+.badge-outline { background: transparent; color: var(--muted-foreground); border-color: var(--border); }
+.badge-success { background: color-mix(in oklab, var(--success) 18%, var(--card)); color: color-mix(in oklab, var(--success) 70%, var(--foreground)); }
+.badge-destructive { background: color-mix(in oklab, var(--destructive) 16%, var(--card)); color: var(--destructive); border-color: color-mix(in oklab, var(--destructive) 30%, transparent); }
+
+.input {
+  font: inherit; font-size: .85rem; width: 100%; height: 38px; padding: 0 .75rem;
+  background: var(--card); color: var(--foreground);
+  border: var(--border-width) solid var(--input); border-radius: var(--radius-md); outline: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+.input:focus { border-color: var(--ring); box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring) 35%, transparent); }
+.label { font-size: .8rem; font-weight: 600; display: block; margin-bottom: .4rem; }
+
+.switch { width: 40px; height: 23px; border-radius: 999px; background: var(--muted); position: relative; cursor: pointer; transition: background .15s; border: 1px solid var(--border); flex: none; }
+.switch.on { background: var(--primary); border-color: var(--primary); }
+.switch::after { content: ""; position: absolute; top: 2px; left: 2px; width: 17px; height: 17px; border-radius: 999px; background: var(--card); transition: transform .15s; box-shadow: var(--shadow-sm); }
+.switch.on::after { transform: translateX(17px); }
+
+.avatar { width: 36px; height: 36px; border-radius: 999px; display: grid; place-items: center; font-size: .8rem; font-weight: 600; color: var(--primary-foreground); background: var(--primary); flex: none; }
+.avatar.ring { box-shadow: 0 0 0 2px var(--card), 0 0 0 4px color-mix(in oklab, var(--primary) 40%, transparent); }
+
+.progress { height: 8px; border-radius: 999px; background: var(--muted); overflow: hidden; }
+.progress > span { display: block; height: 100%; border-radius: 999px; }
+
+.segmented { display: inline-flex; background: var(--muted); padding: 4px; border-radius: var(--radius-md); gap: 2px; }
+.segmented button { font: inherit; font-size: .8rem; font-weight: 600; border: none; cursor: pointer; background: transparent; color: var(--muted-foreground); padding: .4rem .85rem; border-radius: calc(var(--radius-md) - 3px); }
+.segmented button.active { background: var(--card); color: var(--foreground); box-shadow: var(--shadow-sm); }
+
+/* ---- DASHBOARD TEMPLATE -------------------------------------------------- */
+.dash {
+  display: grid; grid-template-columns: 250px 1fr; min-height: 640px;
+  border: var(--border-width) solid var(--border); border-radius: var(--radius-xl);
+  overflow: hidden; box-shadow: var(--shadow-lg); background: var(--card);
+}
+.dash-side {
+  background: var(--sidebar); color: var(--sidebar-foreground);
+  border-right: 1px solid var(--sidebar-border);
+  display: flex; flex-direction: column; padding: 1.1rem .85rem;
+}
+.dash-side .brand { display: flex; align-items: center; gap: .6rem; font-weight: 700; padding: .3rem .5rem 1rem; letter-spacing: -.01em; }
+.dash-side .brand .glyph { width: 28px; height: 28px; border-radius: 8px; background: var(--sidebar-primary); color: var(--sidebar-primary-foreground); display: grid; place-items: center; font-size: .95rem; }
+.nav-group { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; opacity: .6; margin: .9rem .55rem .3rem; }
+.nav-item { display: flex; align-items: center; gap: .65rem; padding: .55rem .6rem; border-radius: var(--radius-md); font-size: .87rem; font-weight: 500; color: color-mix(in oklab, var(--sidebar-foreground) 82%, transparent); cursor: pointer; transition: background .12s; }
+.nav-item:hover { background: color-mix(in oklab, var(--sidebar-accent) 60%, transparent); }
+.nav-item.active { background: var(--sidebar-primary); color: var(--sidebar-primary-foreground); font-weight: 600; box-shadow: var(--shadow-sm); }
+.nav-item .ico { width: 17px; height: 17px; opacity: .9; }
+.nav-item .count { margin-left: auto; font-size: .7rem; background: var(--sidebar-accent); color: var(--sidebar-accent-foreground); padding: .05rem .4rem; border-radius: 999px; font-weight: 700; }
+.nav-item.active .count { background: color-mix(in oklab, var(--sidebar-primary-foreground) 25%, transparent); color: var(--sidebar-primary-foreground); }
+.side-foot { margin-top: auto; display: flex; align-items: center; gap: .6rem; padding: .6rem; border-radius: var(--radius-md); background: color-mix(in oklab, var(--sidebar-accent) 45%, transparent); }
+.side-foot .nm { font-size: .8rem; font-weight: 600; line-height: 1.1; }
+.side-foot .em { font-size: .72rem; opacity: .7; }
+
+.dash-main { display: flex; flex-direction: column; background: var(--background); min-width: 0; }
+.dash-top { display: flex; align-items: center; gap: 1rem; padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); background: color-mix(in oklab, var(--card) 60%, var(--background)); }
+.dash-top h1 { font-size: 1.15rem; font-weight: 700; letter-spacing: -.02em; }
+.search { display: flex; align-items: center; gap: .5rem; height: 36px; padding: 0 .7rem; background: var(--muted); border-radius: var(--radius-md); color: var(--muted-foreground); font-size: .82rem; min-width: 220px; }
+.dash-content { padding: 1.5rem; display: flex; flex-direction: column; gap: 1.25rem; overflow: auto; }
+
+.stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+.stat { padding: 1.1rem; position: relative; overflow: hidden; }
+.stat .chip { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; margin-bottom: .8rem; color: #fff; }
+.stat .k { font-size: .8rem; color: var(--muted-foreground); font-weight: 500; }
+.stat .v { font-size: 1.7rem; font-weight: 700; letter-spacing: -.02em; margin-top: .15rem; }
+.stat .trend { margin-top: .55rem; font-size: .75rem; font-weight: 600; display: inline-flex; gap: .25rem; align-items: center; }
+.trend.up { color: var(--success); }
+.trend.down { color: var(--destructive); }
+.spark { position: absolute; right: 10px; bottom: 10px; opacity: .85; }
+
+.two-col { display: grid; grid-template-columns: 1.7fr 1fr; gap: 1.25rem; }
+.bars { display: flex; align-items: flex-end; gap: 12px; height: 180px; padding-top: 1rem; }
+.bars .col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: .5rem; height: 100%; justify-content: flex-end; }
+.bars .stack { width: 100%; max-width: 34px; display: flex; flex-direction: column-reverse; gap: 3px; border-radius: var(--radius-sm); overflow: hidden; }
+.bars .seg { width: 100%; }
+.bars .lbl { font-size: .72rem; color: var(--muted-foreground); }
+.legend { display: flex; flex-wrap: wrap; gap: .8rem 1.1rem; margin-top: 1rem; }
+.legend span { display: inline-flex; align-items: center; gap: .4rem; font-size: .78rem; color: var(--muted-foreground); }
+.legend i { width: 10px; height: 10px; border-radius: 3px; }
+
+.donut-wrap { display: flex; align-items: center; gap: 1.25rem; }
+.donut { width: 130px; height: 130px; border-radius: 999px; flex: none; position: relative;
+  background: conic-gradient(var(--chart-1) 0 42%, var(--chart-2) 42% 66%, var(--chart-3) 66% 82%, var(--chart-4) 82% 93%, var(--chart-5) 93% 100%); }
+.donut::after { content: ""; position: absolute; inset: 22px; border-radius: 999px; background: var(--card); box-shadow: inset 0 0 0 1px var(--border); }
+.donut .center { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; z-index: 1; }
+.donut .center b { font-size: 1.3rem; font-weight: 700; }
+.donut .center small { font-size: .68rem; color: var(--muted-foreground); }
+
+table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+th { text-align: left; font-weight: 600; color: var(--muted-foreground); font-size: .75rem; text-transform: uppercase; letter-spacing: .04em; padding: .6rem .75rem; border-bottom: 1px solid var(--border); }
+td { padding: .7rem .75rem; border-bottom: 1px solid var(--border); }
+tr:last-child td { border-bottom: none; }
+tbody tr:hover { background: var(--muted); }
+.cellname { display: flex; align-items: center; gap: .6rem; font-weight: 500; }
+.cellname .av { width: 28px; height: 28px; font-size: .7rem; border-radius: 999px; display: grid; place-items: center; font-weight: 600; }
+
+.alert { display: flex; gap: .8rem; padding: 1rem 1.1rem; border-radius: var(--radius-lg); border: 1px solid; }
+.alert .ico { flex: none; margin-top: 1px; }
+.alert.info { background: color-mix(in oklab, var(--accent) 14%, var(--card)); border-color: color-mix(in oklab, var(--accent) 32%, transparent); color: var(--card-foreground); }
+.alert.info .ico { color: color-mix(in oklab, var(--accent-foreground) 65%, var(--accent)); }
+.alert.danger { background: color-mix(in oklab, var(--destructive) 12%, var(--card)); border-color: color-mix(in oklab, var(--destructive) 32%, transparent); }
+.alert.danger .ico { color: var(--destructive); }
+.alert b { font-weight: 600; }
+.alert p { font-size: .83rem; color: var(--muted-foreground); margin-top: .1rem; }
+
+/* ---- COMPONENT GALLERY --------------------------------------------------- */
+.grid-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; align-items: start; }
+.row { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; }
+.stack { display: flex; flex-direction: column; gap: 1rem; }
+.kv { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+
+/* ---- MARKETING ----------------------------------------------------------- */
+.hero { position: relative; overflow: hidden; border-radius: var(--radius-xl); padding: 3rem 2.5rem; border: var(--border-width) solid var(--border); background: var(--surface-gradient); box-shadow: var(--shadow-lg); }
+.hero .eyebrow { display: inline-flex; }
+.hero h1 { font-size: 2.5rem; line-height: 1.05; letter-spacing: -.03em; font-weight: 700; margin: 1rem 0 .8rem; max-width: 16ch; }
+.hero p { font-size: 1.05rem; color: color-mix(in oklab, var(--foreground) 78%, transparent); max-width: 46ch; margin-bottom: 1.6rem; }
+.feature-ico { width: 42px; height: 42px; border-radius: var(--radius-md); display: grid; place-items: center; margin-bottom: .9rem; color: #fff; }
+
+.price-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; align-items: stretch; }
+.price.featured { border-color: var(--primary); box-shadow: var(--shadow-lg); position: relative; }
+.price.featured::before { content: "Most popular"; position: absolute; top: -11px; left: 50%; transform: translateX(-50%); background: var(--primary); color: var(--primary-foreground); font-size: .68rem; font-weight: 700; padding: .2rem .7rem; border-radius: 999px; letter-spacing: .03em; }
+.price .amt { font-size: 2.2rem; font-weight: 700; letter-spacing: -.02em; }
+.price ul { list-style: none; display: flex; flex-direction: column; gap: .55rem; margin: 1.1rem 0 1.4rem; }
+.price li { display: flex; gap: .55rem; align-items: center; font-size: .87rem; }
+.price li .ck { color: var(--primary); flex: none; }
+
+.note { font-size: .8rem; color: var(--muted-foreground); background: var(--muted); border: 1px dashed var(--border); border-radius: var(--radius-md); padding: .7rem .9rem; display: flex; gap: .5rem; }
+
+@media (max-width: 1000px) {
+  .dash { grid-template-columns: 1fr; }
+  .dash-side { display: none; }
+  .stat-grid { grid-template-columns: repeat(2, 1fr); }
+  .two-col, .grid-cards, .price-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 560px) {
+  .stat-grid { grid-template-columns: 1fr; }
+  .hero h1 { font-size: 1.9rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ======================= TOOLBAR ======================= -->
+<div class="toolbar">
+  <div class="brand"><span class="dot"></span> ShadeCraft <span class="muted" style="font-weight:500">· preview templates</span></div>
+  <div class="swatches" title="Live theme tokens">
+    <i style="background:var(--primary)"></i>
+    <i style="background:var(--secondary)"></i>
+    <i style="background:var(--accent)"></i>
+    <i style="background:var(--chart-1)"></i>
+    <i style="background:var(--chart-2)"></i>
+    <i style="background:var(--chart-3)"></i>
+    <i style="background:var(--chart-4)"></i>
+    <i style="background:var(--chart-5)"></i>
+    <i style="background:var(--destructive)"></i>
+  </div>
+  <div class="spacer"></div>
+  <div class="pills" id="themePills">
+    <button data-set="aurora" aria-pressed="true">Aurora</button>
+    <button data-set="slate" aria-pressed="false">Slate</button>
+    <button data-set="vibrant" aria-pressed="false">Vibrant</button>
+  </div>
+  <button class="icon-btn" id="darkToggle" title="Toggle dark mode">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+  </button>
+</div>
+
+<div class="page">
+
+  <p class="note" style="margin-bottom:.5rem">
+    <strong>Design-review mockup.</strong>&nbsp;Every block below is painted only with generated theme tokens. Switch theme/dark mode in the toolbar and watch <em>secondary</em>, <em>accent</em>, the <em>chart-1..5</em> palette, the <em>sidebar</em> tokens, and the structural axes (<em>radius / shadow / surface</em>) all change together — that's the behaviour the real templates are missing today.
+  </p>
+
+  <!-- ======================= DASHBOARD ======================= -->
+  <div class="section-label">Template 01</div>
+  <h2 class="section-title">App Dashboard</h2>
+  <p class="section-sub">Exercises sidebar tokens, the full chart palette, success/destructive trends, and secondary/accent surfaces in one realistic surface.</p>
+
+  <div class="dash">
+    <!-- sidebar -->
+    <aside class="dash-side">
+      <div class="brand"><span class="glyph">◐</span> Northwind</div>
+      <div class="nav-group">Workspace</div>
+      <div class="nav-item active"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg> Overview</div>
+      <div class="nav-item"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg> Analytics <span class="count">12</span></div>
+      <div class="nav-item"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg> Billing</div>
+      <div class="nav-item"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg> Customers <span class="count">5</span></div>
+      <div class="nav-group">Account</div>
+      <div class="nav-item"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-2.92.95V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 8 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 3.6 14H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 5 8.6l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 10 4.6V3a2 2 0 0 1 4 0v.09A1.65 1.65 0 0 0 16 5l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 11H21a2 2 0 0 1 0 4h-1.6Z"/></svg> Settings</div>
+      <div class="side-foot">
+        <span class="avatar" style="width:32px;height:32px">RB</span>
+        <div><div class="nm">Raihan B.</div><div class="em">rishaon0@gmail.com</div></div>
+      </div>
+    </aside>
+
+    <!-- main -->
+    <div class="dash-main">
+      <div class="dash-top">
+        <h1>Overview</h1>
+        <div class="spacer" style="flex:1"></div>
+        <div class="search"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg> Search…</div>
+        <button class="btn btn-outline btn-sm">Export</button>
+        <button class="btn btn-primary btn-sm">+ New report</button>
+      </div>
+
+      <div class="dash-content">
+        <!-- stat cards: each uses a different chart color -->
+        <div class="stat-grid">
+          <div class="card stat">
+            <div class="chip" style="background:var(--chart-1)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+            <div class="k">Revenue</div><div class="v">$48.2k</div>
+            <div class="trend up">▲ 12.4% <span class="muted" style="font-weight:500">vs last mo</span></div>
+            <svg class="spark" width="70" height="28" viewBox="0 0 70 28" fill="none"><polyline points="0,22 12,18 24,20 36,10 48,13 60,5 70,7" stroke="var(--chart-1)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="card stat">
+            <div class="chip" style="background:var(--chart-2)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+            <div class="k">New customers</div><div class="v">1,204</div>
+            <div class="trend up">▲ 8.1% <span class="muted" style="font-weight:500">vs last mo</span></div>
+            <svg class="spark" width="70" height="28" viewBox="0 0 70 28" fill="none"><polyline points="0,18 12,20 24,12 36,15 48,8 60,11 70,4" stroke="var(--chart-2)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="card stat">
+            <div class="chip" style="background:var(--chart-3)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></div>
+            <div class="k">Active sessions</div><div class="v">8,932</div>
+            <div class="trend up">▲ 3.2% <span class="muted" style="font-weight:500">vs last mo</span></div>
+            <svg class="spark" width="70" height="28" viewBox="0 0 70 28" fill="none"><polyline points="0,14 12,12 24,16 36,11 48,14 60,9 70,12" stroke="var(--chart-3)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="card stat">
+            <div class="chip" style="background:var(--chart-4)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><rect x="7" y="10" width="3" height="8"/><rect x="12" y="6" width="3" height="12"/><rect x="17" y="13" width="3" height="5"/></svg></div>
+            <div class="k">Churn rate</div><div class="v">2.4%</div>
+            <div class="trend down">▼ 0.6% <span class="muted" style="font-weight:500">vs last mo</span></div>
+            <svg class="spark" width="70" height="28" viewBox="0 0 70 28" fill="none"><polyline points="0,8 12,11 24,9 36,14 48,12 60,16 70,18" stroke="var(--chart-4)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+
+        <!-- chart + donut -->
+        <div class="two-col">
+          <div class="card">
+            <div class="card-head"><div class="kv"><div><div class="card-title">Revenue by channel</div><div class="card-desc">Stacked, last 7 months</div></div><div class="segmented"><button>Week</button><button class="active">Month</button><button>Year</button></div></div></div>
+            <div class="card-body">
+              <div class="bars">
+                <div class="col"><div class="stack" style="height:55%"><div class="seg" style="height:45%;background:var(--chart-1)"></div><div class="seg" style="height:30%;background:var(--chart-2)"></div><div class="seg" style="height:25%;background:var(--chart-3)"></div></div><div class="lbl">Jan</div></div>
+                <div class="col"><div class="stack" style="height:62%"><div class="seg" style="height:40%;background:var(--chart-1)"></div><div class="seg" style="height:35%;background:var(--chart-2)"></div><div class="seg" style="height:25%;background:var(--chart-3)"></div></div><div class="lbl">Feb</div></div>
+                <div class="col"><div class="stack" style="height:48%"><div class="seg" style="height:50%;background:var(--chart-1)"></div><div class="seg" style="height:28%;background:var(--chart-2)"></div><div class="seg" style="height:22%;background:var(--chart-3)"></div></div><div class="lbl">Mar</div></div>
+                <div class="col"><div class="stack" style="height:78%"><div class="seg" style="height:42%;background:var(--chart-1)"></div><div class="seg" style="height:33%;background:var(--chart-2)"></div><div class="seg" style="height:25%;background:var(--chart-3)"></div></div><div class="lbl">Apr</div></div>
+                <div class="col"><div class="stack" style="height:70%"><div class="seg" style="height:46%;background:var(--chart-1)"></div><div class="seg" style="height:30%;background:var(--chart-2)"></div><div class="seg" style="height:24%;background:var(--chart-3)"></div></div><div class="lbl">May</div></div>
+                <div class="col"><div class="stack" style="height:90%"><div class="seg" style="height:44%;background:var(--chart-1)"></div><div class="seg" style="height:32%;background:var(--chart-2)"></div><div class="seg" style="height:24%;background:var(--chart-3)"></div></div><div class="lbl">Jun</div></div>
+                <div class="col"><div class="stack" style="height:100%"><div class="seg" style="height:43%;background:var(--chart-1)"></div><div class="seg" style="height:33%;background:var(--chart-2)"></div><div class="seg" style="height:24%;background:var(--chart-3)"></div></div><div class="lbl">Jul</div></div>
+              </div>
+              <div class="legend"><span><i style="background:var(--chart-1)"></i>Direct</span><span><i style="background:var(--chart-2)"></i>Referral</span><span><i style="background:var(--chart-3)"></i>Organic</span></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><div class="card-title">Traffic sources</div><div class="card-desc">Where visitors come from</div></div>
+            <div class="card-body">
+              <div class="donut-wrap">
+                <div class="donut"><div class="center"><b>42%</b><small>Direct</small></div></div>
+                <div class="legend" style="flex-direction:column;gap:.55rem;margin:0">
+                  <span><i style="background:var(--chart-1)"></i>Direct · 42%</span>
+                  <span><i style="background:var(--chart-2)"></i>Referral · 24%</span>
+                  <span><i style="background:var(--chart-3)"></i>Organic · 16%</span>
+                  <span><i style="background:var(--chart-4)"></i>Social · 11%</span>
+                  <span><i style="background:var(--chart-5)"></i>Email · 7%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- table -->
+        <div class="card">
+          <div class="card-head"><div class="kv"><div><div class="card-title">Recent transactions</div><div class="card-desc">Latest activity across your workspace</div></div><button class="btn btn-ghost btn-sm">View all →</button></div></div>
+          <div class="card-body" style="padding-top:.25rem">
+            <table>
+              <thead><tr><th>Customer</th><th>Status</th><th>Method</th><th style="text-align:right">Amount</th></tr></thead>
+              <tbody>
+                <tr><td><div class="cellname"><span class="av" style="background:var(--chart-1);color:#fff">OM</span>Olivia Martin</div></td><td><span class="badge badge-success">Paid</span></td><td class="muted">Visa ••42</td><td style="text-align:right" class="mono">$1,999.00</td></tr>
+                <tr><td><div class="cellname"><span class="av" style="background:var(--chart-4);color:#fff">JL</span>Jackson Lee</div></td><td><span class="badge badge-primary">Processing</span></td><td class="muted">PayPal</td><td style="text-align:right" class="mono">$39.00</td></tr>
+                <tr><td><div class="cellname"><span class="av" style="background:var(--chart-2);color:#fff">IN</span>Isabella Nguyen</div></td><td><span class="badge badge-accent">Pending</span></td><td class="muted">Mastercard ••18</td><td style="text-align:right" class="mono">$299.00</td></tr>
+                <tr><td><div class="cellname"><span class="av" style="background:var(--chart-5);color:#fff">WK</span>William Kim</div></td><td><span class="badge badge-destructive">Failed</span></td><td class="muted">Amex ••07</td><td style="text-align:right" class="mono">$99.00</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="alert info">
+          <svg class="ico" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          <div><b>You're on the Pro trial.</b><p>14 days left. Upgrade now to keep unlimited reports and the full chart palette.</p></div>
+          <div class="spacer" style="flex:1"></div>
+          <button class="btn btn-accent btn-sm" style="align-self:center">Upgrade</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================= COMPONENT GALLERY ======================= -->
+  <div class="section-label">Template 02</div>
+  <h2 class="section-title">Component Library</h2>
+  <p class="section-sub">The honest test of a theme: every shadcn primitive, in every variant, so primary / secondary / accent / destructive all earn their place.</p>
+
+  <div class="grid-cards">
+    <div class="card pad stack">
+      <div class="card-title">Buttons</div>
+      <div class="row"><button class="btn btn-primary">Primary</button><button class="btn btn-secondary">Secondary</button><button class="btn btn-accent">Accent</button></div>
+      <div class="row"><button class="btn btn-outline">Outline</button><button class="btn btn-ghost">Ghost</button><button class="btn btn-destructive">Delete</button></div>
+      <div class="row"><button class="btn btn-primary btn-sm">Small</button><button class="btn btn-primary btn-icon">+</button><button class="btn btn-primary" disabled style="opacity:.5">Disabled</button></div>
+    </div>
+
+    <div class="card pad stack">
+      <div class="card-title">Badges & status</div>
+      <div class="row"><span class="badge badge-primary">Primary</span><span class="badge badge-secondary">Secondary</span><span class="badge badge-accent">Accent</span></div>
+      <div class="row"><span class="badge badge-success">Success</span><span class="badge badge-destructive">Destructive</span><span class="badge badge-outline">Outline</span></div>
+      <div class="kv"><span class="muted" style="font-size:.85rem">Storage used</span><span style="font-size:.85rem;font-weight:600">68%</span></div>
+      <div class="progress"><span style="width:68%;background:var(--primary)"></span></div>
+      <div class="progress"><span style="width:42%;background:var(--accent)"></span></div>
+    </div>
+
+    <div class="card pad stack">
+      <div class="card-title">Form controls</div>
+      <div><label class="label">Email</label><input class="input" value="m@example.com"></div>
+      <div><label class="label">Plan</label><input class="input" value="Pro — $29/mo" readonly></div>
+      <div class="kv"><div><div style="font-size:.85rem;font-weight:600">Marketing emails</div><div class="muted" style="font-size:.78rem">Product news & offers</div></div><div class="switch on"></div></div>
+      <div class="kv"><div><div style="font-size:.85rem;font-weight:600">Two-factor auth</div><div class="muted" style="font-size:.78rem">Extra security</div></div><div class="switch"></div></div>
+    </div>
+
+    <div class="card pad stack">
+      <div class="card-title">Tabs & segmented</div>
+      <div class="segmented"><button class="active">Account</button><button>Password</button><button>Team</button></div>
+      <div class="note" style="border-style:solid">Active tab uses <b style="color:var(--foreground)">card + shadow</b> over a <b style="color:var(--foreground)">muted</b> track — same recipe the real <code>Tabs</code> uses.</div>
+      <div class="row"><span class="avatar ring">SD</span><span class="avatar" style="background:var(--chart-2)">JL</span><span class="avatar" style="background:var(--chart-4)">IN</span><span class="avatar" style="background:var(--muted);color:var(--muted-foreground)">+3</span></div>
+    </div>
+
+    <div class="card pad stack">
+      <div class="card-title">Inline alert</div>
+      <div class="alert danger"><svg class="ico" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.7 18-8-14a2 2 0 0 0-3.4 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.7-3Z"/><path d="M12 9v4M12 17h.01"/></svg><div><b>Payment failed.</b><p>Your card was declined. Update billing to continue.</p></div></div>
+      <button class="btn btn-destructive btn-sm" style="align-self:flex-start">Fix billing</button>
+    </div>
+
+    <div class="card pad stack">
+      <div class="card-title">Highlight / accent surface</div>
+      <div style="background:var(--surface-gradient);border-radius:var(--radius-md);padding:1.1rem;border:1px solid var(--border)">
+        <div class="badge badge-primary" style="margin-bottom:.6rem">New</div>
+        <div style="font-weight:600">Theme-aware surfaces</div>
+        <p class="muted" style="font-size:.83rem;margin-top:.25rem">This panel is painted with <code>--surface-gradient</code> (primary→accent) and <code>--radius</code>. Both change per theme.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================= MARKETING ======================= -->
+  <div class="section-label">Template 03</div>
+  <h2 class="section-title">Marketing / Landing</h2>
+  <p class="section-sub">Hero surface, feature chips, and pricing — where accent, secondary and the surface gradient carry the brand instead of "primary on grey".</p>
+
+  <div class="stack" style="gap:1.25rem">
+    <div class="hero">
+      <span class="badge badge-primary eyebrow">v2.0 · now with smart tokens</span>
+      <h1>Beautiful themes, on real components.</h1>
+      <p>Generate a complete, accessible design system in one click — then watch it render across an entire product, not just a swatch grid.</p>
+      <div class="row"><button class="btn btn-primary">Start generating</button><button class="btn btn-outline">View on GitHub</button></div>
+    </div>
+
+    <div class="grid-cards">
+      <div class="card pad">
+        <div class="feature-ico" style="background:var(--chart-1)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg></div>
+        <div class="card-title">OKLCH color science</div><p class="muted" style="font-size:.87rem;margin-top:.35rem">Perceptually balanced palettes that stay accessible in light and dark.</p>
+      </div>
+      <div class="card pad">
+        <div class="feature-ico" style="background:var(--chart-3)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v4H4zM4 12h10v8H4zM18 12h2v8h-2z"/></svg></div>
+        <div class="card-title">Every token, used</div><p class="muted" style="font-size:.87rem;margin-top:.35rem">Secondary, accent and the chart palette all get a real, visible job.</p>
+      </div>
+      <div class="card pad">
+        <div class="feature-ico" style="background:var(--chart-5)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+        <div class="card-title">One-click export</div><p class="muted" style="font-size:.87rem;margin-top:.35rem">Copy CSS variables or a Tailwind config and ship in minutes.</p>
+      </div>
+    </div>
+
+    <div class="price-grid">
+      <div class="card pad stack">
+        <div><div class="card-title">Starter</div><div class="card-desc">For side projects</div></div>
+        <div class="amt">$0<span class="muted" style="font-size:.9rem;font-weight:500">/mo</span></div>
+        <ul><li><span class="ck">✓</span>Unlimited generation</li><li><span class="ck">✓</span>Light & dark</li><li><span class="ck">✓</span>CSS export</li></ul>
+        <button class="btn btn-outline" style="width:100%">Get started</button>
+      </div>
+      <div class="card pad stack price featured">
+        <div><div class="card-title">Pro</div><div class="card-desc">For teams shipping fast</div></div>
+        <div class="amt">$29<span class="muted" style="font-size:.9rem;font-weight:500">/mo</span></div>
+        <ul><li><span class="ck">✓</span>Everything in Starter</li><li><span class="ck">✓</span>Tailwind + JSON export</li><li><span class="ck">✓</span>Saved theme gallery</li><li><span class="ck">✓</span>Shareable DNA links</li></ul>
+        <button class="btn btn-primary" style="width:100%">Upgrade to Pro</button>
+      </div>
+      <div class="card pad stack">
+        <div><div class="card-title">Team</div><div class="card-desc">For organizations</div></div>
+        <div class="amt">$99<span class="muted" style="font-size:.9rem;font-weight:500">/mo</span></div>
+        <ul><li><span class="ck">✓</span>Everything in Pro</li><li><span class="ck">✓</span>Brand token presets</li><li><span class="ck">✓</span>SSO & roles</li></ul>
+        <button class="btn btn-secondary" style="width:100%">Contact sales</button>
+      </div>
+    </div>
+  </div>
+
+  <p class="note" style="margin-top:3rem">
+    Mockup generated for design review · 3 themes × light/dark · all colour comes from generated tokens. Once you approve the direction, I'll port these patterns into the real React slot components and wire the axis vars into <code>@theme inline</code>.
+  </p>
+</div>
+
+<script>
+  const html = document.documentElement;
+  const pills = document.getElementById('themePills');
+  pills.addEventListener('click', (e) => {
+    const b = e.target.closest('button'); if (!b) return;
+    html.setAttribute('data-theme', b.dataset.set);
+    [...pills.children].forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+  });
+  document.getElementById('darkToggle').addEventListener('click', () => {
+    html.classList.toggle('dark');
+  });
+</script>
+</body>
+</html>
